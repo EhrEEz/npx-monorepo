@@ -1,0 +1,58 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+    ports:
+      - "5173:5173"
+    env_file: .env
+    # Mount source code for HMR (Hot Module Reload)
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - /app/node_modules
+      - /app/apps/frontend/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file: .env
+    # Mount source code for HMR (Hot Module Reload)
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - /app/node_modules
+      - /app/apps/backend/node_modules
+      # Don't mount .next directory (generated files)
+      - /app/apps/backend/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nepaxis_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nepaxis_password}
+      POSTGRES_DB: ${POSTGRES_DB:-nepaxis}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
