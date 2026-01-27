@@ -13,10 +13,11 @@
 
 	let showLoader = $state(true);
 
-	if (navigating)
+	if (navigating) {
 		beforeNavigate(() => {
 			showLoader = true;
 		});
+	}
 	afterNavigate(() => {
 		showLoader = false;
 	});

@@ -4,6 +4,6 @@ export default {
 	uri: PUBLIC_API_URL,
 	blog: {
 		articlesPerPage: 10,
-		sorting: '-createdAt'
+		sorting: 'latest'
 	}
 };

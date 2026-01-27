@@ -16,14 +16,19 @@ section {
 }
 
 a.link {
+	--_color: var(--clr-neutral-400);
+	--_decoration-color: var(--clr-neutral-400);
 	text-decoration: underline;
-	color: var(--clr-neutral-400);
+	text-decoration-color: var(--_decoration-color);
+	color: var(--_color);
 	transition: color 0.2s ease;
 	@extend .tracking-4tight;
+	transition: 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
 
 	&:hover {
 		text-decoration: underline;
-		color: var(--clr-neutral-200);
+		text-decoration-color: var(--set-ui-highlight-color);
+		--_color: var(--clr-neutral-200);
 		transition: color 0.2s ease;
 	}
 
@@ -33,7 +38,7 @@ a.link {
 	&:focus {
 		text-decoration: underline;
 		background-color: var(--set-ui-highlight-color);
-		color: hsl(from var(--set-ui-highlight-color) h s 10% / 100%);
+		color: var(--clr-dark-1000);
 	}
 }
 
@@ -70,7 +75,8 @@ a.link {
 .font-bold {
 	font-weight: 700;
 }
-.rounded-image {
+.rounded-image,
+.rounded-md {
 	border-radius: 2em;
 }
 .ascii {

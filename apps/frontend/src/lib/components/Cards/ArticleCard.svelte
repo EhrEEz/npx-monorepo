@@ -78,8 +78,8 @@
 					</h3>
 				</div>
 				{#if tags && tags.length > 0}
-					<div class="article__category-wrapper">
-						<ul class="strip-style fl-row gap-1">
+					<div>
+						<ul class="article-card__category strip-style fl-row gap-1">
 							{#each tags as tag}
 								<Tag variant="outline" color="light" size="small">{tag.tag}</Tag>
 							{/each}
@@ -115,8 +115,8 @@
 						{article.title}
 					</h3>
 				</div>
-				<div class="article__category-wrapper">
-					<ul class="strip-style fl-row gap-1">
+				<div>
+					<ul class="article-card__category strip-style fl-row gap-1">
 						{#each article.tags as tag}
 							<Tag variant="outline" color="light" size="small">{tag}</Tag>
 						{/each}
@@ -161,8 +161,7 @@
 
 			&__image-wrapper {
 				img {
-					inline-size: 100%;
-					block-size: 100%;
+					inline-size: min(20rem, 100%);
 					aspect-ratio: 1;
 					object-fit: cover;
 					border-radius: var(--card-hover-radius);
@@ -176,6 +175,7 @@
 				flex-direction: column;
 				flex: 1 1 auto;
 				gap: 1.5rem;
+				flex-wrap: wrap;
 			}
 			&__title {
 				max-inline-size: min(100%, 50rem);
@@ -198,16 +198,9 @@
 				}
 			}
 
-			&:hover {
-				background-color: var(--clr-neutral-1000);
-				--_padding-x: var(--_padding-y);
-				--_image-object-position: center right;
-				border-radius: var(--card-hover-radius);
-
-				&,
-				& + :global(.article-card) {
-					--_border-color: transparent;
-				}
+			&__tag_wrapper,
+			&__category {
+				flex-wrap: wrap;
 			}
 		}
 	}
@@ -228,6 +221,18 @@
 
 			&__content {
 				flex: 1 1 calc(100% - var(--_card-gap) - var(--_image-size));
+			}
+
+			&:hover {
+				background-color: var(--clr-neutral-1000);
+				--_padding-x: var(--_padding-y);
+				--_image-object-position: center right;
+				border-radius: var(--card-hover-radius);
+
+				&,
+				& + :global(.article-card) {
+					--_border-color: transparent;
+				}
 			}
 		}
 	}

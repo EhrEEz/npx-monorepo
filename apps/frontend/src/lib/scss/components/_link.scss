@@ -1,6 +1,6 @@
 @use '../abstracts/interfaces' as *;
 
-.link {
+.pretty-link {
 	--_color: var(--clr-neutral-200);
 	--_accent-color: var(--clr-accent-300);
 	--_border-color: var(--clr-neutral-600);

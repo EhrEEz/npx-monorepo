@@ -15,18 +15,20 @@
 		pageChange: (page: number) => void;
 	} & HTMLAttributes<HTMLElement> = $props();
 
-	$inspect(currentPage);
-
 	const totalPageArray = $derived.by<number[]>(() => {
 		return Array.from({ length: totalPages }, (_, i) => i + 1);
 	});
 </script>
 
 <div class={['pagination__wrapper', className]}>
-	<a
-		href={hasPrevPage ? `/blog?page=${currentPage - 1}` : `/blog?page=${currentPage}`}
+	<button
 		class={'btn--icon btn--ghost btn--pagination'}
 		class:disabled={!hasPrevPage}
+		disabled={!hasPrevPage}
+		aria-disabled={!hasPrevPage}
+		onclick={() => {
+			pageChange(hasPrevPage ? currentPage - 1 : currentPage);
+		}}
 	>
 		<span class="btn__wrapper">
 			<span class="btn__text sr-only">Previous Page</span>
@@ -48,20 +50,20 @@
 				</svg>
 			</span>
 		</span>
-	</a>
+	</button>
 	<ul class="pagination__list strip-style">
 		{#each totalPageArray as page}
 			<li>
-				<a
-					href={`/blog?page=${page}`}
+				<button
 					class={'btn--icon btn--pagination'}
 					class:btn--ghost={page !== currentPage}
 					class:btn--active={page === currentPage}
 					class:btn--accent={page === currentPage}
-					onclick={(e) => {
+					onclick={() => {
 						if (page == currentPage) {
-							e.preventDefault();
+							return;
 						}
+						pageChange(page);
 					}}
 					aria-current={page === currentPage ? 'page' : undefined}
 				>
@@ -70,14 +72,18 @@
 							{page}
 						</span>
 					</span>
-				</a>
+				</button>
 			</li>
 		{/each}
 	</ul>
-	<a
-		href={hasNextPage ? `/blog?page=${currentPage + 1}` : `/blog?page=${currentPage}`}
+	<button
 		class={'btn--icon btn--ghost btn--pagination'}
 		class:disabled={!hasNextPage}
+		onclick={() => {
+			pageChange(hasNextPage ? currentPage + 1 : currentPage);
+		}}
+		disabled={!hasNextPage}
+		aria-disabled={!hasNextPage}
 	>
 		<span class="btn__wrapper">
 			<span class="btn__text sr-only">Next Page</span>
@@ -99,7 +105,7 @@
 				</svg>
 			</span>
 		</span>
-	</a>
+	</button>
 </div>
 
 <style lang="scss">
