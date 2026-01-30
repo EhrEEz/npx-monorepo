@@ -109,7 +109,7 @@
 </section>
 <section class="additional__section py-4 py-md-6 py-lg-8 full-width content-grid">
 	<div class="grid-row">
-		<div class="col-lg-4 share__section">
+		<div class="col-12 col-md-4 col-lg-4 col-xl-3 share__section py-8 py-md-4 py-lg-4">
 			<h2 class="heading-2 mb-2 mb-md-3 mb-lg-4">Thank you for reading the article.</h2>
 			<Share
 				title={mainData.title}
@@ -118,7 +118,7 @@
 				>{#snippet share_label()}Share this article{/snippet}</Share
 			>
 		</div>
-		<div class="additional__wrapper col-start-lg-6 col-end-lg-13">
+		<div class="additional__wrapper col-12 col-md-8 col-start-lg-6 col-end-lg-13 col-start-xl-5">
 			<div class="mb-3 mb-md-4">
 				<a href="/blog" class="pretty-link" aria-label="Back to Articles">
 					<span class="btn__wrapper">
@@ -153,10 +153,10 @@
 	</div>
 </section>
 
-<style>
+<!-- <style>
 	.share__section {
 		position: sticky;
 		inset-block-start: 5rem;
 		inset-inline-start: 0;
 	}
-</style>
+</style> -->
