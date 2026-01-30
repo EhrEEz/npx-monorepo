@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Media } from '$backend/src/payload-types';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { PUBLIC_API_URL as media_url } from '$env/static/public';
 	import type {
 		SerializedParagraphNode,
@@ -98,6 +99,12 @@
 	}
 
 	const nodes = $derived((content?.root?.children as PayloadLexicalNode[]) || []);
+
+	$effect(() => {
+		requestAnimationFrame(() => {
+			ScrollTrigger.refresh();
+		});
+	});
 </script>
 
 {#each nodes as node}

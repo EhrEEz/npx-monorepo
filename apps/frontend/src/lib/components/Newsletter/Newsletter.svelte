@@ -80,9 +80,7 @@
 			class:disabled={loading}
 		>
 			<span class="btn__wrapper">
-				<span class="btn__icon"></span><span class="btn__text"
-					>{loading ? 'Subscribing...' : 'Subscribe'}</span
-				>
+				<span class="btn__text">{loading ? 'Subscribing...' : 'Subscribe'}</span>
 			</span>
 		</button>
 	</div>

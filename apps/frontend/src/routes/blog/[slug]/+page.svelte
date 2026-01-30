@@ -12,7 +12,6 @@
 	const { data }: { data: { article: Article; recommended_articles: Article[] } } = $props();
 	const mainData = $derived(data.article) as Article;
 	const recommendedArticles = $derived(data.recommended_articles);
-	$inspect(recommendedArticles);
 	const created_on = $derived.by(() => {
 		return moment(mainData.createdAt).format('MMM DD, YYYY');
 	});

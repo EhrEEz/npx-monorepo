@@ -233,7 +233,7 @@
 		color: var(--clr-neutral-700);
 	}
 	.menu__btn {
-		&.btn--inverse {
+		&.btn--white {
 			--button-color: var(--clr-neutral-700);
 			--button-background: var(--clr-neutral-700);
 			--button-hover-background: hsl(from var(--clr-neutral-700) h s l / 10%);

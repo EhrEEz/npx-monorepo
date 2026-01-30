@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import '$lib/scss/components/_input.scss';
 	import Sort, { type SortOption } from '$lib/components/Sort/Sort.svelte';
 	import { ArticleCard } from '$lib/components/Cards';
@@ -84,10 +85,22 @@
 		const newUrl = `?${params.toString()}`;
 		replaceState(newUrl === '?' ? '/blog' : newUrl, { page: page.state });
 		goto('#blogMainSection');
+		requestAnimationFrame(() => {
+			ScrollTrigger.refresh();
+		});
 	};
 	const handleSortingChange = async () => {
 		getData(1);
+		requestAnimationFrame(() => {
+			ScrollTrigger.refresh();
+		});
 	};
+
+	$effect(() => {
+		requestAnimationFrame(() => {
+			ScrollTrigger.refresh();
+		});
+	});
 </script>
 
 <section class="blog__header-section mt-8 mb-3 mt-md-6 mt-lg-9">

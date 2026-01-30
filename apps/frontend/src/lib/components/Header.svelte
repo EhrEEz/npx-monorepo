@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { Logo } from './Logo';
-	// import { handleSingleShuffle } from '$lib/js/animations/shuffle';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { ScrollSmoother } from 'gsap/ScrollSmoother';
+	import gsap from 'gsap';
+	import { afterNavigate } from '$app/navigation';
+	import Link from './Link/Link.svelte';
+	import { browser } from '$app/environment';
+	type NavTheme = 'light' | 'dark' | 'invert';
+
 	let navToggled = $state<boolean>(false);
+	let navTheme = $state<NavTheme>('light');
+	let mainNav = $state<HTMLElement>();
 	const buttonText = $derived<string>(navToggled ? 'Close' : 'Menu');
 	let navText = $state<HTMLElement>();
 	let navCard = $state<HTMLElement>();
@@ -9,28 +18,84 @@
 	function toggleNavBar(e: Event) {
 		e.stopPropagation();
 		navToggled = !navToggled;
-		// if (navToggled) {
-		// 	handleSingleShuffle({ el: navText, newText: buttonText });
-		// }
 	}
 
 	function documentClickHandler(e: MouseEvent): void {
 		if (navCard && !navCard.contains(e.target as Node)) {
 			navToggled = false;
-			// handleSingleShuffle({ el: navText, newText: buttonText });
 		}
 	}
 
 	function documentKeyDownHandler(e: KeyboardEvent): void {
 		if (e.key === 'Escape') {
 			navToggled = false;
-			// handleSingleShuffle({ el: navText, newText: buttonText });
 		}
 	}
+	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-	// $effect(() => {
-	// 	handleSingleShuffle({ el: navText });
-	// });
+	function initNavThemeChange() {
+		let sectionTheme: string = 'dark';
+		if (mainNav) {
+			const sections: NodeListOf<HTMLElement> =
+				document.querySelectorAll<HTMLElement>('section, [data-section]');
+
+			sections.forEach((section: HTMLElement) => {
+				ScrollTrigger.create({
+					trigger: section,
+					start: 'top 2%',
+					end: 'bottom 2%',
+					onEnter: () => {
+						const theme = section.getAttribute('data-section');
+						if (theme) {
+							sectionTheme = theme;
+						}
+					},
+					onToggle: (self: ScrollTrigger) => {
+						if (self.isActive) {
+							const theme = section.getAttribute('data-section');
+							if (theme) {
+								sectionTheme = theme;
+							} else {
+								sectionTheme = 'dark';
+							}
+							switch (sectionTheme) {
+								case 'light':
+									navTheme = 'dark';
+									break;
+								case 'dark':
+									navTheme = 'light';
+									break;
+								case 'invert':
+									navTheme = 'invert';
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				});
+			});
+
+			if (sections.length == 0) {
+				navTheme = 'light';
+			}
+		}
+	}
+	$effect(() => {
+		initNavThemeChange();
+		if (browser) {
+			window.addEventListener('resize', () => {
+				initNavThemeChange();
+			});
+		}
+	});
+
+	afterNavigate(() => {
+		console.log('here');
+		ScrollTrigger.refresh();
+		initNavThemeChange();
+		navToggled = false;
+	});
 </script>
 
 <svelte:document onkeydown={documentKeyDownHandler} onclick={documentClickHandler} />
@@ -38,36 +103,72 @@
 <header
 	class="nav__main content-grid py-2 py-md-3 {navToggled ? 'nav--toggled' : ''}"
 	id="headerNav"
-	data-logo-active="light"
+	data-logo-active={navTheme}
+	bind:this={mainNav}
 >
 	<div class="nav__modal content-grid">
 		<div class="nav__card gap-4" bind:this={navCard}>
 			<ul class="nav__list strip-style">
 				<li class="nav__list-item">
-					<a href="#home-section" class="nav__list-link" data-scroll-to="#home-section">
+					<Link
+						href="/#home-section"
+						class="nav__list-link"
+						onClick={() => (navToggled = false)}
+						scrollTo="#home-section"
+					>
 						<div class="nav__list-label">Home</div>
-					</a>
+					</Link>
 				</li>
 				<li class="nav__list-item">
-					<a href="#about-section" class="nav__list-link" data-scroll-to="#about-section">
+					<Link
+						href="/#about-section"
+						class="nav__list-link"
+						scrollTo="#about-section"
+						onClick={() => (navToggled = false)}
+					>
 						<div class="nav__list-label">About Us</div>
-					</a>
+					</Link>
 				</li>
 				<li class="nav__list-item">
-					<a href="#services-section" class="nav__list-link" data-scroll-to="#services-section">
+					<Link
+						href="/#services-section"
+						class="nav__list-link"
+						scrollTo="#services-section"
+						onClick={() => (navToggled = false)}
+					>
 						<div class="nav__list-label">Services</div>
-					</a>
+					</Link>
 				</li>
 				<li class="nav__list-item">
-					<a href="#approach-section" class="nav__list-link" data-scroll-to="#approach-section">
+					<Link
+						href="/#approach-section"
+						class="nav__list-link"
+						scrollTo="#approach-section"
+						onClick={() => (navToggled = false)}
+					>
 						<div class="nav__list-label">Our Approach</div>
-					</a>
+					</Link>
+				</li>
+				<li class="nav__list-item">
+					<Link
+						href="/blog"
+						class="nav__list-link"
+						scrollTo="/blog"
+						onClick={() => (navToggled = false)}
+					>
+						<div class="nav__list-label">Blog</div>
+					</Link>
 				</li>
 
 				<li class="nav__list-item">
-					<a href="#contact-section" class="nav__list-link" data-scroll-to="#contact-section">
+					<Link
+						href="/#contact-section"
+						class="nav__list-link"
+						scrollTo="#contact-section"
+						onClick={() => (navToggled = false)}
+					>
 						<div class="nav__list-label">Contact</div>
-					</a>
+					</Link>
 				</li>
 			</ul>
 			<div>
@@ -145,11 +246,11 @@
 	</div>
 	<nav class="fl-row jc-between al-center">
 		<h1 class="relative">
-			<a href="#home-section" class="nav__logo" data-scroll-to="#home-section">
+			<Link href="/#home-section" class="nav__logo" scrollTo="#home-section">
 				<Logo fill="currentColor" />
 
 				<span class="sr-only">Nepaxis</span>
-			</a>
+			</Link>
 		</h1>
 		<button
 			class="menu__btn btn--outline btn--white btn--narrow btn--primary"

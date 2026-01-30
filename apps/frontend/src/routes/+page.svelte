@@ -2,17 +2,23 @@
 	import ASCII from '$lib/components/ASCII/ASCII.svelte';
 	import ITLTime from '$lib/components/ITLTime/ITLTime.svelte';
 	import Cube from '$lib/components/Cube/Cube.svelte';
-	import { initAnimations } from '$lib/js/animations';
-	import { afterNavigate } from '$app/navigation';
 	import ContactSection from '$lib/components/Page/Home/ContactSection.svelte';
 	import { initFloatingImages } from '$lib/js/animations/hover-image';
-
-	afterNavigate(() => {
-		initAnimations();
-	});
-
+	import { initHeroTimeline } from '$lib/js/animations/scroll-timelines/hero';
+	import { initAboutTimeline } from '$lib/js/animations/scroll-timelines/about';
+	import { initCapabilitiesTimeline } from '$lib/js/animations/scroll-timelines/capabilities';
+	import { initApproachSectionAnimations } from '$lib/js/animations/scroll-timelines/approach';
+	import { initDraggable } from '$lib/js/animations/draggable';
+	import Link from '$lib/components/Link/Link.svelte';
 	$effect(() => {
 		initFloatingImages();
+		document.fonts.ready.then(() => {
+			initDraggable();
+			initHeroTimeline();
+			initApproachSectionAnimations();
+			initAboutTimeline();
+			initCapabilitiesTimeline();
+		});
 	});
 </script>
 
@@ -67,30 +73,30 @@
 			<span class="visible-text"> Empowering your digital journey </span>
 		</h2>
 		<div class="fl-row fl-wrap fl-md-no-wrap jc-center al-center gap-2 gap-md-1 mx-lg-6">
-			<a
+			<Link
 				href="#services-section"
-				data-scroll-to="#services-section"
+				scrollTo="#services-section"
 				class="btn--outline btn--white order-1 order-md-0 hero__link"
 			>
 				<span class="btn__wrapper">
 					<span class="btn__text">Services</span>
 				</span>
-			</a>
+			</Link>
 			<div class="neutral-400 uppercase text-center font-mono hero__subtitle order-0 order-md-1">
 				<p>
 					Our team offers expertise in software engineering, cloud computing, UI/UX design, DevOps,
 					data analytics, system integrations and Marketing.
 				</p>
 			</div>
-			<a
+			<Link
 				href="#contact-section"
-				data-scroll-to="#contact-section"
+				scrollTo="#contact-section"
 				class="btn--primary order-2 order-md-2 hero__link"
 			>
 				<span class="btn__wrapper">
 					<span class="btn__text">Let's Talk</span>
 				</span>
-			</a>
+			</Link>
 		</div>
 	</div>
 	<div class="hero__base content-grid">
@@ -636,5 +642,4 @@
 		<img src="/images/bottom-image.png" class="h-full object-cover w-100" alt="Our Work Images" />
 	</picture>
 </section>
-
 <ContactSection />
