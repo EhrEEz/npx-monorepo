@@ -2,7 +2,7 @@
 @use '../abstracts/functions' as *;
 @use '../abstracts/interfaces' as *;
 
-[class*='share-'] {
+[class^='share-'] {
 	@extend %reset-button;
 	--_width: var(--icon-width, 2rem);
 	--_bg: var(--icon-background, hsl(0 0% 100% / 10%));

@@ -4,6 +4,7 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { SplitText } from 'gsap/SplitText';
 	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+	import { onMount } from 'svelte';
 
 	type Validation = string | true;
 	type ValidationFunction = (a: string) => Validation;
@@ -122,7 +123,7 @@
 			email.changed // Ensure required fields are filled
 	);
 
-	$effect(() => {
+	onMount(() => {
 		document.fonts.ready.then(() => {
 			SplitText.create('.contact__title', {
 				type: 'words,lines',

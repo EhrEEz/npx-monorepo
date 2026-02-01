@@ -11,16 +11,5 @@
 		"strict": true,
 		"moduleResolution": "bundler",
 		"skipLibCheck": true,
-		"paths": {
-		    "$lib": [
-		        "./src/lib"
-		    ],
-		    "$lib/*": [
-		        "./src/lib/*"
-		    ],
-		    "$backend/*": [
-		        "../backend/*"
-		    ]
-		}
 	}
 }

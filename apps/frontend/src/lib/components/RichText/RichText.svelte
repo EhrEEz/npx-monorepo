@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Media } from '$backend/src/payload-types';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { PUBLIC_API_URL as media_url } from '$env/static/public';
 	import type {
 		SerializedParagraphNode,
@@ -12,12 +11,14 @@
 		SerializedEditorState,
 		SerializedLexicalNode
 	} from '@payloadcms/richtext-lexical/lexical';
+	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
 		content: SerializedEditorState;
+		afterRun?: () => void;
 	}
 
-	const { content }: Props = $props();
+	const { content, afterRun }: Props = $props();
 
 	interface UploadNode extends SerializedLexicalNode {
 		type: 'upload';
@@ -100,10 +101,15 @@
 
 	const nodes = $derived((content?.root?.children as PayloadLexicalNode[]) || []);
 
-	$effect(() => {
-		requestAnimationFrame(() => {
-			ScrollTrigger.refresh();
-		});
+	onMount(() => {
+		if (afterRun) {
+			afterRun();
+		}
+	});
+	onDestroy(() => {
+		if (afterRun) {
+			afterRun();
+		}
 	});
 </script>
 

@@ -1,66 +1,102 @@
 <script lang="ts">
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import { SplitText } from 'gsap/SplitText';
-	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+	import { browser } from '$app/environment';
+	import { afterNavigate } from '$app/navigation';
 	import Link from '$lib/components/Link/Link.svelte';
 	import Newsletter from '$lib/components/Newsletter/Newsletter.svelte';
 	import { page } from '$app/state';
 
-	const CURRENT_YEAR = new Date().getFullYear();
-	let footer = $state<HTMLElement>();
-
 	const currentPage = $derived(page.route.id);
+	const CURRENT_YEAR = new Date().getFullYear();
+
+	let footer: HTMLElement | null = null;
+	let contactPinTrigger: ScrollTrigger | null = null;
+
+	function initContactPinAnimation() {
+		// Kill existing trigger
+		if (contactPinTrigger) {
+			contactPinTrigger.kill();
+			contactPinTrigger = null;
+		}
+
+		if (currentPage !== '/' || !footer || !browser) {
+			return;
+		}
+
+		const contactSection = document.querySelector<HTMLElement>('.contact__section');
+
+		if (!contactSection) {
+			// Element doesn't exist, silently return
+			return;
+		}
+
+		const footerHeight = footer.offsetHeight;
+		const slideOutDuration = contactSection.offsetHeight * 1.25;
+		const totalDuration = footerHeight + slideOutDuration;
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: contactSection,
+				start: 'bottom bottom',
+				end: `+=${totalDuration}`,
+				scrub: true,
+				pin: contactSection,
+				pinSpacing: false,
+				id: 'contact-pin-slide',
+				onRefresh: (self) => {
+					contactPinTrigger = self;
+				}
+			}
+		});
+
+		tl.to(
+			contactSection,
+			{
+				duration: footerHeight,
+				y: 0,
+				ease: 'none'
+			},
+			0
+		);
+
+		tl.to(
+			contactSection,
+			{
+				duration: slideOutDuration,
+				y: -contactSection.offsetHeight,
+				ease: 'none'
+			},
+			footerHeight
+		);
+	}
+
+	afterNavigate(() => {
+		if (browser) {
+			requestAnimationFrame(() => {
+				setTimeout(() => {
+					initContactPinAnimation();
+				}, 150);
+			});
+		}
+	});
 
 	$effect(() => {
-		gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger, SplitText);
-		let contactSection: HTMLElement | null;
-		if (currentPage === '/') {
-			if (!footer) {
-				return;
-			}
-			contactSection = document.querySelector('.contact__section');
+		if (browser) {
+			gsap.registerPlugin(ScrollTrigger);
 
-			if (contactSection) {
-				const footerHeight = footer.offsetHeight;
-				const slideOutDuration = contactSection.offsetHeight * 1.25;
-				const totalDuration = footerHeight + slideOutDuration;
-				const tl = gsap.timeline({
-					scrollTrigger: {
-						trigger: contactSection,
-						start: 'bottom bottom',
-						end: `+=${totalDuration}`,
-						scrub: true,
-						pin: contactSection,
-						pinSpacing: false,
-						id: 'contact-pin-slide'
-					}
-				});
+			const timeout = setTimeout(() => {
+				initContactPinAnimation();
+			}, 150);
 
-				tl.to(
-					contactSection,
-					{
-						duration: footerHeight,
-						y: 0,
-						ease: 'none'
-					},
-					0
-				);
-
-				tl.to(
-					contactSection,
-					{
-						duration: slideOutDuration,
-						y: -contactSection.offsetHeight,
-						ease: 'none'
-					},
-					footerHeight
-				);
-			}
+			return () => {
+				clearTimeout(timeout);
+				if (contactPinTrigger) {
+					contactPinTrigger.kill();
+					contactPinTrigger = null;
+				}
+			};
 		}
-		// return () => {
-		// 	ScrollTrigger.getById('contact-pin-slide')?.kill();
-		// };
 	});
 </script>
 

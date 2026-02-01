@@ -2,10 +2,11 @@
 	import { Logo } from './Logo';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { ScrollSmoother } from 'gsap/ScrollSmoother';
-	import gsap from 'gsap';
+	import { gsap } from 'gsap';
 	import { afterNavigate } from '$app/navigation';
 	import Link from './Link/Link.svelte';
 	import { browser } from '$app/environment';
+	import { onDestroy, onMount } from 'svelte';
 	type NavTheme = 'light' | 'dark' | 'invert';
 
 	let navToggled = $state<boolean>(false);
@@ -14,7 +15,7 @@
 	const buttonText = $derived<string>(navToggled ? 'Close' : 'Menu');
 	let navText = $state<HTMLElement>();
 	let navCard = $state<HTMLElement>();
-
+	let resizeTimeout: ReturnType<typeof setTimeout>;
 	function toggleNavBar(e: Event) {
 		e.stopPropagation();
 		navToggled = !navToggled;
@@ -34,13 +35,22 @@
 	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 	function initNavThemeChange() {
+		// Kill all existing ScrollTriggers for this function
+		ScrollTrigger.getAll().forEach((trigger) => {
+			if (trigger.vars.id?.startsWith('nav-theme-')) {
+				trigger.kill();
+			}
+		});
+
 		let sectionTheme: string = 'dark';
+
 		if (mainNav) {
 			const sections: NodeListOf<HTMLElement> =
 				document.querySelectorAll<HTMLElement>('section, [data-section]');
 
-			sections.forEach((section: HTMLElement) => {
+			sections.forEach((section: HTMLElement, index: number) => {
 				ScrollTrigger.create({
+					id: `nav-theme-${index}`, // Add ID for tracking
 					trigger: section,
 					start: 'top 2%',
 					end: 'bottom 2%',
@@ -76,25 +86,56 @@
 				});
 			});
 
-			if (sections.length == 0) {
+			if (sections.length === 0) {
 				navTheme = 'light';
 			}
 		}
 	}
-	$effect(() => {
-		initNavThemeChange();
+
+	function handleResize() {
+		clearTimeout(resizeTimeout);
+		resizeTimeout = setTimeout(() => {
+			ScrollTrigger.refresh();
+		}, 250);
+	}
+
+	// Use afterNavigate to handle SvelteKit navigation
+	afterNavigate(() => {
 		if (browser) {
-			window.addEventListener('resize', () => {
-				initNavThemeChange();
+			// Wait for DOM to settle and images to load
+			requestAnimationFrame(() => {
+				setTimeout(() => {
+					initNavThemeChange();
+					ScrollTrigger.refresh();
+				}, 100);
 			});
 		}
 	});
 
-	afterNavigate(() => {
-		console.log('here');
-		ScrollTrigger.refresh();
-		initNavThemeChange();
-		navToggled = false;
+	onMount(() => {
+		if (browser) {
+			// Initial setup with delay for content loading
+			setTimeout(() => {
+				initNavThemeChange();
+				ScrollTrigger.refresh();
+			}, 100);
+
+			window.addEventListener('resize', handleResize);
+		}
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('resize', handleResize);
+			clearTimeout(resizeTimeout);
+
+			// Kill all nav-theme ScrollTriggers
+			ScrollTrigger.getAll().forEach((trigger) => {
+				if (trigger.vars.id?.startsWith('nav-theme-')) {
+					trigger.kill();
+				}
+			});
+		}
 	});
 </script>
 

@@ -8,6 +8,10 @@
 	import ResponsiveImage from '$lib/components/Image/ResponsiveImage.svelte';
 	import RichText from '$lib/components/RichText/RichText.svelte';
 	import ArticleCard from '$lib/components/Cards/ArticleCard.svelte';
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { browser } from '$app/environment';
+	import { onDestroy } from 'svelte';
 
 	const { data }: { data: { article: Article; recommended_articles: Article[] } } = $props();
 	const mainData = $derived(data.article) as Article;
@@ -15,8 +19,67 @@
 	const created_on = $derived.by(() => {
 		return moment(mainData.createdAt).format('MMM DD, YYYY');
 	});
+	let sharePinTrigger: ScrollTrigger | null = null;
 
 	const cover_image = $derived(mainData.cover_image) as Media;
+	function initSharePin() {
+		if (!browser) return;
+
+		// Kill existing trigger
+		if (sharePinTrigger) {
+			sharePinTrigger.kill();
+			sharePinTrigger = null;
+		}
+		if (window.innerWidth < 768) return;
+
+		const shareSection = document.querySelector('.share__section');
+		const additionalSection = document.querySelector('.additional__section');
+
+		if (!shareSection || !additionalSection) return;
+
+		sharePinTrigger = ScrollTrigger.create({
+			trigger: additionalSection,
+			start: 'top top', // Adjust based on your header height
+			end: 'bottom bottom',
+			pin: shareSection,
+			pinSpacing: false,
+			id: 'share-pin'
+		});
+	}
+
+	function afterRun() {
+		gsap.registerPlugin(ScrollTrigger);
+		if (browser) {
+			requestAnimationFrame(() => {
+				ScrollTrigger.refresh();
+			});
+		}
+	}
+	$effect(() => {
+		if (browser) {
+			gsap.registerPlugin(ScrollTrigger);
+
+			const timeout = setTimeout(() => {
+				initSharePin();
+				ScrollTrigger.refresh();
+			}, 150);
+
+			return () => {
+				clearTimeout(timeout);
+				if (sharePinTrigger) {
+					sharePinTrigger.kill();
+					sharePinTrigger = null;
+				}
+			};
+		}
+	});
+
+	onDestroy(() => {
+		if (sharePinTrigger) {
+			sharePinTrigger.kill();
+			sharePinTrigger = null;
+		}
+	});
 	const thumbnail = $derived.by(() => {
 		if (typeof cover_image === 'number') {
 			return null;
@@ -102,13 +165,13 @@
 			</div>
 		</div>
 		<div class="article-content">
-			<RichText content={mainData.text} />
+			<RichText content={mainData.text} {afterRun} />
 		</div>
 	</article>
 </section>
 <section class="additional__section py-4 py-md-6 py-lg-8 full-width content-grid">
 	<div class="grid-row">
-		<div class="col-12 col-md-4 col-lg-4 col-xl-3 share__section py-8 py-md-4 py-lg-4">
+		<div class="col-12 col-md-4 col-lg-4 share__section py-8 py-md-4 py-lg-4">
 			<h2 class="heading-2 mb-2 mb-md-3 mb-lg-4">Thank you for reading the article.</h2>
 			<Share
 				title={mainData.title}
@@ -116,9 +179,7 @@
 				addresses={['facebook', 'x', 'linkedin', 'pinterest', 'threads']}
 				>{#snippet share_label()}Share this article{/snippet}</Share
 			>
-		</div>
-		<div class="additional__wrapper col-12 col-md-8 col-start-lg-6 col-end-lg-13 col-start-xl-5">
-			<div class="mb-3 mb-md-4">
+			<div class="mt-3 mt-md-4">
 				<a href="/blog" class="pretty-link" aria-label="Back to Articles">
 					<span class="btn__wrapper">
 						<span class="btn__icon"
@@ -141,6 +202,8 @@
 					>
 				</a>
 			</div>
+		</div>
+		<div class="additional__wrapper col-12 col-md-8 col-start-lg-6 col-end-lg-13 col-start-xl-5">
 			{#if recommendedArticles && recommendedArticles.length > 0}
 				<ul class="strip-style blog__articles-grid" aria-label="Additional Articles">
 					{#each recommendedArticles as article}
