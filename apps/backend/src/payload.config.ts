@@ -1,25 +1,26 @@
-import { config as dotenvConfig } from 'dotenv';
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { config as dotenvConfig } from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { s3Storage } from '@payloadcms/storage-s3'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import sharp from 'sharp'
+import { buildConfig } from 'payload'
+import { seoPlugin } from '@payloadcms/plugin-seo'
+import { Users } from './collections/Users'
+import { Media } from './collections/Media'
+import { Categories } from './collections/BlogCategory'
+import { Articles } from './collections/BlogArticle'
+import { SEOPages } from './collections/Pages'
+import { SiteSettings } from './global/SiteSetttings'
+
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 // Load .env from monorepo root
-dotenvConfig({ path: path.resolve(dirname, '../../../.env') });
-
-import { postgresAdapter } from '@payloadcms/db-postgres';
-import { lexicalEditor } from '@payloadcms/richtext-lexical';
-import sharp from 'sharp';
-import { buildConfig } from 'payload';
-import { seoPlugin } from '@payloadcms/plugin-seo';
-import { Users } from './collections/Users';
-import { Media } from './collections/Media';
-import { Categories } from './collections/BlogCategory';
-import { Articles } from './collections/BlogArticle';
-import { SEOPages } from './collections/Pages';
-import { SiteSettings } from './global/SiteSetttings';
+dotenvConfig({ path: path.resolve(dirname, '../../../.env') })
 
 export default buildConfig({
   admin: {
@@ -29,7 +30,7 @@ export default buildConfig({
     },
   },
 
-  ...(process.env.ENV_MODE === "prod" && { cors: [process.env.PUBLIC_CLIENT_URL ?? ""] }),
+  ...(process.env.ENV_MODE === 'prod' && { cors: [process.env.PUBLIC_CLIENT_URL ?? ''] }),
   collections: [Users, Media, Categories, Articles, SEOPages],
   globals: [SiteSettings],
   editor: lexicalEditor(),
@@ -41,7 +42,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.PRIVATE_DATABASE_URI!,
     },
-    push: process.env.ENV_MODE === "dev" ? true : false,
+    push: process.env.ENV_MODE === 'dev' ? true : false,
   }),
   sharp,
   plugins: [
@@ -51,30 +52,30 @@ export default buildConfig({
       generateTitle: ({ doc, collectionConfig }) => {
         // Check which collection is being processed
         if (collectionConfig?.slug === 'articles') {
-          return `${doc?.title || 'Untitled Article'} | Nepaxis`;
+          return `${doc?.title || 'Untitled Article'} | Nepaxis`
         }
         if (collectionConfig?.slug === 'seo-pages') {
-          return `${doc?.page_title || 'Untitled Page'} | Nepaxis`;
+          return `${doc?.page_title || 'Untitled Page'} | Nepaxis`
         }
-        return 'Nepaxis';
+        return 'Nepaxis'
       },
       generateDescription: ({ doc, collectionConfig }) => {
         if (collectionConfig?.slug === 'articles') {
-          return doc?.short_quote || '';
+          return doc?.short_quote || ''
         }
         if (collectionConfig?.slug === 'seo-pages') {
-          return doc?.page_description || '';
+          return doc?.page_description || ''
         }
-        return '';
+        return ''
       },
       generateImage: ({ doc, collectionConfig }) => {
         if (collectionConfig?.slug === 'articles') {
-          return doc?.cover_image || null;
+          return doc?.cover_image || null
         }
         if (collectionConfig?.slug === 'seo-pages') {
-          return doc?.og_image || null;
+          return doc?.og_image || null
         }
-        return null;
+        return null
       },
       fields: ({ defaultFields }) => [
         ...defaultFields,
@@ -85,24 +86,43 @@ export default buildConfig({
         },
         {
           name: 'prevent_indexing',
-          label: "Prevent Indexing",
-          type: "checkbox",
+          label: 'Prevent Indexing',
+          type: 'checkbox',
           defaultValue: false,
           required: true,
           admin: {
-            position: 'sidebar'
-          }
+            position: 'sidebar',
+          },
         },
-      ]
+      ],
     }),
-
-    vercelBlobStorage({
-      enabled: true,
-      collections: {
-        media: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    })
-
+    ...(process.env.PRIVATE_DELPLOYMENT_STORAGE === 'vercel'
+      ? [
+          vercelBlobStorage({
+            enabled: true,
+            collections: {
+              media: true,
+            },
+            token: process.env.PRIVATE_BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      : process.env.PRIVATE_DELPLOYMENT_STORAGE === 's3'
+        ? [
+            s3Storage({
+              collections: {
+                media: true,
+              },
+              bucket: process.env.PRIVATE_S3_BUCKET!,
+              config: {
+                credentials: {
+                  accessKeyId: process.env.PRIVATE_S3_ACCESS_KEY_ID!,
+                  secretAccessKey: process.env.PRIVATE_S3_SECRET_ACCESS_KEY!,
+                },
+                region: process.env.PRIVATE_S3_REGION!,
+                // ... Other S3 configuration
+              },
+            }),
+          ]
+        : []),
   ],
-});
+})
