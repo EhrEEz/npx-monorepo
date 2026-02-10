@@ -1,15 +1,11 @@
 import type { LayoutServerLoad } from './$types';
-import { getPayloadClient } from '$lib/server/payload';
-
-export const load: LayoutServerLoad = async ({ }) => {
-
-	const payload = await getPayloadClient();
-
+import { payload } from '$lib/server/payload-sdk';
+export const load: LayoutServerLoad = async ({}) => {
 	const result = await payload.findGlobal({
 		slug: 'site-settings',
-		depth: 2,
+		depth: 2
 	});
-
+	console.log(result);
 
 	return {
 		siteSettings: result
