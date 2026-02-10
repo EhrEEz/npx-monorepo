@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile.dev
+    ports:
+      - "3000:3000"
+    env_file: .env.docker
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - /app/node_modules
+      - /app/apps/backend/node_modules
+      - /app/apps/backend/.next
+    environment:
+      - ENV_MODE=development
+      - NODE_ENV=development
+    command: npm run dev
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile.dev
+    ports:
+      - "5173:5173"
+    env_file: .env.docker
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - /app/node_modules
+      - /app/apps/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    depends_on:
+      - backend

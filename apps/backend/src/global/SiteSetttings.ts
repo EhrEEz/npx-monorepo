@@ -1,7 +1,6 @@
-import { GlobalConfig } from 'payload'
+import type { GlobalConfig } from 'payload'
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-
   fields: [
     {
       type: 'tabs',
@@ -26,8 +25,8 @@ export const SiteSettings: GlobalConfig = {
               type: 'text',
               required: true,
               maxLength: 60,
-              label: "CTA Tagline",
-              defaultValue: ""
+              label: 'CTA Tagline',
+              defaultValue: '',
             },
 
             {

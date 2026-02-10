@@ -4,6 +4,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: [/gsap/]
+		noExternal: [/gsap/],
+		external: ['payload', 'sharp']
+	},
+	build: {
+		sourcemap: false,
+		chunkSizeWarningLimit: 2000
 	}
 });

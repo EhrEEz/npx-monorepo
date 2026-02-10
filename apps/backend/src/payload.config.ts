@@ -40,8 +40,12 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.PRIVATE_DATABASE_URI!,
+      connectionString: process.env.PRIVATE_WRITE_DATABASE_URI!,
+      ssl: {
+        rejectUnauthorized: false, // This bypasses the 'local issuer certificate' check
+      },
     },
+    readReplicas: [process.env.PRIVATE_DATABASE_URI!],
     push: process.env.ENV_MODE === 'dev' ? true : false,
   }),
   sharp,
@@ -110,15 +114,18 @@ export default buildConfig({
         ? [
             s3Storage({
               collections: {
-                media: true,
+                media: {
+                  disableLocalStorage: true,
+                },
               },
-              bucket: process.env.PRIVATE_S3_BUCKET!,
+              bucket: process.env.PRIVATE_S3_BUCKET_NAME!,
               config: {
                 credentials: {
                   accessKeyId: process.env.PRIVATE_S3_ACCESS_KEY_ID!,
                   secretAccessKey: process.env.PRIVATE_S3_SECRET_ACCESS_KEY!,
                 },
                 region: process.env.PRIVATE_S3_REGION!,
+                forcePathStyle: false,
                 // ... Other S3 configuration
               },
             }),

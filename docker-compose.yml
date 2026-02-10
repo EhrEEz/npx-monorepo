@@ -1,54 +1,118 @@
 services:
-  frontend:
-    user: "${UID:-1000}:${GID:-1000}"
-    build:
-      context: .
-      dockerfile: ./apps/frontend/Dockerfile
-    ports:
-      - "5173:5173"
-    env_file: .env.docker
-    volumes:
-      - ./apps/frontend:/app/apps/frontend
-      - /app/node_modules
-      - /app/apps/frontend/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      - NODE_ENV=development
-
   backend:
-    user: "${UID:-1000}:${GID:-1000}"
     build:
       context: .
       dockerfile: ./apps/backend/Dockerfile
     ports:
       - "3000:3000"
-    env_file: .env.docker
-    volumes:
-      - ./apps/backend:/app/apps/backend
-      - /app/node_modules
-      - /app/apps/backend/node_modules
-      - /app/apps/backend/.next
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
-      - NODE_ENV=development
+      # Environment
+      - ENV_MODE=${ENV_MODE:-production}
+      - NODE_ENV=production
 
-  postgres:
-    image: postgres:15-alpine
-    restart: always
-    env_file: .env.docker
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
+      # Payload
+      - PRIVATE_PAYLOAD_SECRET=${PRIVATE_PAYLOAD_SECRET}
+      - PAYLOAD_SECRET=${PRIVATE_PAYLOAD_SECRET}
+
+      # Database
+      - PRIVATE_WRITE_DATABASE_URI=${PRIVATE_WRITE_DATABASE_URI}
+      - PRIVATE_DATABASE_URI=${PRIVATE_DATABASE_URI}
+      - DATABASE_URI=${PRIVATE_DATABASE_URI}
+
+      # Mailchimp
+      - PRIVATE_MAILCHIMP_API_KEY=${PRIVATE_MAILCHIMP_API_KEY}
+      - PRIVATE_AUDIENCE_KEY=${PRIVATE_AUDIENCE_KEY}
+
+      # Migration
+      - PRIVATE_MIGRATION_TOKEN=${PRIVATE_MIGRATION_TOKEN}
+
+      # Storage
+      - PRIVATE_DELPLOYMENT_STORAGE=${PRIVATE_DELPLOYMENT_STORAGE}
+
+      # S3
+      - PRIVATE_S3_REGION=${PRIVATE_S3_REGION}
+      - PRIVATE_S3_ACCESS_KEY_ID=${PRIVATE_S3_ACCESS_KEY_ID}
+      - PRIVATE_S3_SECRET_ACCESS_KEY=${PRIVATE_S3_SECRET_ACCESS_KEY}
+      - PRIVATE_S3_BUCKET_NAME=${PRIVATE_S3_BUCKET_NAME}
+      - PRIVATE_S3_ENDPOINT=${PRIVATE_S3_ENDPOINT}
+
+      # URLs
+      - PUBLIC_API_URL=${PUBLIC_API_URL}
+      - PAYLOAD_PUBLIC_SERVER_URL=${PUBLIC_API_URL}
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/api', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-volumes:
-  pgdata:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      # Environment
+      - ENV_MODE=${ENV_MODE:-production}
+      - NODE_ENV=production
+
+      # Payload
+      - PRIVATE_PAYLOAD_SECRET=${PRIVATE_PAYLOAD_SECRET}
+      - PAYLOAD_SECRET=${PRIVATE_PAYLOAD_SECRET}
+
+      # Database
+      - PRIVATE_WRITE_DATABASE_URI=${PRIVATE_WRITE_DATABASE_URI}
+      - PRIVATE_DATABASE_URI=${PRIVATE_DATABASE_URI}
+      - DATABASE_URI=${PRIVATE_DATABASE_URI}
+
+      # Mailchimp
+      - PRIVATE_MAILCHIMP_API_KEY=${PRIVATE_MAILCHIMP_API_KEY}
+      - PRIVATE_AUDIENCE_KEY=${PRIVATE_AUDIENCE_KEY}
+
+      # Migration
+      - PRIVATE_MIGRATION_TOKEN=${PRIVATE_MIGRATION_TOKEN}
+
+      # Storage
+      - PRIVATE_DELPLOYMENT_STORAGE=${PRIVATE_DELPLOYMENT_STORAGE}
+
+      # S3
+      - PRIVATE_S3_REGION=${PRIVATE_S3_REGION}
+      - PRIVATE_S3_ACCESS_KEY_ID=${PRIVATE_S3_ACCESS_KEY_ID}
+      - PRIVATE_S3_SECRET_ACCESS_KEY=${PRIVATE_S3_SECRET_ACCESS_KEY}
+      - PRIVATE_S3_BUCKET_NAME=${PRIVATE_S3_BUCKET_NAME}
+      - PRIVATE_S3_ENDPOINT=${PRIVATE_S3_ENDPOINT}
+
+      # URLs
+      - PUBLIC_API_URL=${PUBLIC_API_URL}
+      - PAYLOAD_PUBLIC_SERVER_URL=${PUBLIC_API_URL}
+      # URLs
+      - PUBLIC_API_URL=${PUBLIC_API_URL}
+      - PUBLIC_CLIENT_URL=${PUBLIC_CLIENT_URL}
+
+      # Web3Forms
+      - PUBLIC_WEB3FORMS_ACCESS_KEY=${PUBLIC_WEB3FORMS_ACCESS_KEY}
+
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:5173', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
