@@ -451,9 +451,11 @@
 							<a class="link" href="mailto:{contacts.contact_email}">{contacts.contact_email}</a>
 						</div>
 						<div class="mb-2">
-							<a class="link" href="tel:{contacts.phone_number_1}">{contacts.phone_number_1}</a
+							<a class="link" rel="external" target="_blank" href="tel:{contacts.phone_number_1}"
+								>{contacts.phone_number_1}</a
 							>{#if contacts?.phone_number_2},
-								<a class="link" href="tel:{contacts?.phone_number_2}">{contacts?.phone_number_2}</a
+								<a class="link" rel="external" target="_blank" href="tel:{contacts?.phone_number_2}"
+									>{contacts?.phone_number_2}</a
 								>{/if}
 						</div>
 						{#if contacts?.address?.address_line_1}

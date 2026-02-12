@@ -188,7 +188,7 @@
 				addresses={['facebook', 'x', 'linkedin', 'pinterest', 'threads']}
 				>{#snippet share_label()}Share this article{/snippet}</Share
 			>
-			<div class="mt-3 mt-md-4">
+			<div class="my-3 my-md-4">
 				<a href={resolve('/blog')} class="pretty-link" aria-label="Back to Articles">
 					<span class="btn__wrapper">
 						<span class="btn__icon"

@@ -9,7 +9,6 @@ export const Articles: CollectionConfig = {
   },
   access: {
     read: ({ req: { user } }) => {
-      console.log('Request User:', user)
       return Boolean(user)
     },
   },

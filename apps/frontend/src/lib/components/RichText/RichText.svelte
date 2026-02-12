@@ -333,14 +333,16 @@
 			{/if}
 		</li>
 	{:else if isTableNode(node)}
-		<table
-			class="content-table"
+		<div
+			class="content-table-wrapper"
 			class:content-table--stripe-row={(node as SerializedTableNode).rowStriping}
 		>
-			{#if hasChildren(node)}
-				<RichText content={createInnerContent(node)} />
-			{/if}
-		</table>
+			<table class="content-table">
+				{#if hasChildren(node)}
+					<RichText content={createInnerContent(node)} />
+				{/if}
+			</table>
+		</div>
 	{:else if isTableSectionNode(node)}
 		{#if (node as PayloadLexicalNode).type === 'thead'}
 			<thead class="content-table-head">

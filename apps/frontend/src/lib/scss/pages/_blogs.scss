@@ -122,17 +122,27 @@
 	}
 
 	&-table {
-		display: block;
-		grid-column: breakout-start / breakout-end;
-		max-inline-size: 100%;
 		inline-size: 100%;
-		border-radius: 1rem;
-		border: 1px solid var(--clr-neutral-600);
-		border-collapse: collapse;
-		margin-block-end: 2rem;
-		overflow-x: scroll;
+
+		&-wrapper {
+			border-radius: 1rem;
+			margin-block-end: 2rem;
+			border-collapse: collapse;
+			border: 1px solid var(--clr-neutral-600);
+			grid-column: breakout-start / breakout-end;
+			display: block;
+			max-inline-size: 100%;
+			inline-size: 100%;
+			overflow-x: scroll;
+		}
+
+		table {
+			inline-size: 100%;
+		}
 
 		&-row {
+			display: table-row;
+			inline-size: 100%;
 			&:not(:last-child) {
 				border-block-end: 1px solid var(--clr-neutral-600);
 			}

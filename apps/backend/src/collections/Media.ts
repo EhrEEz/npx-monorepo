@@ -4,7 +4,6 @@ export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: ({ req: { user } }) => {
-      console.log('Request User:', user)
       return Boolean(user)
     },
   },
@@ -12,7 +11,8 @@ export const Media: CollectionConfig = {
     group: 'Base',
   },
   upload: {
-    staticDir: 'media',
+    disableLocalStorage: true,
+    adminThumbnail: 'thumbnail',
     imageSizes: [
       {
         name: 'thumbnail',

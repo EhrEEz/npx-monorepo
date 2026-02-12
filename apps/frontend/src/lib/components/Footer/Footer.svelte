@@ -225,6 +225,9 @@
 			<div class="fl-md-row jc-md-between gap-4 w-100 mb-5">
 				<h6 class="uppercase leading-120 medium-15 shrink-0 w-md-30 mb-3 mb-md-0">Quick Links</h6>
 				<div class="w-100 grid grid-template-col-2 gap-1 w-lg-70">
+					<Link href="#home-section" scrollTo="#home-section" class="regular-13 footer__link"
+						>Home</Link
+					>
 					<Link href="#about-section" scrollTo="#about-section" class="regular-13 footer__link"
 						>About us</Link
 					>
@@ -240,8 +243,9 @@
 						scrollTo="#approach-section">Our Approach</Link
 					>
 					<Link href="#contact-section" class="regular-13 footer__link" scrollTo="#contact-section"
-						>Contact Form</Link
+						>Contact</Link
 					>
+					<Link href="/blog" class="regular-13 footer__link">Blog</Link>
 				</div>
 			</div>
 			<Newsletter />
