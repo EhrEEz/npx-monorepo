@@ -1,6 +1,19 @@
+import { config as dotenvConfig } from 'dotenv'
+import path from 'path'
 import type { GlobalConfig } from 'payload'
+import { fileURLToPath } from 'url'
+
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
+
+dotenvConfig({ path: path.resolve(dirname, '../../../.env') })
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  access: {
+    read: ({ req: { user } }) => {
+      return Boolean(user)
+    },
+  },
   fields: [
     {
       type: 'tabs',

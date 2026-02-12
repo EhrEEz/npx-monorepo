@@ -59,7 +59,7 @@ export default buildConfig({
           return `${doc?.title || 'Untitled Article'} | Nepaxis`
         }
         if (collectionConfig?.slug === 'seo-pages') {
-          return `${doc?.page_title || 'Untitled Page'} | Nepaxis`
+          return `${doc?.page_title || 'Untitled Page'}`
         }
         return 'Nepaxis'
       },

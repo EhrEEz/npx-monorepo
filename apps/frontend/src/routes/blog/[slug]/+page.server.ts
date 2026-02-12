@@ -1,8 +1,7 @@
-import { getPayloadClient } from '$lib/server/payload';
+import { payload } from '$lib/server/payload-sdk';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const payload = await getPayloadClient();
 	const data = await payload.find({
 		collection: 'articles',
 		where: {
@@ -10,9 +9,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				equals: params.slug
 			}
 		},
-		pagination: {
-			limit: 1
-		}
+		pagination: true
 	});
 
 	const recommended_articles = await payload.find({

@@ -95,7 +95,7 @@ const seedSiteSettings = async () => {
         // Tab: page_seo
         page_seo: {
           site_name: 'Nepaxis',
-          title_suffix: ' | Nepaxis',
+          title_suffix: 'Nepaxis',
           default_title: 'Nepaxis Technologies llc | Empowering your digital journey',
           default_keywords: 'IT Company of Dubai and Nepal',
           default_og_image: ogImageId, // Required field

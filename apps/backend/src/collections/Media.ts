@@ -2,6 +2,12 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  access: {
+    read: ({ req: { user } }) => {
+      console.log('Request User:', user)
+      return Boolean(user)
+    },
+  },
   admin: {
     group: 'Base',
   },

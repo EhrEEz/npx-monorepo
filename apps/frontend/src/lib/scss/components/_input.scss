@@ -1,8 +1,8 @@
-@use "../base/helpers/type-helper" as *;
-@use "../abstracts/mixins" as *;
-@use "../abstracts/variables" as *;
+@use '../base/helpers/type-helper' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/variables' as *;
 
-[class*="form"] {
+[class*='form'] {
 	--_error-color: hsl(14 100% 50%);
 	--_pad_x: 1.25rem;
 }
@@ -16,7 +16,7 @@
 				.form__input {
 					@include media(992px) {
 						&:after {
-							content: "Tab";
+							content: 'Tab';
 							position: absolute;
 							inset-inline-end: var(--_pad_x);
 							inset-block-start: 50%;
@@ -49,7 +49,7 @@
 			}
 			.error-message {
 				text-transform: uppercase;
-				font-family: "Space Mono";
+				font-family: 'Space Mono';
 				letter-spacing: 0.01em;
 				font-size: 0.75rem;
 				text-align: right;
@@ -172,8 +172,8 @@
 	}
 	&__input {
 		position: relative;
-		inline-size: min(25rem, 100%);
-		&:has(.form__control[type="email"]) {
+		inline-size: min(32rem, 100%);
+		&:has(.form__control[type='email']) {
 			inline-size: min(40rem, 100%);
 		}
 		&:has(textarea) {
@@ -208,7 +208,7 @@
 	&--required {
 		--indicator-color: var(--clr-neutral-500);
 		&:after {
-			content: "required";
+			content: 'required';
 			position: absolute;
 			inset-inline-end: 0;
 			inset-block-start: 0;
@@ -227,7 +227,7 @@
 	}
 }
 
-[class*="select-"] {
+[class*='select-'] {
 	appearance: none;
 	--_border-color: var(--clr-neutral-600);
 	--_background-color: var(--_clr-neutral-700);
@@ -253,8 +253,8 @@
 	}
 }
 
-[class*="select-"],
-[class*="form-"] {
+[class*='select-'],
+[class*='form-'] {
 	@media screen and (max-width: 991px) {
 		--_pad_y: 0.75em;
 	}

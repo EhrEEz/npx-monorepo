@@ -7,7 +7,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import Link from './Link/Link.svelte';
 	import { browser } from '$app/environment';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import type { SiteSetting } from '$backend/src/payload-types';
 
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')

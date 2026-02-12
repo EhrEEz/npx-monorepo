@@ -7,7 +7,12 @@ export const Articles: CollectionConfig = {
     useAsTitle: 'title',
     group: 'Content',
   },
-
+  access: {
+    read: ({ req: { user } }) => {
+      console.log('Request User:', user)
+      return Boolean(user)
+    },
+  },
   versions: {
     drafts: {
       autosave: {
@@ -49,10 +54,7 @@ export const Articles: CollectionConfig = {
       type: 'richText',
       label: 'Article',
       editor: lexicalEditor({
-        features: ({ rootFeatures }) => [
-          ...rootFeatures,
-          EXPERIMENTAL_TableFeature(),
-        ],
+        features: ({ rootFeatures }) => [...rootFeatures, EXPERIMENTAL_TableFeature()],
       }),
       required: true,
     },

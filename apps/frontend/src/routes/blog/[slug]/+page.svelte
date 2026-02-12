@@ -13,6 +13,7 @@
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
 	import SEO from '$lib/components/SEO/SEO.svelte';
+	import { resolve } from '$app/paths';
 
 	const { data }: { data: { article: Article; recommended_articles: Article[] } } = $props();
 	const mainData = $derived(data.article) as Article;
@@ -113,9 +114,9 @@
 		meta: mainData.meta
 	}}
 />
-<section class="article__section content-grid py-4 py-md-6 py-lg-9">
-	<div class="mb-5">
-		<a href="/blog" class="pretty-link" aria-label="Back to Articles">
+<section class="article__section full-width content-grid pt-7 pb-4 py-md-6 py-lg-9">
+	<div class="mb-3 mb-lg-5">
+		<a href={resolve('/blog')} class="pretty-link" aria-label="Back to Articles">
 			<span class="btn__wrapper">
 				<span class="btn__icon"
 					><svg
@@ -155,12 +156,12 @@
 		{/if}
 		{#if mainData.tags && mainData.tags.length > 0}
 			<div class="fl-row gap-1 my-3">
-				{#each mainData.tags as tag}
+				{#each mainData.tags as tag, index (index)}
 					<Tag variant="outline" color="light" size="small" curvature="large">{tag.tag}</Tag>
 				{/each}
 			</div>
 		{/if}
-		<div class="grid-row jc-between ai-center mt-7 mb-7">
+		<div class="grid-lg-row jc-between gap-6 ai-center mt-7 mb-7">
 			<div class="col-4">
 				<Share
 					title={mainData.title}
@@ -168,7 +169,7 @@
 					addresses={['facebook', 'x', 'linkedin', 'pinterest', 'threads']}
 				/>
 			</div>
-			<div class="col-8">
+			<div class="col-8 mt-4 mt-lg-0">
 				<p class="regular-48">{mainData.short_quote}</p>
 			</div>
 		</div>
@@ -179,7 +180,7 @@
 </section>
 <section class="additional__section py-4 py-md-6 py-lg-8 full-width content-grid">
 	<div class="grid-row">
-		<div class="col-12 col-md-4 col-lg-4 share__section py-8 py-md-4 py-lg-4">
+		<div class="col-12 col-md-5 col-lg-4 share__section py-4 py-md-4 py-lg-4 pe-3">
 			<h2 class="heading-2 mb-2 mb-md-3 mb-lg-4">Thank you for reading the article.</h2>
 			<Share
 				title={mainData.title}
@@ -188,7 +189,7 @@
 				>{#snippet share_label()}Share this article{/snippet}</Share
 			>
 			<div class="mt-3 mt-md-4">
-				<a href="/blog" class="pretty-link" aria-label="Back to Articles">
+				<a href={resolve('/blog')} class="pretty-link" aria-label="Back to Articles">
 					<span class="btn__wrapper">
 						<span class="btn__icon"
 							><svg
@@ -212,9 +213,9 @@
 			</div>
 		</div>
 		{#if recommendedArticles && recommendedArticles.length > 0}
-			<div class="additional__wrapper col-12 col-md-8 col-start-lg-6 col-end-lg-13 col-start-xl-5">
+			<div class="additional__wrapper col-12 col-md-7 col-start-lg-6 col-end-lg-13 col-start-xl-5">
 				<ul class="strip-style blog__articles-grid" aria-label="Additional Articles">
-					{#each recommendedArticles as article}
+					{#each recommendedArticles as article, index (index)}
 						<ArticleCard {article} tag="li" />
 					{/each}
 				</ul>

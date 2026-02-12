@@ -44,6 +44,10 @@ export function handleSingleShuffle(shuffledEl: HTMLElement) {
 	const parentButton: HTMLButtonElement | null = shuffledEl.closest(`[class*="btn-"]`) || null;
 	if (!parentButton) return;
 
+	if (parentButton.classList.contains('menu__btn')) {
+		return;
+	}
+
 	const textOrig = shuffledEl.textContent || '';
 
 	// **1. Layout Shift Prevention (One-time setup)**

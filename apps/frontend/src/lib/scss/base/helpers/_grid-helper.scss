@@ -67,7 +67,6 @@ $content: (
 		.grid-row {
 			display: grid;
 			grid-template-columns: repeat(12, 1fr);
-			gap: 3rem;
 		}
 		@for $i from 1 through 13 {
 			.order-#{$i} {
@@ -118,7 +117,6 @@ $content: (
 		.grid-#{$bName}-row {
 			display: grid;
 			grid-template-columns: repeat(12, 1fr);
-			column-gap: 3rem;
 		}
 		@for $i from 1 through 13 {
 			.col-#{$bName}-#{$i} {

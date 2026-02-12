@@ -1,5 +1,5 @@
 import config from '$lib/config';
-import { getPayloadClient } from '$lib/server/payload.js';
+import { payload } from '$lib/server/payload-sdk.js';
 
 const SERVER_SORT_CODES = [
 	{
@@ -21,7 +21,7 @@ const SERVER_SORT_CODES = [
 ];
 
 export const GET = async ({ url }) => {
-	const page = url.searchParams.get('page') || '1';
+	const page = parseInt(url.searchParams.get('page') as string) || 1;
 	const sort = url.searchParams.get('sort') || config.blog.sorting;
 	const query = url.searchParams.get('query') || '';
 	const category = url.searchParams.get('category') || '';
@@ -35,26 +35,25 @@ export const GET = async ({ url }) => {
 		});
 	}
 
-	const payload = await getPayloadClient();
-
 	const whereClause = {
 		and: [
-			// 1. Mandatory Category Filter (if selected)
+			{ _status: { equals: 'published' } },
+
+			// 1. Mandatory Category Filter
 			...(category && category !== '' ? [{ 'category.slug': { equals: category } }] : []),
 
-			// 2. Search Query Filter (Title OR Tags)
+			// 2. Search Query Filter
 			...(query
 				? [
-					{
-						or: [
-							{ title: { contains: query } },
-							{ 'tags.tag': { contains: query } } // Note: your schema field is 'tag' inside 'tags'
-						]
-					}
-				]
+						{
+							or: [{ title: { contains: query } }, { 'tags.tag': { contains: query } }]
+						}
+					]
 				: [])
 		]
-	};
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} as any;
+
 	const result = await payload.find({
 		collection: 'articles',
 		sort: sort_search_res!.server,
@@ -73,9 +72,7 @@ export const GET = async ({ url }) => {
 			category: true
 		},
 		where: whereClause,
-		pagination: {
-			limit: config.blog.articlesPerPage
-		},
+		limit: config.blog.articlesPerPage,
 		page: page
 	});
 

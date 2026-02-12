@@ -3,6 +3,11 @@ import { slugField } from 'payload'
 
 export const SEOPages: CollectionConfig = {
   slug: 'seo-pages',
+  access: {
+    read: ({ req: { user } }) => {
+      return Boolean(user)
+    },
+  },
   admin: {
     useAsTitle: 'page_title',
     defaultColumns: ['page_title', 'page_description', 'slug', 'status', 'updatedAt'],
@@ -33,5 +38,5 @@ export const SEOPages: CollectionConfig = {
       relationTo: 'media',
       label: 'OG Image',
     },
-  ]
+  ],
 }

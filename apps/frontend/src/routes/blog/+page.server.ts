@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getPayloadClient } from '$lib/server/payload';
+import { payload } from '$lib/server/payload-sdk';
 import config from '$lib/config';
 import type { SeoPage } from '$backend/src/payload-types';
 
@@ -23,14 +23,12 @@ const SERVER_SORT_CODES = [
 ];
 
 export const load: PageServerLoad = async ({ url }) => {
-	const PERMALINK = "blog";
+	const PERMALINK = 'blog';
 
-	const page = url.searchParams.get('page') || '1';
+	const page = parseInt(url.searchParams.get('page') as string) || 1;
 	let sort = url.searchParams.get('sort') || config.blog.sorting;
 	const query = url.searchParams.get('query') || '';
 	const category = url.searchParams.get('category') || '';
-
-	const payload = await getPayloadClient();
 
 	let sort_search_res = SERVER_SORT_CODES.find((emt) => {
 		return emt.client === sort;
@@ -45,22 +43,21 @@ export const load: PageServerLoad = async ({ url }) => {
 	const whereClause = {
 		and: [
 			{ _status: { equals: 'published' } },
-			// 1. Mandatory Category Filter (if selected)
+
+			// 1. Mandatory Category Filter
 			...(category && category !== '' ? [{ 'category.slug': { equals: category } }] : []),
 
-			// 2. Search Query Filter (Title OR Tags)
+			// 2. Search Query Filter
 			...(query
 				? [
-					{
-						or: [
-							{ title: { contains: query } },
-							{ 'tags.tag': { contains: query } } // Note: your schema field is 'tag' inside 'tags'
-						]
-					}
-				]
+						{
+							or: [{ title: { contains: query } }, { 'tags.tag': { contains: query } }]
+						}
+					]
 				: [])
 		]
-	};
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} as any;
 	const result = await payload.find({
 		collection: 'articles',
 		sort: sort_search_res!.server,
@@ -79,10 +76,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			category: true
 		},
 		where: whereClause,
-		pagination: {
-			limit: config.blog.articlesPerPage,
-			page
-		}
+		limit: config.blog.articlesPerPage,
+		page: page
 	});
 
 	const categories = await payload.find({
@@ -90,14 +85,14 @@ export const load: PageServerLoad = async ({ url }) => {
 	});
 
 	const page_seo = await payload.find({
-		collection: "seo-pages",
+		collection: 'seo-pages',
 		where: {
 			slug: {
 				equals: PERMALINK
-			},
-			limit: 1,
-		}
-	})
+			}
+		},
+		limit: 1
+	});
 
 	return {
 		page_seo: page_seo.docs[0] as SeoPage,

@@ -600,8 +600,10 @@ picture {
 }
 .additional {
 	&__wrapper {
-		border-inline-start: 1px solid var(--clr-neutral-600);
-		padding-inline-start: 4rem;
+		@media screen and (min-width: 992px) {
+			border-inline-start: 1px solid var(--clr-neutral-600);
+			padding-inline-start: 4rem;
+		}
 	}
 	&__section {
 		border-block-start: 1px solid var(--clr-neutral-600);

@@ -169,19 +169,26 @@
 	}
 	function validatePhoneNumber(value: string): Validation {
 		const phoneRegex = /^[0-9+\-\s()]{7,}$/;
-		if (value.trim()) {
-			if (!phoneRegex.test(value.trim())) {
-				return 'Enter a valid phone number.';
-			}
+		const trimmed = value.trim();
+
+		if (trimmed.length > 0 && !phoneRegex.test(trimmed)) {
+			return 'Enter a valid phone number.';
 		}
+
 		return true;
 	}
+
 	function validateMessage(value: string): Validation {
-		if (value.trim() && value.trim().length <= 5) {
+		const trimmed = value.trim();
+
+		if (trimmed.length > 0 && trimmed.length < 5) {
 			return 'Message must be at least 5 characters.';
-		} else if (value.trim() && value.trim().length > 500) {
+		}
+
+		if (trimmed.length > 500) {
 			return 'Message must be at most 500 characters.';
 		}
+
 		return true;
 	}
 
@@ -245,15 +252,8 @@
 	let showModal = $state(false);
 	let showErrorInModal = $state(false);
 	let validity = $derived(
-		(!fullName.changed || !fullName.error) &&
-			(!companyName.changed || !companyName.error) &&
-			(!email.changed || !email.error) &&
-			(!phoneNumber.changed || !phoneNumber.error) &&
-			(!message.changed || !message.error) &&
-			fullName.changed &&
-			email.changed
+		!fullName.error && !companyName.error && !email.error && !phoneNumber.error && !message.error
 	);
-
 	async function submitForm(event: SubmitEvent) {
 		event.preventDefault();
 		if (validity) {
@@ -282,6 +282,7 @@
 					showModal = true;
 					showErrorInModal = true;
 				}
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch (e: any) {
 				console.error('Error:', e);
 				modal.headerText = 'Network Error';
@@ -399,7 +400,7 @@
 									placeholder="Phone Number"
 								/>
 								<span class="error-message">
-									{#if phoneNumber.changed && phoneNumber.error !== true}
+									{#if phoneNumber.changed && phoneNumber.error}
 										{phoneNumber.errorMessage}
 									{/if}
 								</span>
@@ -424,7 +425,7 @@
 									rows="4"
 								></textarea>
 								<span class="error-message">
-									{#if message.changed && message.error !== true}
+									{#if message.changed && message.error}
 										{message.errorMessage}
 									{/if}
 								</span>
@@ -447,11 +448,7 @@
 				{#if contacts}
 					<div class="info__body">
 						<div class="mb-2">
-							<a
-								class="link"
-								href="/cdn-cgi/l/email-protection#1368707c7d67727067603d707c7d677270674c767e727a7f6e"
-								>{contacts.contact_email}</a
-							>
+							<a class="link" href="mailto:{contacts.contact_email}">{contacts.contact_email}</a>
 						</div>
 						<div class="mb-2">
 							<a class="link" href="tel:{contacts.phone_number_1}">{contacts.phone_number_1}</a
@@ -479,11 +476,7 @@
 							<div class="info__body">
 								<p class="uppercase no-italics regular-13 neutral-200 mb-1">Join us</p>
 								<div>
-									<a
-										class="link"
-										href="/cdn-cgi/l/email-protection#4b302824253f2a283f3865282a392e2e39142e262a222736"
-										>{contacts.career_email}</a
-									>
+									<a class="link" href="mailto:{contacts.career_email}">{contacts.career_email}</a>
 								</div>
 							</div>
 						</div>
@@ -498,10 +491,7 @@
 									Do you have a request / Query?
 								</p>
 								<div>
-									<a
-										class="link"
-										href="/cdn-cgi/l/email-protection#b1cad2dedfc5d0d2c5c29fc2c4c1c1dec3c5eed4dcd0d8ddcc"
-										>{contacts.support_email}</a
+									<a class="link" href="mailto:{contacts.support_email}">{contacts.support_email}</a
 									>
 								</div>
 							</div>
