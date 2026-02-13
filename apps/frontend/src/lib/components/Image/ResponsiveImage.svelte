@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { PUBLIC_API_URL as media_url } from '$env/static/public';
 	import type { Media } from '$backend/src/payload-types';
+	import { env } from '$env/dynamic/public';
+	const media_url = env.PUBLIC_API_URL;
 
 	const {
 		image,

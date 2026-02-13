@@ -10,5 +10,10 @@ export default defineConfig({
 	build: {
 		sourcemap: false,
 		chunkSizeWarningLimit: 2000
+	},
+	server: {
+		fs: {
+			allow: ['../..']
+		}
 	}
 });

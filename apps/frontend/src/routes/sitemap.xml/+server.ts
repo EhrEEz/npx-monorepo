@@ -1,22 +1,22 @@
 import { payload } from '$lib/server/payload-sdk';
 import type { RequestHandler } from './$types';
-import { PUBLIC_CLIENT_URL as siteUrl } from '$env/static/public';
-import type { Article, SeoPage } from '$backend/src/payload-types';
+import { env } from '$env/dynamic/public';
 
 export const GET: RequestHandler = async () => {
+	const siteUrl = env.PUBLIC_CLIENT_URL;
 
 	// 1. Fetch data from all relevant collections
 	const [articles, seoPages] = await Promise.all([
 		payload.find({
 			collection: 'articles',
 			limit: 1000,
-			select: { slug: true, updatedAt: true   },
+			select: { slug: true, updatedAt: true },
 			draft: false,
 			where: {
 				'meta.prevent_indexing': {
-					not_equals: true,
-				},
-			},
+					not_equals: true
+				}
+			}
 		}),
 		payload.find({
 			collection: 'seo-pages',
@@ -25,45 +25,49 @@ export const GET: RequestHandler = async () => {
 			select: { slug: true, updatedAt: true },
 			where: {
 				'meta.prevent_indexing': {
-					not_equals: true,
-				},
-			},
-		}),
+					not_equals: true
+				}
+			}
+		})
 	]);
-  const articleEntries = articles.docs.filter((doc) => doc.slug && doc.slug !== null && doc.slug !== '').map((doc) => ({
-    loc: `${siteUrl}/blog/${doc.slug}` as string,
-    lastmod: new Date(doc.updatedAt as string).toISOString().split('T')[0],
-    priority: '0.7',
-  }));
+	const articleEntries = articles.docs
+		.filter((doc) => doc.slug && doc.slug !== null && doc.slug !== '')
+		.map((doc) => ({
+			loc: `${siteUrl}/blog/${doc.slug}` as string,
+			lastmod: new Date(doc.updatedAt as string).toISOString().split('T')[0],
+			priority: '0.7'
+		}));
 
-  const pageEntries = seoPages.docs.filter((doc) => doc.slug && doc.slug !== null && doc.slug !== '').map((doc) => ({
-    loc: `${siteUrl}/${doc.slug === 'home' ? '' : doc.slug}`,
-    lastmod: new Date(doc.updatedAt as string).toISOString().split('T')[0],
-    priority: '1.0',
-  }));
+	const pageEntries = seoPages.docs
+		.filter((doc) => doc.slug && doc.slug !== null && doc.slug !== '')
+		.map((doc) => ({
+			loc: `${siteUrl}/${doc.slug === 'home' ? '' : doc.slug}`,
+			lastmod: new Date(doc.updatedAt as string).toISOString().split('T')[0],
+			priority: '1.0'
+		}));
 
-  const allEntries = [...pageEntries, ...articleEntries];
+	const allEntries = [...pageEntries, ...articleEntries];
 
 	// 3. Generate XML string
 	const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${allEntries
-			.map(
-				(entry) => `
+		.map(
+			(entry) => `
     <url>
       <loc>${entry.loc}</loc>
       <lastmod>${entry.lastmod}</lastmod>
       <priority>${entry.priority}</priority>
     </url>`
-			)
-			.join('')}
+		)
+		.join('')}
 </urlset>`.trim();
 
 	// 4. Return response with correct Content-Type
 	return new Response(sitemap, {
 		headers: {
 			'Content-Type': 'application/xml',
-			'Cache-Control': 'public, max-age=0, s-maxage=3600', // Cache for 1 hour
-		},
+			'Cache-Control': 'public, max-age=0, s-maxage=3600' // Cache for 1 hour
+		}
 	});
 };

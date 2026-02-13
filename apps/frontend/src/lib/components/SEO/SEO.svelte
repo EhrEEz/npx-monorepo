@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { PUBLIC_API_URL as media_url, PUBLIC_CLIENT_URL as main_url } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { page } from '$app/state';
 	import type { SiteSetting } from '$backend/src/payload-types';
 	import { getContext } from 'svelte';
 	const { pageSettings } = $props();
+
+	const media_url = env.PUBLIC_API_URL;
+	const main_url = env.PUBLIC_CLIENT_URL;
 
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
 		.settings as SiteSetting;
@@ -78,12 +81,9 @@
 	<meta itemprop="description" content={og_description} />
 	<meta name="twitter:description" content={og_description} />
 
-	<meta property="og:title" content="{og_title} | {globalSEO.title_suffix ?? basicSettings.name}" />
-	<meta itemprop="name" content="{og_title} | {globalSEO.title_suffix ?? basicSettings.name}" />
-	<meta
-		name="twitter:title"
-		content="{og_title} | {globalSEO.title_suffix ?? basicSettings.name}"
-	/>
+	<meta property="og:title" content={og_title} />
+	<meta itemprop="name" content={og_title} />
+	<meta name="twitter:title" content={og_title} />
 
 	<meta name="keywords" content={keywords} />
 

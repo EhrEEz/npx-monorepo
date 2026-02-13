@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { PUBLIC_API_URL as media_url } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { type Article } from '$backend/src/payload-types';
 	import defaultImage from '$lib/assets/default-image.webp';
 	import Tag from '$lib/components/Tag/Tag.svelte';
 	import moment from 'moment';
+
+	const media_url = env.PUBLIC_API_URL;
 	const {
 		article: _article,
 		tag,

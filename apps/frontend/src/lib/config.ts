@@ -1,7 +1,7 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 export default {
-	uri: PUBLIC_API_URL,
+	uri: env.PUBLIC_API_URL,
 	blog: {
 		articlesPerPage: 10,
 		sorting: 'latest'

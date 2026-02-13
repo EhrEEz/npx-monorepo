@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Article, type Media } from '$backend/src/payload-types';
-	import { PUBLIC_API_URL as media_url } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import '$lib/scss/pages/_blogs.scss';
 	import Share from '$lib/components/Share/Share.svelte';
 	import Tag from '$lib/components/Tag/Tag.svelte';
@@ -14,6 +14,7 @@
 	import { onDestroy } from 'svelte';
 	import SEO from '$lib/components/SEO/SEO.svelte';
 	import { resolve } from '$app/paths';
+	const media_url = env.PUBLIC_API_URL;
 
 	const { data }: { data: { article: Article; recommended_articles: Article[] } } = $props();
 	const mainData = $derived(data.article) as Article;
