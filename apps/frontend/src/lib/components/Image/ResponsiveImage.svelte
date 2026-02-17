@@ -21,10 +21,10 @@
 				? media_url + image.url
 				: default_image}
 		srcset="
-				{image.sizes.small ? `${media_url + image.sizes.small.url} 234w,` : ''}
-				{image.sizes.card ? `${media_url + image.sizes.card.url} 500w,` : ''}
-				{image.sizes.tablet ? `${media_url + image.sizes.tablet.url} 750w,` : ''}
-				{image.sizes.desktop ? `${media_url + image.sizes.desktop.url} 1000w,` : ''}"
+				{image?.sizes?.small?.url ? `${media_url + image.sizes.small.url} 234w,` : ''}
+				{image?.sizes?.card?.url ? `${media_url + image.sizes.card.url} 500w,` : ''}
+				{image?.sizes?.tablet?.url ? `${media_url + image.sizes.tablet.url} 750w,` : ''}
+				{image?.sizes?.desktop?.url ? `${media_url + image.sizes.desktop.url} 1000w,` : ''}"
 		class="w-full h-full object-cover"
 		alt="Cover of {image.alt ?? image.alt ?? alternate_alt}"
 		{...restProps}
