@@ -2,9 +2,8 @@ import { env } from '$env/dynamic/private';
 import { env as env_pub } from '$env/dynamic/public';
 import { PayloadSDK } from '@payloadcms/sdk';
 import type { Config } from '$backend/src/payload-types';
-``;
 
-console.log('PUBLIC API URL', env_pub.PUBLIC_API_URL);
+console.log('PUBLIC API URL', env.PRIVATE_API_KEY);
 export const payload = new PayloadSDK<Config>({
 	baseURL: `${env_pub.PUBLIC_API_URL}/api`,
 	baseInit: {

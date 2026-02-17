@@ -7,7 +7,7 @@
 .article {
 	&-content {
 		--padding-inline: 0;
-		--content-max-width: 60ch;
+		--content-max-width: 65ch;
 		--breakout-max-width: 85ch;
 		--breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
 

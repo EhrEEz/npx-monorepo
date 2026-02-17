@@ -50,6 +50,12 @@
 			return cover_image.url;
 		}
 	});
+	const handleImageError = (ev: Event) => {
+		const img = ev.target as HTMLImageElement;
+		img.src = defaultImage;
+		// Optional: prevent infinite loops if defaultImage also fails
+		img.onerror = null;
+	};
 </script>
 
 {#if parent_tag === 'li'}
@@ -68,7 +74,8 @@
 				/>
 			{:else}
 				<img
-					src={media_url + thumbnail}
+					onerror={handleImageError}
+					src={thumbnail ? media_url + thumbnail : defaultImage}
 					alt={typeof cover_image === 'number' ? 'Default Placeholder' : cover_image.alt}
 					class="article-card__image w-100"
 					loading="lazy"
@@ -111,6 +118,7 @@
 		<div class="article-card__image-wrapper">
 			<img
 				src={thumbnail}
+				onerror={handleImageError}
 				alt={typeof cover_image === 'number' ? 'Default Placeholder' : cover_image.alt}
 				class="article-card__image w-100"
 				loading="lazy"

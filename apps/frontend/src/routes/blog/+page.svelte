@@ -9,6 +9,7 @@
 	import Tag from '$lib/components/Tag/Tag.svelte';
 	import SEO from '$lib/components/SEO/SEO.svelte';
 	import type { Category } from '$backend/src/payload-types.js';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	const SORT_OPTIONS: SortOption[] = [
 		{ value: 'latest', name: 'Latest First' },
@@ -45,7 +46,7 @@
 
 	const getData = async (newPage: number = currentPage) => {
 		isFetching = true;
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 
 		// Build URL Parameters
 		if (newPage > 1) params.set('page', newPage.toString());
@@ -120,7 +121,7 @@
 		}}
 	>
 		<select class="select--category" bind:value={selectedCategory}>
-			<option value={'all'}>All Categories</option>
+			<option value="all">All Categories</option>
 			{#each categories as category}
 				<option value={category.slug}>{category.name}</option>
 			{/each}

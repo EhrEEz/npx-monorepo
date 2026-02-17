@@ -33,7 +33,13 @@ export default buildConfig({
   ...(process.env.ENV_MODE === 'prod' && { cors: [process.env.PUBLIC_CLIENT_URL ?? ''] }),
   collections: [Users, Media, Categories, Articles, SEOPages],
   globals: [SiteSettings],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures.filter((feature) => {
+        return feature.key !== 'relationship'
+      }),
+    ],
+  }),
   secret: process.env.PRIVATE_PAYLOAD_SECRET!,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
