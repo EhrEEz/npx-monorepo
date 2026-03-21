@@ -35,6 +35,16 @@ a.link {
 		background-color: var(--set-ui-highlight-color);
 		color: var(--clr-dark-1000);
 	}
+
+	&.w-fit {
+		display: inline-block;
+	}
+
+	&.light {
+		&:hover {
+			--_color: var(--clr-neutral-700);
+		}
+	}
 }
 
 .no-italics {
@@ -225,6 +235,9 @@ picture {
 }
 .tracking-wide {
 	letter-spacing: 0.1em;
+}
+.tracking-ultra-wide {
+	letter-spacing: 0.2em;
 }
 .leading-120 {
 	line-height: 120%;

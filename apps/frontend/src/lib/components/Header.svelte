@@ -9,6 +9,7 @@
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
 	import type { SiteSetting } from '$backend/src/payload-types';
+	import { resolve } from '$app/paths';
 
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
 		.settings as SiteSetting;
@@ -159,18 +160,13 @@
 		<div class="nav__card gap-4" bind:this={navCard}>
 			<ul class="nav__list strip-style">
 				<li class="nav__list-item">
-					<Link
-						href="/#home-section"
-						class="nav__list-link"
-						onClick={() => (navToggled = false)}
-						scrollTo="#home-section"
-					>
+					<a href={resolve('/')} class="nav__list-link" onclick={() => (navToggled = false)}>
 						<div class="nav__list-label">Home</div>
-					</Link>
+					</a>
 				</li>
 				<li class="nav__list-item">
 					<Link
-						href="/#about-section"
+						href={resolve('/about')}
 						class="nav__list-link"
 						scrollTo="#about-section"
 						onClick={() => (navToggled = false)}
@@ -211,7 +207,7 @@
 
 				<li class="nav__list-item">
 					<Link
-						href="/#contact-section"
+						href={resolve('/contact')}
 						class="nav__list-link"
 						scrollTo="#contact-section"
 						onClick={() => (navToggled = false)}

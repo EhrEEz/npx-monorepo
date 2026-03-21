@@ -2,7 +2,6 @@
 	import ASCII from '$lib/components/ASCII/ASCII.svelte';
 	import ITLTime from '$lib/components/ITLTime/ITLTime.svelte';
 	import Cube from '$lib/components/Cube/Cube.svelte';
-	import ContactSection from '$lib/components/Page/Home/ContactSection.svelte';
 	import { initFloatingImages } from '$lib/js/animations/hover-image';
 	import { initHeroTimeline } from '$lib/js/animations/scroll-timelines/hero';
 	import { initAboutTimeline } from '$lib/js/animations/scroll-timelines/about';
@@ -12,6 +11,7 @@
 	import Link from '$lib/components/Link/Link.svelte';
 	import SEO from '$lib/components/SEO/SEO.svelte';
 	import type { SeoPage } from '$backend/src/payload-types.js';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		data: {
@@ -153,6 +153,9 @@
 				We don’t just build digital products - we build long-term assets engineered for growth,
 				performance, and operational excellence
 			</p>
+			<a href={resolve('/about')} class="link w-fit about__link" aria-label="About Us">
+				<span class="btn__wrapper uppercase neutral-100">Learn More</span>
+			</a>
 		</div>
 	</div>
 </section>
@@ -655,4 +658,3 @@
 		<img src="/images/bottom-image.png" class="h-full object-cover w-100" alt="Our Work Images" />
 	</picture>
 </section>
-<ContactSection />

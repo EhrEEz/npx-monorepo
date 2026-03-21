@@ -1,117 +1,112 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import { browser } from '$app/environment';
-	import { afterNavigate } from '$app/navigation';
 	import Link from '$lib/components/Link/Link.svelte';
 	import Newsletter from '$lib/components/Newsletter/Newsletter.svelte';
 	import { page } from '$app/state';
 	import type { SiteSetting } from '$backend/src/payload-types';
+	import { resolve } from '$app/paths';
 
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
 		.settings as SiteSetting;
 	const siteInfo = $derived(siteSettings.basic_settings);
+	const contacts = $derived(siteInfo.contact);
 	const socials = $derived(siteSettings.social_media);
 
-	const currentPage = $derived(page.route.id);
+	const currentPage = $derived<string | null>(page.route.id);
 	const CURRENT_YEAR = new Date().getFullYear();
-
-	let footer: HTMLElement | null = null;
-	let contactPinTrigger: ScrollTrigger | null = null;
-
-	function initContactPinAnimation() {
-		// Kill existing trigger
-		if (contactPinTrigger) {
-			contactPinTrigger.kill();
-			contactPinTrigger = null;
-		}
-
-		if (currentPage !== '/' || !footer || !browser) {
-			return;
-		}
-
-		const contactSection = document.querySelector<HTMLElement>('.contact__section');
-
-		if (!contactSection) {
-			// Element doesn't exist, silently return
-			return;
-		}
-
-		const footerHeight = footer.offsetHeight;
-		const slideOutDuration = contactSection.offsetHeight * 1.25;
-		const totalDuration = footerHeight + slideOutDuration;
-
-		const tl = gsap.timeline({
-			scrollTrigger: {
-				trigger: contactSection,
-				start: 'bottom bottom',
-				end: `+=${totalDuration}`,
-				scrub: true,
-				pin: contactSection,
-				pinSpacing: false,
-				id: 'contact-pin-slide',
-				onRefresh: (self) => {
-					contactPinTrigger = self;
-				}
-			}
-		});
-
-		tl.to(
-			contactSection,
-			{
-				duration: footerHeight,
-				y: 0,
-				ease: 'none'
-			},
-			0
-		);
-
-		tl.to(
-			contactSection,
-			{
-				duration: slideOutDuration,
-				y: -contactSection.offsetHeight,
-				ease: 'none'
-			},
-			footerHeight
-		);
-	}
-
-	afterNavigate(() => {
-		if (browser) {
-			requestAnimationFrame(() => {
-				setTimeout(() => {
-					initContactPinAnimation();
-				}, 150);
-			});
-		}
-	});
-
-	$effect(() => {
-		if (browser) {
-			gsap.registerPlugin(ScrollTrigger);
-
-			const timeout = setTimeout(() => {
-				initContactPinAnimation();
-			}, 150);
-
-			return () => {
-				clearTimeout(timeout);
-				if (contactPinTrigger) {
-					contactPinTrigger.kill();
-					contactPinTrigger = null;
-				}
-			};
-		}
-	});
 </script>
 
 <footer
-	bind:this={footer}
 	class="bg-neutral-100 neutral-700 content-grid full-width py-2 pt-md-2 pt-lg-0 footer__section"
 	data-section="light"
 >
+	<div class="content__wrapper relative z-1 footer__separator py-4 py-md-5 py-lg-7 py-xl-8">
+		{#if currentPage !== '/contact'}
+			<div class="fl-md-row mb-4 mb-lg-6 mb-xl-7 al-center">
+				<h2 class="contact__title heading-2 uppercase mb-3 mb-md-0 w-full" id="contact-title">
+					Let's Talk
+				</h2>
+				<div
+					class="big__button-wrapper fl-col jc-end w-100 w-lg-50 col-lg-4 col-start-xl-9 col-start-2xl-8 col-end-xl-13"
+				>
+					<a href={resolve('/contact')} class="btn--outline btn--black btn--full">
+						<span class="btn__wrapper"><span class="btn__text">Contact</span></span>
+					</a>
+				</div>
+			</div>
+		{/if}
+		<div class="grid-md-row contact__info">
+			<div class="info-wrapper--left col-md-6 col-lg-7 mb-4 mb-lg-0">
+				<h4 class="medium-15 neutral-700 mb-2 mb-lg-3 uppercase info__title">Business</h4>
+				{#if contacts}
+					<div class="info__body">
+						<div class="mb-2">
+							<a class="link light" href="mailto:{contacts.contact_email}"
+								>{contacts.contact_email}</a
+							>
+						</div>
+						<div class="mb-2">
+							<a
+								class="link light"
+								rel="external"
+								target="_blank"
+								href="tel:{contacts.phone_number_1}">{contacts.phone_number_1}</a
+							>{#if contacts?.phone_number_2},
+								<a
+									class="link light"
+									rel="external"
+									target="_blank"
+									href="tel:{contacts?.phone_number_2}">{contacts?.phone_number_2}</a
+								>{/if}
+						</div>
+						{#if contacts?.address?.address_line_1}
+							<address class="uppercase no-italics regular-13 neutral-600">
+								{contacts?.address?.address_line_1}
+								{#if contacts?.address?.address_line_2}<br />
+									{contacts.address.address_line_2}{/if}
+								{#if contacts?.address?.address_line_3}<br />
+									{contacts.address.address_line_3}{/if}
+							</address>
+						{/if}
+					</div>
+				{/if}
+			</div>
+			<div class="info-wrapper--right col-md-5 ps-md-4 ps-lg-5">
+				{#if contacts}
+					{#if contacts?.career_email}
+						<div class="info--careers mb-4 mb-lg-4">
+							<h4 class="medium-15 neutral-700 mb-2 mb-lg-3 uppercase info__title">Careers</h4>
+							<div class="info__body">
+								<p class="uppercase no-italics regular-13 neutral-600 mb-1">Join us</p>
+								<div>
+									<a class="link light" href="mailto:{contacts.career_email}"
+										>{contacts.career_email}</a
+									>
+								</div>
+							</div>
+						</div>
+					{/if}
+					{#if contacts?.support_email}
+						<div class="info--help">
+							<h4 class="medium-15 neutral-700 mb-2 mb-lg-3 uppercase info__title">
+								Help & Support
+							</h4>
+							<div class="info__body">
+								<p class="uppercase no-italics regular-13 neutral-600 mb-1">
+									Do you have a request / Query?
+								</p>
+								<div>
+									<a class="link light" href="mailto:{contacts.support_email}"
+										>{contacts.support_email}</a
+									>
+								</div>
+							</div>
+						</div>
+					{/if}
+				{/if}
+			</div>
+		</div>
+	</div>
 	<div class="grid-md-row pt-4 pb-2 py-md-5 py-lg-7 ai-center">
 		<div class="col-md-5 col-lg-4">
 			<div class="footer__logo-wrapper mb-4 mb-lg-5">
@@ -228,9 +223,7 @@
 					<Link href="/#home-section" scrollTo="/#home-section" class="regular-13 footer__link"
 						>Home</Link
 					>
-					<Link href="/#about-section" scrollTo="/#about-section" class="regular-13 footer__link"
-						>About us</Link
-					>
+					<a href={resolve('/about')} class="regular-13 footer__link">About us</a>
 
 					<Link
 						href="/#services-section"
@@ -242,8 +235,10 @@
 						class="regular-13 footer__link"
 						scrollTo="/#approach-section">Our Approach</Link
 					>
-					<Link href="/#contact-section" class="regular-13 footer__link" scrollTo="#contact-section"
-						>Contact</Link
+					<Link
+						href={resolve('/contact')}
+						class="regular-13 footer__link"
+						scrollTo="#contact-section">Contact</Link
 					>
 					<Link href="/blog" class="regular-13 footer__link">Blog</Link>
 				</div>
@@ -255,3 +250,9 @@
 		{siteInfo.name} © <span id="currentYear">{CURRENT_YEAR}</span>
 	</div>
 </footer>
+
+<style>
+	.footer__separator {
+		border-block-end: 1px solid var(--clr-neutral-700);
+	}
+</style>

@@ -17,6 +17,7 @@ $types: (
 			0px: 1rem
 		)
 	),
+
 	medium-15: (
 		weight: 500,
 		breakpoints: (
@@ -71,6 +72,12 @@ $types: (
 		breakpoints: (
 			0px: 1.25rem,
 			992px: 1.5rem
+		)
+	),
+	about-24: (
+		weight: 400,
+		breakpoints: (
+			0px: 1.5rem
 		)
 	),
 	light-20: (
@@ -172,6 +179,17 @@ $types: (
 			1500px: 3rem // 1600px: 6rem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		)
 	),
+	medium-3: (
+		weight: 400,
+		line-height: 100%,
+		breakpoints: (
+			0px: 1.75rem,
+			768px: 2rem,
+			992px: 2rem,
+			1200px: 2.25rem,
+			1500px: 3rem // 1600px: 6rem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+		)
+	),
 	regular-48: (
 		weight: 400,
 		line-height: 100%,
@@ -247,6 +265,7 @@ $types: (
 			1500px: 1.5rem // 1600px: 6rem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		)
 	),
+
 	heading-4: (
 		weight: 400,
 		breakpoints: (

@@ -60,7 +60,12 @@
 					if (hash) {
 						smooth.scrollTo(hash, true);
 					} else {
-						smooth.scrollTo(0, true);
+						smooth.refresh();
+						const currentPosition = window.scrollY;
+						if (currentPosition) {
+							smooth.scrollTo(currentPosition, true);
+						}
+						// smooth.scrollTo(0, true);
 					}
 				}
 
@@ -87,7 +92,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
-		href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap"
 		rel="stylesheet"
 	/>
 

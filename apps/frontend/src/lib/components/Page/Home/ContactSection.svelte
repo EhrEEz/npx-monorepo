@@ -1,33 +1,28 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { afterNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { SplitText } from 'gsap/SplitText';
 	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 	import Modal from '$lib/components/Modal/Modal.svelte';
-	import type { SiteSetting } from '$backend/src/payload-types';
-
-	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
-		.settings as SiteSetting;
-	const siteInfo = $derived(siteSettings.basic_settings);
-	const contacts = $derived(siteInfo.contact);
+	import { page } from '$app/state';
 
 	type Validation = string | true;
 	type ValidationFunction = (a: string) => Validation;
 	const ACCESS_KEY = `5e3a9806-0470-49b0-ab74-d7109400cdc6`;
+	const currentPage = $derived<string | null>(page.route.id);
 
 	gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger, SplitText);
 
-	let { element = $bindable() } = $props();
-
+	let contactPinTrigger: ScrollTrigger | null = null;
+	let contact_section = $state<HTMLElement | null>();
 	function initTypePin() {
 		if (!browser) return;
 
 		document.fonts.ready.then(() => {
 			const contact_title = document.querySelector('.contact__title');
-			const contact_info = document.querySelector('.contact__info');
-			const contact_section = document.querySelector('.contact__section');
 
 			if (contact_title) {
 				SplitText.create('.contact__title', {
@@ -75,54 +70,6 @@
 					}
 				});
 			});
-
-			if (contact_info && contact_section) {
-				const contactInfoTimeline = gsap
-					.timeline({
-						scrollTrigger: {
-							trigger: '.contact__info',
-							endTrigger: '.contact__section',
-							toggleActions: 'play none none none'
-						}
-					})
-					.addLabel('start');
-
-				const info_titles = gsap.utils.toArray('.info__title') as HTMLElement[];
-				if (info_titles.length) {
-					gsap.set(info_titles, { opacity: 0 });
-					contactInfoTimeline.to(
-						info_titles,
-						{
-							opacity: 1,
-							stagger: 0.2,
-							ease: 'power1.out',
-							duration: 0.8,
-							scrambleText: {
-								speed: 0.7,
-								revealDelay: 0.35,
-								text: '{original}',
-								chars: 'upperCase'
-							}
-						},
-						'start'
-					);
-				}
-
-				const info_body_children = gsap.utils.toArray('.info__body > *') as HTMLElement[];
-				if (info_body_children.length) {
-					contactInfoTimeline.from(
-						info_body_children,
-						{
-							opacity: 0,
-							yPercent: 50,
-							ease: 'power1.out',
-							duration: 0.8,
-							stagger: 0.05
-						},
-						'start+=0.7'
-					);
-				}
-			}
 		});
 	}
 
@@ -291,6 +238,125 @@
 			}
 		}
 	}
+
+	function initContactPinAnimation() {
+		// Kill existing trigger
+		if (contactPinTrigger) {
+			contactPinTrigger.kill();
+			contactPinTrigger = null;
+		}
+		let footer: HTMLElement | null = document.querySelector('.footer__section');
+		if (!footer || !browser || currentPage !== '/contact') {
+			return;
+		}
+		console.log(contact_section);
+		if (!contact_section) {
+			// Element doesn't exist, silently return
+			return;
+		}
+
+		const contact_title = document.querySelector('.contact__title');
+
+		if (contact_title) {
+			document.fonts.ready.then(() => {
+				SplitText.create('.contact__title', {
+					type: 'words,lines',
+					autoSplit: true,
+					onSplit: (self) => {
+						gsap.set(self.words, { opacity: 0 });
+						gsap.to(self.words, {
+							duration: 1,
+							opacity: 1,
+							ease: 'none',
+							scrambleText: {
+								speed: 0.7,
+								revealDelay: 0.35,
+								text: '{original}',
+								chars: 'upperCase'
+							},
+							scrollTrigger: {
+								trigger: '.contact__title',
+								start: 'top 70%',
+								end: 'bottom 0%',
+								toggleActions: 'play none none none'
+							}
+						});
+					}
+				});
+			});
+		}
+
+		const footerHeight = footer.offsetHeight;
+		const slideOutDuration = contact_section.offsetHeight * 1.25;
+		const totalDuration = footerHeight + slideOutDuration;
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: contact_section,
+				start: 'bottom bottom',
+				end: `+=${totalDuration}`,
+				scrub: true,
+				pin: contact_section,
+				pinSpacing: false,
+				id: 'contact-pin-slide',
+				onRefresh: (self) => {
+					contactPinTrigger = self;
+				}
+			}
+		});
+
+		tl.to(
+			contact_section,
+			{
+				duration: footerHeight,
+				y: 0,
+				ease: 'none'
+			},
+			0
+		);
+
+		tl.to(
+			contact_section,
+			{
+				duration: slideOutDuration,
+				y: -contact_section.offsetHeight,
+				ease: 'none'
+			},
+			footerHeight
+		);
+	}
+	$effect(() => {
+		if (browser) {
+			const timeout = setTimeout(() => {
+				initContactPinAnimation();
+			}, 150);
+
+			return () => {
+				clearTimeout(timeout);
+				if (contactPinTrigger) {
+					contactPinTrigger.kill();
+					contactPinTrigger = null;
+				}
+			};
+		}
+	});
+	afterNavigate(() => {
+		if (browser) {
+			requestAnimationFrame(() => {
+				setTimeout(() => {
+					initContactPinAnimation();
+				}, 150);
+			});
+		}
+	});
+	onDestroy(() => {
+		if (browser) {
+			if (contactPinTrigger) {
+				contactPinTrigger.kill();
+				contactPinTrigger = null;
+			}
+		}
+	});
 </script>
 
 <section
@@ -298,7 +364,7 @@
 	id="contact-section"
 	data-section="dark"
 	aria-labelledby="#contact-title"
-	bind:this={element}
+	bind:this={contact_section}
 >
 	<div class="content__wrapper relative z-1">
 		<h2 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h2>
@@ -442,66 +508,6 @@
 				</div>
 			</div>
 		</form>
-		<div class="grid-md-row contact__info">
-			<div class="info-wrapper--left col-md-6 col-lg-7 mb-4 mb-lg-0">
-				<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">Business</h4>
-				{#if contacts}
-					<div class="info__body">
-						<div class="mb-2">
-							<a class="link" href="mailto:{contacts.contact_email}">{contacts.contact_email}</a>
-						</div>
-						<div class="mb-2">
-							<a class="link" rel="external" target="_blank" href="tel:{contacts.phone_number_1}"
-								>{contacts.phone_number_1}</a
-							>{#if contacts?.phone_number_2},
-								<a class="link" rel="external" target="_blank" href="tel:{contacts?.phone_number_2}"
-									>{contacts?.phone_number_2}</a
-								>{/if}
-						</div>
-						{#if contacts?.address?.address_line_1}
-							<address class="uppercase no-italics regular-13 neutral-200">
-								{contacts?.address?.address_line_1}
-								{#if contacts?.address?.address_line_2}<br />
-									{contacts.address.address_line_2}{/if}
-								{#if contacts?.address?.address_line_3}<br />
-									{contacts.address.address_line_3}{/if}
-							</address>
-						{/if}
-					</div>
-				{/if}
-			</div>
-			<div class="info-wrapper--right col-md-5 ps-md-4 ps-lg-5">
-				{#if contacts}
-					{#if contacts?.career_email}
-						<div class="info--careers mb-4 mb-lg-4">
-							<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">Careers</h4>
-							<div class="info__body">
-								<p class="uppercase no-italics regular-13 neutral-200 mb-1">Join us</p>
-								<div>
-									<a class="link" href="mailto:{contacts.career_email}">{contacts.career_email}</a>
-								</div>
-							</div>
-						</div>
-					{/if}
-					{#if contacts?.support_email}
-						<div class="info--help">
-							<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">
-								Help & Support
-							</h4>
-							<div class="info__body">
-								<p class="uppercase no-italics regular-13 neutral-200 mb-1">
-									Do you have a request / Query?
-								</p>
-								<div>
-									<a class="link" href="mailto:{contacts.support_email}">{contacts.support_email}</a
-									>
-								</div>
-							</div>
-						</div>
-					{/if}
-				{/if}
-			</div>
-		</div>
 	</div>
 </section>
 
