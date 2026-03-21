@@ -61,11 +61,7 @@
 						smooth.scrollTo(hash, true);
 					} else {
 						smooth.refresh();
-						const currentPosition = window.scrollY;
-						if (currentPosition) {
-							smooth.scrollTo(currentPosition, true);
-						}
-						// smooth.scrollTo(0, true);
+						smooth.scrollTo(0, true);
 					}
 				}
 

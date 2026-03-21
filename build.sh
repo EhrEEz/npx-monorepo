@@ -3,7 +3,7 @@
 # Configuration
 DOCKER_USERNAME="bfdevs2025"
 REPO="nepaxis"
-VERSION="1.2.0"
+VERSION="1.3.0"
 
 # Initial State
 BUILD_FRONTEND=false

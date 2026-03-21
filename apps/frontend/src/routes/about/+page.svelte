@@ -7,6 +7,7 @@
 	import { SplitText } from 'gsap/SplitText';
 	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 	import SEO from '$lib/components/SEO/SEO.svelte';
+	import { initFloatingImages } from '$lib/js/animations/hover-image';
 
 	const { data } = $props();
 	const page_seo = $derived(data.page_seo);
@@ -14,6 +15,8 @@
 	gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
 	$effect(() => {
+		initFloatingImages();
+
 		const headerTimeline = gsap.timeline({
 			scrollTrigger: {
 				trigger: '.about__header',
@@ -631,7 +634,7 @@
 		</div>
 	</div>
 </section>
-<section class="about__build" data-section="dark">
+<section class="about__build pb-6 pb-md-8 pb-2xl-12" data-section="dark">
 	<h2
 		class="text-right bold-15 uppercase font-mono neutral-400 about__build-sub-title about-sub-heading mb-6"
 	>
@@ -656,14 +659,407 @@
 		</div>
 	</div>
 </section>
-<section class="about__main fl-row jc-center al-center pt-7 pt-md-10 pb-3" data-section="dark">
+<section
+	class="capabilities__section bg-neutral-100 full-width content-grid py-7 py-md-8 py-lg-9"
+	data-section="light"
+	id="services-section"
+	aria-labelledby="#services-title"
+>
+	<h2 class="heading-2 neutral-700 mb-2 mb-md-4 services__title" id="services-title">
+		Capabilities
+	</h2>
+	<div class="grid-xl-row gap-3xl-9">
+		<div class="col-xl-8">
+			<table class="capabilities__table--sm regular-14 mb-4">
+				<tbody>
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Design</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Branding & Visual Identity
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								UI/UX Design
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Digital & Print Media
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Development</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Web Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Mobile App Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Software Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Tech Stack Expertise
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600"
+							>Cloud & Data Services</th
+						>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Cloud & AWS Services
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								DevOps & Infrastructure
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Data & Analytics
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Marketing & Growth</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								We execute data-driven marketing strategies that improve visibility, accelerate
+								acquisition, and enhance long-term customer engagement.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Growth Hacking
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Search & Performance Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Social Media Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Content & Brand marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Analytics & Reporting
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Expert Services</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our strategic and operational support ensures that every digital initiative is
+								planned, executed, and maintained with precision and clarity.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Consulting & Support
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="capabilities__table--md regular-14 mb-md-4">
+				<tbody>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Design</th>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/branding-visual.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Branding & Visual Identity
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/ui-ux-design.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								UI/UX Design
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/digital-print-media.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Digital & Print Media
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Development</th>
+					</tr>
+					<tr>
+						<td rowspan="4">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/web-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Web Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/mobile-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Mobile App Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/software-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Software Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/expert.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Tech Stack Expertise
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600"
+							>Cloud & Data Services</th
+						>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/cloud.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Cloud & AWS Services
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/dev-ops.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								DevOps & Infrastructure
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/analytics.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Data & Analytics
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Marketing & Growth</th>
+					</tr>
+					<tr>
+						<td rowspan="5">
+							<p class="neutral-500 regular-14">
+								We execute data-driven marketing strategies that improve visibility, accelerate
+								acquisition, and enhance long-term customer engagement.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/growth-hacking.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Growth Hacking
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/seo.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Search & Performance Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/social-media.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Social Media Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/content-marketing.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Content & Brand marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/data-reporting.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Analytics & Reporting
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Expert Services</th>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								Our strategic and operational support ensures that every digital initiative is
+								planned, executed, and maintained with precision and clarity.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/support.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Consulting & Support
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-xl-4">
+			<div class="capabilities__aside">
+				<div class="brochure__content">
+					<div class="services__paragraph paragraph-wrapper neutral-500 tracking-tight pe-lg-4">
+						<p>
+							You can catch all the details of our servcies by downloading our service brochure
+							below.
+						</p>
+					</div>
+					<a
+						href="https://drive.google.com/uc?export=download&id=1x1kVPoeZaI9VFPjU6xvle9SePYs8-nWH"
+						class="btn--black services__button mb-4 mb-lg-5"
+						target="_blank"
+					>
+						<span class="btn__wrapper">
+							<span class="btn__text">Download Brochure</span>
+							<span class="btn__icon">
+								<svg
+									width="13"
+									height="13"
+									viewBox="0 0 13 13"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M1 10.2915V8.125C1 7.77982 1.27982 7.5 1.625 7.5C1.97018 7.5 2.25 7.77982 2.25 8.125V10.2915C2.25 10.4131 2.29832 10.5298 2.38428 10.6157C2.47023 10.7017 2.58694 10.75 2.7085 10.75H10.2915C10.4131 10.75 10.5298 10.7017 10.6157 10.6157C10.7017 10.5298 10.75 10.4131 10.75 10.2915V8.125C10.75 7.77982 11.0298 7.5 11.375 7.5C11.7202 7.5 12 7.77982 12 8.125V10.2915C12 10.7446 11.8199 11.1791 11.4995 11.4995C11.1791 11.8199 10.7446 12 10.2915 12H2.7085C2.25542 12 1.82086 11.8199 1.50049 11.4995C1.18011 11.1791 1 10.7446 1 10.2915ZM5.875 1.625C5.875 1.27982 6.15482 1 6.5 1C6.84518 1 7.125 1.27982 7.125 1.625V6.61621L8.7666 4.97461C9.01069 4.73069 9.40637 4.73059 9.65039 4.97461C9.89441 5.21863 9.89431 5.61431 9.65039 5.8584L6.94189 8.56689C6.69782 8.81097 6.30218 8.81097 6.05811 8.56689L3.34961 5.8584C3.10569 5.61431 3.10559 5.21863 3.34961 4.97461C3.59363 4.73059 3.98931 4.73069 4.2334 4.97461L5.875 6.61621V1.625Z"
+										fill="currentColor"
+									/>
+								</svg>
+							</span>
+						</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section
+	class="about__main fl-row jc-center al-center pt-7 pt-md-10 pb-3 pt-xl-12"
+	data-section="dark"
+>
 	<h2 class="heading-xl text-center approach__text">
 		<div>Scalable By Design</div>
 		<div>Secure by Default</div>
 		<div>Maintained with Discipline</div>
 	</h2>
 </section>
-<section class="about__operating py-5 py-md-8" data-section="dark">
+
+<section class="about__operating py-5 py-md-8 pt-xl-12 pb-xl-2" data-section="dark">
 	<h2
 		class="text-right bold-15 uppercase font-mono neutral-400 about-sub-heading mb-4 mb-md-6 about__operating-sub-title"
 	>
@@ -685,6 +1081,7 @@
 		</div>
 	</div>
 </section>
+
 <section class="about__drive pb-8 py-lg-12" data-section="dark">
 	<div class="grid-row">
 		<div class="col-12 col-md-10 col-start-lg-5 col-end-lg-10">
