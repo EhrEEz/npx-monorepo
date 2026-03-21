@@ -6,6 +6,11 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { SplitText } from 'gsap/SplitText';
 	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+	import SEO from '$lib/components/SEO/SEO.svelte';
+
+	const { data } = $props();
+	const page_seo = $derived(data.page_seo);
+
 	gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
 	$effect(() => {
@@ -432,13 +437,13 @@
 			ease: 'ease.out',
 			stagger: 0.2
 		});
-		gsap.utils.toArray('.about__drive-paragraph').forEach((em) => {
-			gsap.from(em, {
+		gsap.utils.toArray('.about__drive-paragraph').forEach((em: unknown) => {
+			gsap.from(em as GSAPTweenTarget, {
 				opacity: 0,
 				duration: 1,
 				ease: 'ease',
 				scrollTrigger: {
-					trigger: em,
+					trigger: em as HTMLElement,
 					start: 'top 70%',
 					toggleActions: 'play none none none'
 				}
@@ -480,13 +485,15 @@
 	});
 </script>
 
+<SEO pageSettings={page_seo} />
+
 <section
-	class="about__header pt-lg-12 full-width content-grid pb-lg-3 mt-8 mt-md-0"
+	class="about__header pt-md-12 full-width content-grid pb-md- pb-lg-3 mt-8 mt-md-0"
 	data-section="dark"
 >
-	<div class="grid-row">
+	<div class="grid-row jc-md-center">
 		<div
-			class="order-md-1 col-12 col-start-lg-9 col-end-lg-13 col-start-xl-10 about__heading mb-5 mb-md-0"
+			class="order-md-1 col-12 col-md-5 col-start-lg-9 col-end-lg-13 col-start-xl-10 about__heading mb-5 mb-md-0"
 		>
 			<h2
 				class="bold-15 uppercase text-right font-mono neutral-400 about-sub-heading about__intro-sub-heading"
@@ -494,7 +501,7 @@
 				Who we are
 			</h2>
 		</div>
-		<div class="col-12 col-lg-5 col-xl-4">
+		<div class="col-12 col-md-7 col-lg-5 col-xl-4">
 			<div class="about__logo mb-2 neutral-100">
 				<svg width="130" viewBox="0 0 69 19" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -536,14 +543,14 @@
 		</div>
 	</div>
 </section>
-<section class="about__introduction py-4 pt-lg-9" data-section="dark">
+<section class="about__introduction py-4 pt-md-8 pt-lg-9" data-section="dark">
 	<div class="grid-row about__introduction-grid">
-		<div class="col-12 col-lg-5 col-xl-6">
-			<div class="diamonds__wrapper mb-4">
+		<div class="col-12 col-start-md-5 col-end-md-13 col-lg-5 col-xl-6">
+			<div class="diamonds__wrapper mb-4 mb-md-8">
 				<Diamonds />
 			</div>
 		</div>
-		<div class="col-12 col-lg-7 col-xl-6 about-title-wrapper">
+		<div class="col-12 col-md-9 col-lg-7 col-xl-6 about-title-wrapper">
 			<p class="about-title about-24 about__introduction-title">
 				Headquartered in Dubai and operating a dedicated engineering hub in Nepal, we exist at the
 				intersection of global ambition and technical excellence, serving enterprises, scale-ups,
@@ -552,20 +559,22 @@
 		</div>
 	</div>
 </section>
-<section class="about__why py-6 py-lg-12" data-section="dark">
+<section class="about__why py-6 py-md-8 pt-md-4 py-2xl-12" data-section="dark">
 	<h2
-		class="text-right bold-15 uppercase font-mono neutral-400 about-sub-heading mb-4 mb-lg-6 about__why-sub-heading"
+		class="text-right bold-15 uppercase font-mono neutral-400 about-sub-heading mb-4 mb-md-6 about__why-sub-heading"
 	>
 		Why we exist
 	</h2>
-	<div class="grid-row h-lg-full">
-		<div class="col-12 col-ms-10 col-md-9 col-start-lg-2 col-end-lg-5">
+	<div class="grid-row h-lg-full row-gap-md-2">
+		<div class="col-12 col-ms-10 col-start-md-4 col-end-md-13 col-lg-5 col-start-xl-2 col-end-xl-6">
 			<p class="about-title about-24 about__why-heading mb-3 mb-md-0">
 				We built Nepaxis to be the antidote to overpromised and underdelivered technology services
 				across the globe.
 			</p>
 		</div>
-		<div class="col-12 col-ms-11 col-md-12 col-start-lg-7 col-end-lg-11">
+		<div
+			class="col-12 col-ms-11 col-start-md-4 col-end-md-11 col-start-lg-7 col-end-lg-13 col-start-xl-7 col-end-xl-11"
+		>
 			<p class="regular-15 neutral-300 about__why-paragraph">
 				Our model is deliberate: a commercially sharp presence in Dubai - one of the world's most
 				dynamic business capitals, backed by a high-caliber engineering team rooted in Nepal's
@@ -574,21 +583,23 @@
 		</div>
 	</div>
 </section>
-<section class="about__nepal full-width content-grid" data-section="light">
-	<div class="full-width bg-neutral-100 py-7 py-lg-12">
+<section class="about__nepal full-width content-grid">
+	<div class="full-width bg-neutral-100 py-7 py-lg-12" data-section="light">
 		<div class="content-grid">
-			<div class="grid-row">
+			<div class="grid-row row-gap-md-7">
 				<div class="col-12 col-start-lg-8 col-end-lg-13 col-end-xl-12 order-lg-1">
 					<h2
 						class="text-right bold-15 uppercase font-mono neutral-300 about-sub-heading mb-6 about__nepal-sub-heading"
 					>
 						The Nepali Engineering Advantage
 					</h2>
-					<div class="mb-6 mb-md-0">
+					<div class="mb-6 mb-md-0 px-md-7 px-lg-0">
 						<Nepal />
 					</div>
 				</div>
-				<div class="col-start-lg-2 col-end-lg-6 col-12 col-ms-10 col-md-9">
+				<div
+					class="col-12 col-ms-10 col-start-md-2 col-end-md-10 col-start-lg-1 col-start-2xl-2 col-end-lg-6"
+				>
 					<p class="about-title about-24 mb-3 neutral-1000 about__nepal-title">
 						Nepal's technology talent pool is one of Asia's best-kept secrets, and we intend to keep
 						leveraging it.
@@ -602,13 +613,18 @@
 			</div>
 		</div>
 	</div>
-	<div class="grid-row py-7 py-lg-12 about__nepal-section2">
-		<div class="col-12 col-lg-5 order-1 order-md-0">
-			<div class="fl-row jc-center">
+	<div
+		class="grid-row ac-center row-gap-md-10 py-7 py-md-9 py-lg-12 about__nepal-section2"
+		data-section="dark"
+	>
+		<div class="col-12 col-md-8 col-lg-5 order-1 order-md-0">
+			<div class="fl-row jc-center jc-lg-start jc-2xl-center">
 				<Cubes />
 			</div>
 		</div>
-		<div class="col-12 col-start-lg-7 col-end-lg-13 order-0 order-md-1">
+		<div
+			class="col-12 col-start-md-5 col-end-md-13 col-start-lg-7 col-end-lg-13 order-0 order-md-1"
+		>
 			<p class="about-title medium-3 about__nepal-section2-title mb-4 mb-md-0">
 				When you work with Nepaxis, you get engineers who own their work, the real builders.
 			</p>
@@ -621,8 +637,8 @@
 	>
 		What we build
 	</h2>
-	<div class="grid-row">
-		<div class="col-12 col-start-lg-2 col-end-lg-5">
+	<div class="grid-row gap-md-4">
+		<div class="col-12 col-md-8 col-start-lg-2 col-end-lg-7 col-end-2xl-5">
 			<p class="about-title about-24 mb-3 about__build-title">
 				We operate across the full digital stack across 15+ countries
 			</p>
@@ -640,28 +656,28 @@
 		</div>
 	</div>
 </section>
-<section class="about__main fl-row jc-center al-center py-82" data-section="dark">
+<section class="about__main fl-row jc-center al-center pt-7 pt-md-10 pb-3" data-section="dark">
 	<h2 class="heading-xl text-center approach__text">
 		<div>Scalable By Design</div>
 		<div>Secure by Default</div>
 		<div>Maintained with Discipline</div>
 	</h2>
 </section>
-<section class="about__operating py-5" data-section="dark">
+<section class="about__operating py-5 py-md-8" data-section="dark">
 	<h2
 		class="text-right bold-15 uppercase font-mono neutral-400 about-sub-heading mb-4 mb-md-6 about__operating-sub-title"
 	>
 		Operating Model
 	</h2>
-	<div class="grid-row">
-		<div class="col-12 col-start-lg-2 col-end-lg-6 mb-4 mb-md-0 model__item">
+	<div class="grid-row gap-4 gap-md-2 gap-lg-0">
+		<div class="col-12 col-md-6 col-start-lg-2 col-end-lg-6 model__item">
 			<h3 class="regular-15 tracking-ultra-wide uppercase neutral-300 mb-3">Dubai</h3>
 			<p class="regular-24 neutral-200">
 				Dubai gives us proximity to clients across the GCC, Europe, and beyond - the trust, the
 				timezone, and the commercial infrastructure to engage at an enterprise level.
 			</p>
 		</div>
-		<div class="col-12 col-start-lg-7 col-end-lg-11 model__item">
+		<div class="col-12 col-md-6 col-start-lg-7 col-end-lg-11 model__item">
 			<h3 class="regular-15 tracking-ultra-wide uppercase neutral-300 mb-3">Nepal</h3>
 			<p class="regular-24 neutral-200">
 				Nepal gives us the engineering depth to deliver without compromise.
@@ -671,14 +687,14 @@
 </section>
 <section class="about__drive pb-8 py-lg-12" data-section="dark">
 	<div class="grid-row">
-		<div class="col-12 col-start-lg-5 col-end-lg-10">
+		<div class="col-12 col-md-10 col-start-lg-5 col-end-lg-10">
 			<p class="regular-15 neutral-300 about__drive-paragraph">
 				We are not interested in building digital products that look good in a pitch deck and fall
 				apart in production. Every system we architect, every team we assemble, and every product we
 				build is built with one question in mind:
 			</p>
 		</div>
-		<div class="col-12 col-start-lg-3 col-end-lg-8">
+		<div class="col-12 col-md-10 col-start-lg-3 col-end-lg-8">
 			<blockquote class="about-title medium-3 my-3 about__drive-blockquote">
 				Will this still be an asset for our client in five years?
 			</blockquote>
@@ -764,6 +780,7 @@
 		font-weight: 400;
 		line-height: 122%;
 		text-transform: uppercase;
+		text-wrap: balance;
 
 		&-wrapper {
 			display: grid;

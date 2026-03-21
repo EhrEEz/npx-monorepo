@@ -8,7 +8,7 @@
 	import config from '$lib/config.js';
 	import Tag from '$lib/components/Tag/Tag.svelte';
 	import SEO from '$lib/components/SEO/SEO.svelte';
-	import type { Category } from '$backend/src/payload-types.js';
+	import type { Article, Category } from '$backend/src/payload-types.js';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	const SORT_OPTIONS: SortOption[] = [
@@ -22,10 +22,10 @@
 
 	// Internal State Management
 	let isFetching = $state(false);
-	let articles = $derived(data.articles.docs);
+	let articles: Article[] = $derived(data.articles.docs as Article[]);
 	let totalArticles = $derived(data.articles.totalDocs);
 	let totalPages = $derived(data.articles.totalPages);
-	let currentPage = $derived(parseInt(data.articles.page));
+	let currentPage = $derived(parseInt(`${data.articles.page}`));
 	let hasNextPage = $derived(data.articles.hasNextPage);
 	let hasPrevPage = $derived(data.articles.hasPrevPage);
 
@@ -122,7 +122,7 @@
 	>
 		<select class="select--category" bind:value={selectedCategory}>
 			<option value="all">All Categories</option>
-			{#each categories as category}
+			{#each categories as category (category.id)}
 				<option value={category.slug}>{category.name}</option>
 			{/each}
 		</select>

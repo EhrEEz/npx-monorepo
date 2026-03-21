@@ -14,7 +14,7 @@
 		index = 0
 	}: { article: Article; tag: 'li' | 'article'; index?: number } = $props();
 
-	const article = $derived(_article);
+	const article: Article = $derived(_article);
 
 	const tags = $derived(article.tags);
 	const cover_image = $derived(article.cover_image);
@@ -98,7 +98,7 @@
 				{#if tags && tags.length > 0}
 					<div>
 						<ul class="article-card__category strip-style fl-row gap-1">
-							{#each tags as tag}
+							{#each tags as tag (tag.id)}
 								<Tag variant="outline" color="light" size="small">{tag.tag}</Tag>
 							{/each}
 						</ul>
@@ -139,7 +139,7 @@
 				</div>
 				<div>
 					<ul class="article-card__category strip-style fl-row gap-1">
-						{#each article.tags as tag}
+						{#each article.tags as tag (tag.id)}
 							<Tag variant="outline" color="light" size="small">{tag}</Tag>
 						{/each}
 					</ul>

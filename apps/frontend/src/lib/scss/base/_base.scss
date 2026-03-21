@@ -37,12 +37,18 @@ body {
 	font-style: normal;
 	letter-spacing: -0.03em;
 	line-height: var(--set-default-line-height);
+	text-wrap: balance;
+
 	.light {
 		font-weight: 600;
 	}
 	.semi {
 		font-weight: 700;
 	}
+}
+
+[class*='heading-'] {
+	text-wrap: balance;
 }
 
 .fancy {
@@ -103,6 +109,7 @@ a {
 
 p {
 	line-height: var(--set-default-paragraph-line-height);
+	text-wrap: pretty;
 }
 
 .normal {

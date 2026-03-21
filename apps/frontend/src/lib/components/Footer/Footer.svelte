@@ -247,7 +247,9 @@
 		</div>
 	</div>
 	<div class="legal regular-12 font-mono uppercase tracking-wide text-center neutral-400 py-lg-2">
-		{siteInfo.name} © <span id="currentYear">{CURRENT_YEAR}</span>
+		{siteInfo.name} © <span id="currentYear">{CURRENT_YEAR}</span> |
+		<a class="link light" href={resolve('/privacy-policy')}>Privacy Policy</a>
+		& <a class="link light" href={resolve('/terms-of-service')}>Terms of Service</a>
 	</div>
 </footer>
 

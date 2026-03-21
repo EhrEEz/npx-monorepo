@@ -15,6 +15,8 @@ import { Categories } from './collections/BlogCategory'
 import { Articles } from './collections/BlogArticle'
 import { SEOPages } from './collections/Pages'
 import { SiteSettings } from './global/SiteSetttings'
+import { TermsOfService } from './global/TermsOfService'
+import { PrivacyPolicy } from './global/PrivacyPolicy'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,7 +34,7 @@ export default buildConfig({
 
   ...(process.env.ENV_MODE === 'prod' && { cors: [process.env.PUBLIC_CLIENT_URL ?? ''] }),
   collections: [Users, Media, Categories, Articles, SEOPages],
-  globals: [SiteSettings],
+  globals: [SiteSettings, PrivacyPolicy, TermsOfService],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures.filter((feature) => {
