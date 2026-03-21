@@ -101,15 +101,11 @@
 					data analytics, system integrations and Marketing.
 				</p>
 			</div>
-			<Link
-				href="#contact-section"
-				scrollTo="#contact-section"
-				class="btn--primary order-2 order-md-2 hero__link"
-			>
+			<a href={resolve('/contact')} class="btn--primary order-2 order-md-2 hero__link">
 				<span class="btn__wrapper">
 					<span class="btn__text">Let's Talk</span>
 				</span>
-			</Link>
+			</a>
 		</div>
 	</div>
 	<div class="hero__base content-grid">

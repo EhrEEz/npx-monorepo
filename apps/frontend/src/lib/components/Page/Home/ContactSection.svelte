@@ -359,158 +359,159 @@
 	});
 </script>
 
-<section
-	class="contact__section pt-8 pt-md-9 pt-xl-10 pb-4 pb-md-8 py-2xl-10 relative"
-	id="contact-section"
-	data-section="dark"
-	aria-labelledby="#contact-title"
-	bind:this={contact_section}
->
-	<div class="content__wrapper relative z-1">
-		<h2 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h2>
-		<form id="contactForm" class="contact__form mb-lg-9 mb-6 mb-lg-8" onsubmit={submitForm}>
-			<div class="grid-lg-row gap-lg-3 gap-xl-0">
-				<div class="fl-col row-gap-3 col-gap-2 col-lg-10 col-xl-8 col-2xl-6 mb-3 mb-lg-0">
-					<label for="fullName" class="form__group" class:error={fullName.error}>
-						<div class="form__line">
-							<div class="form__description regular-25 tracking-4tight neutral-300">
-								My Name is &nbsp;
+<div>
+	<section
+		class="contact__section pt-8 pt-md-9 pt-xl-10 pb-4 pb-md-8 py-2xl-10 relative"
+		id="contact-section"
+		data-section="dark"
+		aria-labelledby="#contact-title"
+		bind:this={contact_section}
+	>
+		<div class="content__wrapper relative z-1">
+			<h2 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h2>
+			<form id="contactForm" class="contact__form mb-lg-9 mb-6 mb-lg-8" onsubmit={submitForm}>
+				<div class="grid-lg-row gap-lg-3 gap-xl-0">
+					<div class="fl-col row-gap-3 col-gap-2 col-lg-10 col-xl-8 col-2xl-6 mb-3 mb-lg-0">
+						<label for="fullName" class="form__group" class:error={fullName.error}>
+							<div class="form__line">
+								<div class="form__description regular-25 tracking-4tight neutral-300">
+									My Name is &nbsp;
+								</div>
+								<div class="form__input form--required">
+									<input
+										type="text"
+										class="form__control"
+										name="fullName"
+										oninput={() => {
+											fullName.validate();
+										}}
+										bind:value={fullName.value}
+										id="fullName"
+										placeholder="Full Name"
+										aria-required="true"
+									/>
+									<span class="error-message">
+										{#if fullName.changed && fullName.error}
+											{fullName.errorMessage}
+										{/if}
+									</span>
+								</div>
 							</div>
-							<div class="form__input form--required">
-								<input
-									type="text"
-									class="form__control"
-									name="fullName"
-									oninput={() => {
-										fullName.validate();
-									}}
-									bind:value={fullName.value}
-									id="fullName"
-									placeholder="Full Name"
-									aria-required="true"
-								/>
-								<span class="error-message">
-									{#if fullName.changed && fullName.error}
-										{fullName.errorMessage}
-									{/if}
-								</span>
+						</label>
+						<label for="companyName" class="form__group" class:error={companyName.error}>
+							<div class="form__line">
+								<div class="form__description regular-25 tracking-4tight neutral-300">
+									representing &nbsp;
+								</div>
+								<div class="form__input">
+									<input
+										type="text"
+										class="form__control"
+										name="companyName"
+										bind:value={companyName.value}
+										oninput={() => {
+											companyName.validate();
+										}}
+										id="companyName"
+										placeholder="Company Name"
+									/>
+									<span class="error-message">
+										{#if companyName.changed && companyName.error}
+											{companyName.errorMessage}
+										{/if}
+									</span>
+								</div>
 							</div>
-						</div>
-					</label>
-					<label for="companyName" class="form__group" class:error={companyName.error}>
-						<div class="form__line">
-							<div class="form__description regular-25 tracking-4tight neutral-300">
-								representing &nbsp;
+						</label>
+						<label for="email" class="form__group" class:error={email.error}>
+							<div class="form__line">
+								<div class="form__description regular-25 tracking-4tight neutral-300">
+									You can contact me at &nbsp;
+								</div>
+								<div class="form__input form--required">
+									<input
+										type="email"
+										class="form__control"
+										bind:value={email.value}
+										oninput={() => {
+											email.validate();
+										}}
+										name="email"
+										id="email"
+										placeholder="Email Address"
+										aria-required="true"
+									/>
+									<span class="error-message">
+										{#if email.changed && email.error}
+											{email.errorMessage}
+										{/if}
+									</span>
+								</div>
 							</div>
-							<div class="form__input">
-								<input
-									type="text"
-									class="form__control"
-									name="companyName"
-									bind:value={companyName.value}
-									oninput={() => {
-										companyName.validate();
-									}}
-									id="companyName"
-									placeholder="Company Name"
-								/>
-								<span class="error-message">
-									{#if companyName.changed && companyName.error}
-										{companyName.errorMessage}
-									{/if}
-								</span>
+						</label>
+						<label for="phoneNumber" class="form__group" class:error={phoneNumber.error}>
+							<div class="form__line">
+								<div class="form__description regular-25 tracking-4tight neutral-300">
+									or call us on &nbsp;&nbsp;
+								</div>
+								<div class="form__input">
+									<input
+										type="tel"
+										class="form__control"
+										name="phoneNumber"
+										id="phoneNumber"
+										bind:value={phoneNumber.value}
+										oninput={() => {
+											phoneNumber.validate();
+										}}
+										placeholder="Phone Number"
+									/>
+									<span class="error-message">
+										{#if phoneNumber.changed && phoneNumber.error}
+											{phoneNumber.errorMessage}
+										{/if}
+									</span>
+								</div>
 							</div>
-						</div>
-					</label>
-					<label for="email" class="form__group" class:error={email.error}>
-						<div class="form__line">
-							<div class="form__description regular-25 tracking-4tight neutral-300">
-								You can contact me at &nbsp;
+						</label>
+						<label for="message" class="form__group" class:error={message.error}>
+							<div class="form__line">
+								<div class="form__description regular-25 tracking-4tight neutral-300">
+									And I want to say:&nbsp;&nbsp;
+								</div>
+								<div class="form__input">
+									<textarea
+										name="message"
+										id="message"
+										bind:value={message.value}
+										class="form__control"
+										oninput={() => {
+											message.validate();
+										}}
+										placeholder="Message"
+										rows="4"
+									></textarea>
+									<span class="error-message">
+										{#if message.changed && message.error}
+											{message.errorMessage}
+										{/if}
+									</span>
+								</div>
 							</div>
-							<div class="form__input form--required">
-								<input
-									type="email"
-									class="form__control"
-									bind:value={email.value}
-									oninput={() => {
-										email.validate();
-									}}
-									name="email"
-									id="email"
-									placeholder="Email Address"
-									aria-required="true"
-								/>
-								<span class="error-message">
-									{#if email.changed && email.error}
-										{email.errorMessage}
-									{/if}
-								</span>
-							</div>
-						</div>
-					</label>
-					<label for="phoneNumber" class="form__group" class:error={phoneNumber.error}>
-						<div class="form__line">
-							<div class="form__description regular-25 tracking-4tight neutral-300">
-								or call us on &nbsp;&nbsp;
-							</div>
-							<div class="form__input">
-								<input
-									type="tel"
-									class="form__control"
-									name="phoneNumber"
-									id="phoneNumber"
-									bind:value={phoneNumber.value}
-									oninput={() => {
-										phoneNumber.validate();
-									}}
-									placeholder="Phone Number"
-								/>
-								<span class="error-message">
-									{#if phoneNumber.changed && phoneNumber.error}
-										{phoneNumber.errorMessage}
-									{/if}
-								</span>
-							</div>
-						</div>
-					</label>
-					<label for="message" class="form__group" class:error={message.error}>
-						<div class="form__line">
-							<div class="form__description regular-25 tracking-4tight neutral-300">
-								And I want to say:&nbsp;&nbsp;
-							</div>
-							<div class="form__input">
-								<textarea
-									name="message"
-									id="message"
-									bind:value={message.value}
-									class="form__control"
-									oninput={() => {
-										message.validate();
-									}}
-									placeholder="Message"
-									rows="4"
-								></textarea>
-								<span class="error-message">
-									{#if message.changed && message.error}
-										{message.errorMessage}
-									{/if}
-								</span>
-							</div>
-						</div>
-					</label>
+						</label>
+					</div>
+					<div
+						class="big__button-wrapper fl-col jc-end w-100 col-lg-4 col-start-xl-9 col-start-2xl-8 col-end-xl-13"
+					>
+						<button class="btn--primary w-100 btn--full" type="submit" class:disabled={!validity}>
+							<span class="btn__wrapper"><span class="btn__text">Send Message</span></span>
+						</button>
+					</div>
 				</div>
-				<div
-					class="big__button-wrapper fl-col jc-end w-100 col-lg-4 col-start-xl-9 col-start-2xl-8 col-end-xl-13"
-				>
-					<button class="btn--primary w-100 btn--full" type="submit" class:disabled={!validity}>
-						<span class="btn__wrapper"><span class="btn__text">Send Message</span></span>
-					</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</section>
-
+			</form>
+		</div>
+	</section>
+</div>
 {#if showModal}
 	<Modal bind:showModal>
 		{#snippet header()}
