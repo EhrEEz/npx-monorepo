@@ -526,7 +526,7 @@
 							below.
 						</p>
 					</div>
-					<a
+					<!-- <a
 						href="https://drive.google.com/uc?export=download&id=1x1kVPoeZaI9VFPjU6xvle9SePYs8-nWH"
 						class="btn--black services__button mb-4 mb-lg-5"
 						target="_blank"
@@ -548,7 +548,7 @@
 								</svg>
 							</span>
 						</span>
-					</a>
+					</a> -->
 				</div>
 				<Cube />
 			</div>
