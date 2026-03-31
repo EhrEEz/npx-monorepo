@@ -217,8 +217,8 @@
 					<tr>
 						<td class="single-column-description">
 							<p class="neutral-500 regular-14">
-								Our engineering team builds high-performance digital products using modern
-								frameworks, scalable architecture, and efficient development practices.
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
 							</p>
 						</td>
 					</tr>
