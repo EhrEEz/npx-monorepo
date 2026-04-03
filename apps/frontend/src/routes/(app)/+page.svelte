@@ -391,8 +391,8 @@
 					<tr>
 						<td rowspan="4">
 							<p class="neutral-500 regular-14">
-								Our engineering team builds high-performance digital products using modern
-								frameworks, scalable architecture, and efficient development practices.
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
 							</p>
 						</td>
 						<td class="floating__image-wrapper" data-img="/images/service/web-development.png">
