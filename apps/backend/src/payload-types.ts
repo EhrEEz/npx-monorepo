@@ -274,6 +274,7 @@ export interface Article {
    * Leave as-is to publish immediately, or set a future date to schedule.
    */
   publishedAt?: string | null;
+  publishedAt_tz?: ('Asia/Kathmandu' | 'Asia/Dubai') | null;
   meta: {
     title?: string | null;
     description?: string | null;
@@ -528,6 +529,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   text?: T;
   cover_image?: T;
   publishedAt?: T;
+  publishedAt_tz?: T;
   meta?:
     | T
     | {

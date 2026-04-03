@@ -18,9 +18,14 @@ const readAccess: Access = ({ req: { user } }) => {
         },
       },
       {
-        publishedAt: {
-          less_than_equal: new Date().toISOString(),
-        },
+        or: [
+          {
+            publishedAt: {
+              less_than_equal: new Date().toISOString(),
+            },
+          },
+          { publishedAt: { exists: false } }, // treat null as "publish immediately"
+        ],
       },
     ],
   }
@@ -91,8 +96,16 @@ export const Articles: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
-      label: 'Publish At',
+      label: 'Schedule Publish',
+      timezone: {
+        defaultTimezone: 'Asia/Kathmandu',
+        supportedTimezones: [
+          { label: 'Nepal (NPT +5:45)', value: 'Asia/Kathmandu' },
+          { label: 'Dubai (GST +4:00)', value: 'Asia/Dubai' },
+        ],
+      },
       defaultValue: () => new Date().toISOString(),
+
       admin: {
         description: 'Leave as-is to publish immediately, or set a future date to schedule.',
         date: {
