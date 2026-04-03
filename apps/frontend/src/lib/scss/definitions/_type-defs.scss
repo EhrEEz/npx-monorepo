@@ -144,6 +144,18 @@ $types: (
 		)
 	),
 
+	heading-ar1: (
+		weight: 400,
+		breakpoints: (
+			0px: 2rem,
+			575px: 2.75rem,
+			768px: 3rem,
+			992px: 3.25rem,
+			1200px: 4rem,
+			1500px: 6rem // 1600px: 6rem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+		)
+	),
+
 	heading-1: (
 		weight: 400,
 		line-height: 78%,
@@ -171,9 +183,9 @@ $types: (
 		weight: 400,
 		line-height: 100%,
 		breakpoints: (
-			0px: 3rem,
-			575px: 3rem,
-			768px: 3rem,
+			0px: 2rem,
+			575px: 2.25rem,
+			768px: 2.5rem,
 			992px: 3rem,
 			1200px: 3rem,
 			1500px: 3rem // 1600px: 6rem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -192,13 +204,13 @@ $types: (
 	),
 	regular-48: (
 		weight: 400,
-		line-height: 100%,
+		line-height: 120%,
 		breakpoints: (
-			0px: 3rem,
-			575px: 3rem,
-			768px: 3rem,
-			992px: 3rem,
-			1200px: 3rem,
+			0px: 1.5rem,
+			575px: 1.5rem,
+			768px: 1.75rem,
+			992px: 2rem,
+			1200px: 2.5rem,
 			1500px: 3rem // 1600px:
 		)
 	),

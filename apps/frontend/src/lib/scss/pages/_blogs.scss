@@ -44,11 +44,28 @@
 		em,
 		i,
 		b {
-			color: var(--clr-neutral-100);
+			color: var(--clr-neutral-200);
 		}
 	}
 	&__image {
 		object-fit: cover;
+	}
+	&__title {
+		word-wrap: break-word;
+		-webkit-hyphens: auto;
+		-moz-hyphens: auto;
+		-ms-hyphens: auto;
+		hyphens: auto;
+	}
+	&__quote {
+		position: relative;
+		color: var(--clr-neutral-300);
+		padding-block-start: 0.25em;
+
+		@include media-x(768px) {
+			background-color: var(--clr-neutral-600);
+			padding: 1em;
+		}
 	}
 }
 
@@ -66,10 +83,13 @@
 	}
 	&-element {
 		letter-spacing: 0.02em;
-		color: var(--clr-neutral-200);
+		color: var(--clr-neutral-300);
 	}
 	&-heading {
+		margin-block-start: 0.75em;
 		text-transform: unset;
+		letter-spacing: -0.03em;
+		color: var(--clr-neutral-200);
 	}
 	&-code {
 		background-color: var(--clr-neutral-600);
@@ -118,6 +138,10 @@
 	&-element {
 		&:is(p) {
 			line-height: 200%;
+
+			@include media-x(767px) {
+				line-height: 150%;
+			}
 		}
 	}
 
@@ -173,6 +197,8 @@
 				font-family: 'Space Mono', monospace;
 			}
 			margin-block: 0.35em;
+			color: var(--clr-neutral-300);
+			line-height: 200%;
 			&.checklist {
 				position: relative;
 				--_checkbox-width: 1rem;
@@ -219,6 +245,11 @@
 				& > ol {
 					list-style-type: lower-roman;
 				}
+			}
+
+			@include media-x(767px) {
+				line-height: 150%;
+				list-style-position: inside;
 			}
 		}
 	}

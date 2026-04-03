@@ -147,7 +147,7 @@
 				<Tag color="white" size="small">{mainData.category.name}</Tag>
 			{/if}
 		</div>
-		<h1 class="heading-1 mb-4">{mainData.title}</h1>
+		<h1 class="heading-ar1 mb-4 article__title">{mainData.title}</h1>
 		{#if cover_image && typeof cover_image !== 'number'}
 			<ResponsiveImage
 				image={cover_image}
@@ -156,13 +156,13 @@
 			/>
 		{/if}
 		{#if mainData.tags && mainData.tags.length > 0}
-			<div class="fl-row gap-1 my-3">
+			<div class="fl-row gap-1 my-3 fl-wrap">
 				{#each mainData.tags as tag, index (index)}
 					<Tag variant="outline" color="light" size="small" curvature="large">{tag.tag}</Tag>
 				{/each}
 			</div>
 		{/if}
-		<div class="grid-lg-row jc-between gap-6 ai-center mt-7 mb-7">
+		<div class="grid-lg-row jc-between gap-6 ai-center my-4 my-lg-7">
 			<div class="col-4">
 				<Share
 					title={mainData.title}
@@ -171,7 +171,7 @@
 				/>
 			</div>
 			<div class="col-8 mt-4 mt-lg-0">
-				<p class="regular-48">{mainData.short_quote}</p>
+				<p class="regular-48 article__quote">{mainData.short_quote}</p>
 			</div>
 		</div>
 		<div class="article-content">

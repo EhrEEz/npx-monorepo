@@ -72,8 +72,8 @@
 
 	function getHeadingClass(depth: number): string {
 		return depth === 1
-			? 'heading-3 content-element'
-			: `content-element heading-${depth === 6 ? 6 : depth + 1}`;
+			? 'heading-3 content-element content-heading'
+			: `content-element content-heading heading-${depth === 6 ? 6 : depth === 5 ? 6 : depth + 2}`;
 	}
 
 	function getImageSrc(src: string): string {

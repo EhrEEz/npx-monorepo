@@ -49,7 +49,7 @@
 	{:else}
 		<div class="uppercase text-lg mb-2 font-mono">Share</div>
 	{/if}
-	<div class="left-section fl-row gap-2 items-center justify-between">
+	<div class="left-section fl-row fl-wrap gap-2 items-center justify-between">
 		{#if addresses.find((addr) => addr === 'pinterest')}
 			<button
 				onclick={() => {
