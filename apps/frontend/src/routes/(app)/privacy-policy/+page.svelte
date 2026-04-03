@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Tag from '$lib/components/Tag/Tag.svelte';
+	import '$lib/scss/pages/_blogs.scss';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import moment from 'moment';
@@ -25,8 +26,8 @@
 	}
 </script>
 
-<section class="article__section full-width content-grid pt-7 pb-4 py-md-6 py-lg-9">
-	<SEO pageSettings={page_seo} />
+<SEO pageSettings={page_seo} />
+<section class="pt-7 pb-4 py-md-6 py-lg-9">
 	<article>
 		<h1 class="heading-1 mb-4">Privacy Policy</h1>
 		<div class="fl-row al-center gap-1 mb-3">

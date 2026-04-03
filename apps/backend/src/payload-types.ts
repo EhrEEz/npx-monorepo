@@ -59,7 +59,8 @@ export type SupportedTimezones =
   | 'Pacific/Guam'
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+  | 'Pacific/Fiji'
+  | 'Asia/Kathmandu';
 
 export interface Config {
   auth: {
@@ -269,6 +270,10 @@ export interface Article {
     [k: string]: unknown;
   };
   cover_image: number | Media;
+  /**
+   * Leave as-is to publish immediately, or set a future date to schedule.
+   */
+  publishedAt?: string | null;
   meta: {
     title?: string | null;
     description?: string | null;
@@ -522,6 +527,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   slug?: T;
   text?: T;
   cover_image?: T;
+  publishedAt?: T;
   meta?:
     | T
     | {

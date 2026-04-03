@@ -1,16 +1,41 @@
 import { lexicalEditor, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-lexical'
+import type { Access, Where } from 'payload'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
+
+const readAccess: Access = ({ req: { user } }) => {
+  if (!user) return false
+
+  const strategy = (user as any)._strategy
+
+  if (strategy === 'local-jwt') return true
+
+  const query: Where = {
+    and: [
+      {
+        _status: {
+          equals: 'published',
+        },
+      },
+      {
+        publishedAt: {
+          less_than_equal: new Date().toISOString(),
+        },
+      },
+    ],
+  }
+
+  return query
+}
 export const Articles: CollectionConfig = {
   slug: 'articles',
   admin: {
     useAsTitle: 'title',
     group: 'Content',
+    defaultColumns: ['title', '_status', 'publishedAt', 'updatedAt'],
   },
   access: {
-    read: ({ req: { user } }) => {
-      return Boolean(user)
-    },
+    read: readAccess,
   },
   versions: {
     drafts: {
@@ -62,6 +87,19 @@ export const Articles: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       required: true,
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      label: 'Publish At',
+      defaultValue: () => new Date().toISOString(),
+      admin: {
+        description: 'Leave as-is to publish immediately, or set a future date to schedule.',
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+        position: 'sidebar',
+      },
     },
   ],
 }

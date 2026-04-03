@@ -27,6 +27,13 @@ dotenvConfig({ path: path.resolve(dirname, '../../../.env') })
 export default buildConfig({
   admin: {
     user: Users.slug,
+    timezones: {
+      defaultTimezone: 'Asia/Kathmandu',
+      supportedTimezones: ({ defaultTimezones }) => [
+        ...defaultTimezones,
+        { label: 'Kathmandu (NPT +5:45)', value: 'Asia/Kathmandu' },
+      ],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
