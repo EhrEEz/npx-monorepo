@@ -2,7 +2,7 @@ import { lexicalEditor, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-l
 import type { Access, Where } from 'payload'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
-
+import { ValidationError } from 'payload'
 const readAccess: Access = ({ req: { user } }) => {
   if (!user) return false
 
@@ -77,6 +77,27 @@ export const Articles: CollectionConfig = {
       name: 'slug',
       useAsSlug: 'title',
       required: true,
+      overrides: (defaultField) => {
+        console.log(defaultField)
+        if ('fields' in defaultField && Array.isArray(defaultField.fields)) {
+          const slugText = defaultField.fields.find((f) => 'name' in f && f.name === 'slug')
+
+          if (slugText && 'type' in slugText && slugText.type === 'text') {
+            slugText.validate = (val: string | string[] | null | undefined) => {
+              if (typeof val !== 'string') {
+                return 'Slug is required'
+              }
+              const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+              if (!slugRegex.test(val)) {
+                return 'Invalid format. Use lowercase, numbers, and dashes only.'
+              }
+
+              return true
+            }
+          }
+        }
+        return defaultField
+      },
     }),
     {
       name: 'text',
