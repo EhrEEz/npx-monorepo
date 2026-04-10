@@ -76,6 +76,9 @@ a.link {
 }
 .font-mono {
 	font-family: $code-font-stack;
+	font-feature-settings:
+		'ss01' 1,
+		'ss02' 1;
 }
 .font-regular {
 	font-weight: 400;

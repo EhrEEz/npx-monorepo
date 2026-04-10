@@ -199,6 +199,7 @@
 	});
 </script>
 
+<!-- eslint-disable-next-line svelte/require-each-key -->
 {#each nodes as node}
 	{#if isTextNode(node)}
 		{@const formatted = formatText(node)}

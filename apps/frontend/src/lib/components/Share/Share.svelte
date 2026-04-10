@@ -34,6 +34,7 @@
 			document.execCommand('copy');
 			document.body.removeChild(textArea);
 			copySuccess = true;
+			console.log(err);
 			setTimeout(() => {
 				copySuccess = false;
 			}, 2000);
