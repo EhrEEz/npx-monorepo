@@ -5,7 +5,7 @@ import type { SeoPage } from '$backend/src/payload-types';
 export const load: PageServerLoad = async () => {
 	const PERMALINK = 'home';
 
-	const result = await payload.find({
+	const page_seo = await payload.find({
 		collection: 'seo-pages',
 		where: {
 			slug: {
@@ -16,6 +16,6 @@ export const load: PageServerLoad = async () => {
 	});
 
 	return {
-		page_seo: result.docs[0] as SeoPage
+		page_seo: (page_seo.docs.length > 0 ? page_seo.docs[0] : null) as SeoPage | null
 	};
 };

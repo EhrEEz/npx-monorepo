@@ -16,6 +16,6 @@ export const load: PageServerLoad = async () => {
 	});
 
 	return {
-		page_seo: page_seo.docs[0] as SeoPage
+		page_seo: (page_seo.docs.length > 0 ? page_seo.docs[0] : null) as SeoPage | null
 	};
 };

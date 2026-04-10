@@ -1,4 +1,5 @@
 import { payload } from '$lib/server/payload-sdk';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -11,7 +12,11 @@ export const load: PageServerLoad = async ({ params }) => {
 		},
 		pagination: true
 	});
-
+	if (data.totalDocs <= 0) {
+		error(404, {
+			message: 'Page not found'
+		});
+	}
 	const recommended_articles = await payload.find({
 		collection: 'articles',
 		select: {

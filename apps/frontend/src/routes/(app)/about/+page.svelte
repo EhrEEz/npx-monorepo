@@ -489,7 +489,6 @@
 </script>
 
 <SEO pageSettings={page_seo} />
-
 <section
 	class="about__header pt-md-12 full-width content-grid pb-md- pb-lg-3 mt-8 mt-md-0"
 	data-section="dark"

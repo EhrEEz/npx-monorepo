@@ -78,10 +78,16 @@ export const load: PageServerLoad = async ({ url }) => {
 		where: whereClause,
 		limit: config.blog.articlesPerPage,
 		page: page
+	}).catch((error) => {
+		console.error('Error fetching articles:', error);
+		return { docs: [], totalDocs: 0, hasNextPage: false, hasPrevPage: false, page: 1, totalPages: 0 };
 	});
 
 	const categories = await payload.find({
 		collection: 'categories'
+	}).catch((error) => {
+		console.error('Error fetching categories:', error);
+		return { docs: [], totalDocs: 0 };
 	});
 
 	const page_seo = await payload.find({
@@ -92,11 +98,14 @@ export const load: PageServerLoad = async ({ url }) => {
 			}
 		},
 		limit: 1
+	}).catch((error) => {
+		console.error('Error fetching SEO page:', error);
+		return { docs: [] };
 	});
 
 	return {
-		page_seo: page_seo.docs[0] as SeoPage,
-		categories: categories.docs,
+		page_seo: (page_seo.docs[0] || null) as SeoPage | null,
+		categories: categories.docs || [],
 		articles: result,
 		sorting_mode: sort,
 		query,

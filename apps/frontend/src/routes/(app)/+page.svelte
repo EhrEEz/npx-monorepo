@@ -34,7 +34,6 @@
 </script>
 
 <SEO pageSettings={page_seo} />
-
 <section
 	class="hero__section full-width content-grid"
 	style="--background: url(/images/hero-background.png)"

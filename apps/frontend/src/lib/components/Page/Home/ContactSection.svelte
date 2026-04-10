@@ -7,12 +7,10 @@
 	import { SplitText } from 'gsap/SplitText';
 	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 	import Modal from '$lib/components/Modal/Modal.svelte';
-	import { page } from '$app/state';
 
 	type Validation = string | true;
 	type ValidationFunction = (a: string) => Validation;
 	const ACCESS_KEY = `5e3a9806-0470-49b0-ab74-d7109400cdc6`;
-	const currentPage = $derived<string | null>(page.route.id);
 
 	gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger, SplitText);
 
@@ -246,10 +244,10 @@
 			contactPinTrigger = null;
 		}
 		let footer: HTMLElement | null = document.querySelector('.footer__section');
-		if (!footer || !browser || currentPage !== '/contact') {
+
+		if (!footer || !browser) {
 			return;
 		}
-		console.log(contact_section);
 		if (!contact_section) {
 			// Element doesn't exist, silently return
 			return;
@@ -329,7 +327,7 @@
 		if (browser) {
 			const timeout = setTimeout(() => {
 				initContactPinAnimation();
-			}, 150);
+			}, 200);
 
 			return () => {
 				clearTimeout(timeout);
@@ -345,7 +343,7 @@
 			requestAnimationFrame(() => {
 				setTimeout(() => {
 					initContactPinAnimation();
-				}, 150);
+				}, 200);
 			});
 		}
 	});
