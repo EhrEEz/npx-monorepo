@@ -8,7 +8,7 @@
 		[key: string]: any;
 	}
 
-	interface CarouselProps {
+	interface Props {
 		slides: CarouselSlide[];
 		autoplay?: boolean;
 		autoplayInterval?: number;
@@ -22,11 +22,6 @@
 		cardMode?: boolean;
 		cardVisibleCount?: number;
 		class?: string;
-		children?: import('svelte').Snippet<{
-			slide: CarouselSlide;
-			index: number;
-			isActive: boolean;
-		}>;
 	}
 
 	let {
@@ -42,25 +37,23 @@
 		autoscrollSpeed = 1,
 		cardMode = false,
 		cardVisibleCount = 3,
-		class: className = '',
-		children
-	}: CarouselProps = $props();
+		class: className = ''
+	}: Props = $props();
 
-	let container: HTMLElement | undefined = $state();
-	let track: HTMLElement | undefined = $state();
-	let slideElements: (HTMLElement | undefined)[] = $state([]);
-	let autoplayTimer: ReturnType<typeof setInterval> | null = $state(null);
-	let autoscrollTween: gsap.core.Tween | null = $state(null);
+	let container: HTMLElement;
+	let track: HTMLElement;
+	let slideElements: HTMLElement[] = [];
+	let autoplayTimer: any = null;
+	let autoscrollTween: gsap.core.Tween | null = null;
 	let currentIndex = $state(0);
 	let isTransitioning = $state(false);
 	let isPaused = $state(false);
-	let tl: gsap.core.Timeline | null = $state(null);
+	let tl: gsap.core.Timeline | null = null;
 
 	const totalSlides = $derived(slides.length);
 	const effectiveIndex = $derived(cardMode ? currentIndex % totalSlides : currentIndex);
 
 	function clampIndex(index: number): number {
-		if (totalSlides === 0) return 0;
 		if (cardMode && loop) {
 			return ((index % totalSlides) + totalSlides) % totalSlides;
 		}
@@ -72,13 +65,13 @@
 
 	function goToSlide(index: number, direction?: 'left' | 'right'): void {
 		if (isTransitioning || slides.length <= 1) return;
-		
+
 		const newIndex = clampIndex(index);
 		if (newIndex === currentIndex && !cardMode) return;
 
 		isTransitioning = true;
-		const moveDirection = direction ?? (newIndex > currentIndex ? 'left' : 'right');
-		
+		const moveDirection = direction || (newIndex > currentIndex ? 'left' : 'right');
+
 		if (cardMode) {
 			animateCardSlide(newIndex, moveDirection);
 		} else {
@@ -166,15 +159,14 @@
 		});
 
 		const visibleCount = Math.min(cardVisibleCount, totalSlides);
-		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
+		const slideWidth = slideElements[0]?.offsetWidth || 300;
 		const gap = 20;
 		const totalWidth = slideWidth + gap;
 
 		slideElements.forEach((slide, i) => {
-			if (!slide) return;
 			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
 			const distanceFromCurrent = getCardDistance(effectiveI, currentIndex);
-			
+
 			let xPosition = 0;
 			let scale = 1;
 			let opacity = 1;
@@ -215,7 +207,6 @@
 		});
 
 		slideElements.forEach((slide, i) => {
-			if (!slide) return;
 			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
 			const oldDistance = getCardDistance(effectiveI, currentIndex);
 			const newDistance = getCardDistance(effectiveI, newIndex);
@@ -294,12 +285,12 @@
 
 	function startAutoscroll(): void {
 		if (!autoscroll || cardMode) return;
-		
+
 		if (autoscrollTween) autoscrollTween.kill();
-		
-		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
+
+		const slideWidth = slideElements[0]?.offsetWidth || 300;
 		const duration = (slideWidth / 50) * (1 / autoscrollSpeed);
-		
+
 		autoscrollTween = gsap.to(track, {
 			x: `-${slideWidth * totalSlides}`,
 			duration: duration * totalSlides,
@@ -331,9 +322,9 @@
 	function initializeSlides(): void {
 		if (tl) tl.kill();
 		stopAutoscroll();
-		
+
 		gsap.set(track, { x: 0 });
-		
+
 		if (cardMode) {
 			initializeCardMode();
 		} else {
@@ -351,7 +342,6 @@
 
 	function initializeStandardMode(): void {
 		slideElements.forEach((slide, i) => {
-			if (!slide) return;
 			const isActive = i === currentIndex;
 			gsap.set(slide, {
 				x: isActive ? 0 : (i > currentIndex ? slide.offsetWidth : -slide.offsetWidth),
@@ -365,15 +355,14 @@
 
 	function initializeCardMode(): void {
 		const visibleCount = Math.min(cardVisibleCount, totalSlides);
-		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
+		const slideWidth = slideElements[0]?.offsetWidth || 300;
 		const gap = 20;
 		const totalWidth = slideWidth + gap;
 
 		slideElements.forEach((slide, i) => {
-			if (!slide) return;
 			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
 			const distance = getCardDistance(effectiveI, currentIndex);
-			
+
 			let xPosition = 0;
 			let scale = 1;
 			let opacity = 1;
@@ -399,10 +388,6 @@
 				filter: depthEffect && distance > 0 ? `blur(${Math.min(distance, 3)}px)` : 'blur(0px)'
 			});
 		});
-	}
-
-	function bindSlide(element: HTMLElement | undefined, index: number): void {
-		slideElements[index] = element;
 	}
 
 	onMount(() => {
@@ -443,7 +428,7 @@
 	});
 </script>
 
-<div 
+<div
 	bind:this={container}
 	class="carousel-container {className}"
 	class:card-mode={cardMode}
@@ -452,26 +437,26 @@
 	onmouseleave={handleMouseLeave}
 >
 	<div class="carousel-track-wrapper">
-		<div 
+		<div
 			bind:this={track}
 			class="carousel-track"
 			class:card-mode={cardMode}
 		>
 			{#each slides as slide, index (slide.id ?? index)}
 				<div
-					bind:this={(el) => bindSlide(el, index)}
+					bind:this={slideElements[index]}
 					class="carousel-slide"
 					class:active={index === effectiveIndex}
 					class:card-mode={cardMode}
 				>
-					{@render children?.({ slide, index, isActive: index === effectiveIndex })}
+					<slot name="slide" {slide} {index} {isActive: index === effectiveIndex} />
 				</div>
 			{/each}
 		</div>
 	</div>
 
 	{#if showNavigation && totalSlides > 1}
-		<button 
+		<button
 			class="nav-button nav-prev"
 			onclick={prev}
 			disabled={isTransitioning || (!loop && effectiveIndex === 0)}
@@ -484,7 +469,7 @@
 	{/if}
 
 	{#if showNavigation && totalSlides > 1}
-		<button 
+		<button
 			class="nav-button nav-next"
 			onclick={next}
 			disabled={isTransitioning || (!loop && effectiveIndex === totalSlides - 1)}
@@ -511,7 +496,7 @@
 	{/if}
 
 	{#if (autoplay || autoscroll) && totalSlides > 1}
-		<button 
+		<button
 			class="pause-button"
 			onclick={() => {
 				isPaused = !isPaused;
