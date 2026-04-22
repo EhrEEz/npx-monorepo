@@ -13,6 +13,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Categories } from './collections/BlogCategory'
 import { Articles } from './collections/BlogArticle'
+import { Services } from './collections/Services'
 import { SEOPages } from './collections/Pages'
 import { SiteSettings } from './global/SiteSetttings'
 import { TermsOfService } from './global/TermsOfService'
@@ -40,7 +41,7 @@ export default buildConfig({
   },
 
   ...(process.env.ENV_MODE === 'prod' && { cors: [process.env.PUBLIC_CLIENT_URL ?? ''] }),
-  collections: [Users, Media, Categories, Articles, SEOPages],
+  collections: [Users, Media, Categories, Articles, SEOPages, Services],
   globals: [SiteSettings, PrivacyPolicy, TermsOfService],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

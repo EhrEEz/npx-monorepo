@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import { resolve } from '$app/paths';
 	import type { Media } from '$backend/src/payload-types';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
 	import Image from '$lib/components/Image/Image.svelte';
 
 	export type ServiceItem = {
@@ -15,7 +16,7 @@
 		description: string;
 		slug: string;
 		inner_list: ServiceItem[];
-		images?: Media[];
+		images?: Media[] | string[];
 		cover: Media | string;
 	};
 </script>
@@ -34,7 +35,11 @@
 				{ id: 2, name: 'UI/UX Design' },
 				{ id: 3, name: 'Digital & Print Media' }
 			],
-			images: [],
+			images: [
+				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`,
+				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`,
+				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
+			],
 			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
 		},
 		{
@@ -158,9 +163,7 @@
 						</p>
 						<div class="fl-row fl-wrap al-center mt-2">
 							<a
-								href={resolve(`/services/[slug]`, {
-									slug: service.slug
-								})}
+								href={resolve(`/services/${service.slug}`)}
 								class="btn--primary btn--outline services__button btn--thin"
 								target="_blank"
 							>
@@ -174,7 +177,7 @@
 					</div>
 					<div class="col-start-lg-6 col-end-lg-10 h-full">
 						<div class="h-full">
-							<ol class="services__inner-list">
+							<ol class="services__inner-list mb-3">
 								{#each service.inner_list as inner_item (inner_item.id)}
 									<li class="services__inner-item">
 										<div class="fl-row jc-between al-center">
@@ -188,6 +191,28 @@
 									</li>
 								{/each}
 							</ol>
+							{#if service.images}
+								<Carousel
+									slides={[
+										...service.images.map((emt, i) => {
+											return {
+												id: i,
+												content: emt
+											};
+										})
+									]}
+								>
+									{#snippet children({ slide, isActive })}
+										<div class="slide" class:active={isActive}>
+											{#if typeof slide.content === 'string'}
+												<img src={slide.content} alt="{service.name} example" />
+											{:else}
+												<Image image={slide.content as Media} />
+											{/if}
+										</div>
+									{/snippet}
+								</Carousel>
+							{/if}
 						</div>
 					</div>
 					<div class="col-start-lg-10 col-end-lg-13" aria-hidden="true">

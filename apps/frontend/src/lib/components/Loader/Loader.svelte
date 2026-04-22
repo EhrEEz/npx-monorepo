@@ -72,6 +72,9 @@
 		display: flex;
 		justify-content: space-between;
 		font-family: 'Space Mono', monospace;
+		font-feature-settings:
+			'ss01' 1,
+			'ss02' 1;
 		font-size: 10px;
 		letter-spacing: 0.2em;
 		margin-bottom: 12px;

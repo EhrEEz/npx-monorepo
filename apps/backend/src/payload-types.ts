@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     articles: Article;
     'seo-pages': SeoPage;
+    services: Service;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -85,6 +86,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'seo-pages': SeoPagesSelect<false> | SeoPagesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -318,6 +320,32 @@ export interface SeoPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  label: string;
+  description: string;
+  cover: number | Media;
+  images: (number | Media)[];
+  service_item?:
+    | {
+        name: string;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -359,6 +387,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'seo-pages';
         value: number | SeoPage;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -561,6 +593,28 @@ export interface SeoPagesSelect<T extends boolean = true> {
         image?: T;
         keywords?: T;
         prevent_indexing?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  label?: T;
+  description?: T;
+  cover?: T;
+  images?: T;
+  service_item?:
+    | T
+    | {
+        name?: T;
+        image?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

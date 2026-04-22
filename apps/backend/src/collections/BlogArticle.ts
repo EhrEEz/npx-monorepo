@@ -2,7 +2,6 @@ import { lexicalEditor, EXPERIMENTAL_TableFeature } from '@payloadcms/richtext-l
 import type { Access, Where } from 'payload'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
-import { ValidationError } from 'payload'
 const readAccess: Access = ({ req: { user } }) => {
   if (!user) return false
 
@@ -78,7 +77,6 @@ export const Articles: CollectionConfig = {
       useAsSlug: 'title',
       required: true,
       overrides: (defaultField) => {
-        console.log(defaultField)
         if ('fields' in defaultField && Array.isArray(defaultField.fields)) {
           const slugText = defaultField.fields.find((f) => 'name' in f && f.name === 'slug')
 

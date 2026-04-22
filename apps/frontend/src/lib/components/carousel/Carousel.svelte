@@ -2,14 +2,14 @@
 	import { onMount, onDestroy, tick } from 'svelte';
 	import gsap from 'gsap';
 
-	export interface CarouselSlide {
+	export type CarouselSlide = {
 		id?: string | number;
-		content: any;
-		[key: string]: any;
-	}
+		content: unknown;
+		[key: string]: unknown;
+	};
 
-	interface CarouselProps {
-		slides: CarouselSlide[];
+	type CarouselProps = {
+		slides?: CarouselSlide[];
 		autoplay?: boolean;
 		autoplayInterval?: number;
 		loop?: boolean;
@@ -22,12 +22,10 @@
 		cardMode?: boolean;
 		cardVisibleCount?: number;
 		class?: string;
-		children?: import('svelte').Snippet<{
-			slide: CarouselSlide;
-			index: number;
-			isActive: boolean;
-		}>;
-	}
+		children?: import('svelte').Snippet<
+			[{ slide: CarouselSlide; index: number; isActive: boolean }]
+		>;
+	};
 
 	let {
 		slides = [],
@@ -49,21 +47,22 @@
 	let container: HTMLElement | undefined = $state();
 	let track: HTMLElement | undefined = $state();
 	let slideElements: (HTMLElement | undefined)[] = $state([]);
-	let autoplayTimer: ReturnType<typeof setInterval> | null = $state(null);
-	let autoscrollTween: gsap.core.Tween | null = $state(null);
+	let autoplayTimer: ReturnType<typeof setInterval> | null = null;
+	let autoscrollTween: gsap.core.Tween | null = null;
 	let currentIndex = $state(0);
 	let isTransitioning = $state(false);
 	let isPaused = $state(false);
-	let tl: gsap.core.Timeline | null = $state(null);
+	let tl: gsap.core.Timeline | undefined;
 
 	const totalSlides = $derived(slides.length);
-	const effectiveIndex = $derived(cardMode ? currentIndex % totalSlides : currentIndex);
+	const effectiveIndex = $derived(
+		loop && totalSlides > 0
+			? ((currentIndex % totalSlides) + totalSlides) % totalSlides
+			: currentIndex
+	);
 
 	function clampIndex(index: number): number {
 		if (totalSlides === 0) return 0;
-		if (cardMode && loop) {
-			return ((index % totalSlides) + totalSlides) % totalSlides;
-		}
 		if (loop) {
 			return ((index % totalSlides) + totalSlides) % totalSlides;
 		}
@@ -72,13 +71,13 @@
 
 	function goToSlide(index: number, direction?: 'left' | 'right'): void {
 		if (isTransitioning || slides.length <= 1) return;
-		
+
 		const newIndex = clampIndex(index);
-		if (newIndex === currentIndex && !cardMode) return;
+		if (newIndex === effectiveIndex && !cardMode) return;
 
 		isTransitioning = true;
-		const moveDirection = direction ?? (newIndex > currentIndex ? 'left' : 'right');
-		
+		const moveDirection = direction ?? (newIndex > effectiveIndex ? 'left' : 'right');
+
 		if (cardMode) {
 			animateCardSlide(newIndex, moveDirection);
 		} else {
@@ -96,7 +95,7 @@
 			}
 		});
 
-		const currentSlide = slideElements[currentIndex];
+		const currentSlide = slideElements[effectiveIndex];
 		const nextSlide = slideElements[newIndex];
 
 		if (!currentSlide || !nextSlide) {
@@ -106,7 +105,6 @@
 		}
 
 		const slideWidth = currentSlide.offsetWidth;
-		const depthOffset = depthEffect ? (1 - depthScale) * 100 : 0;
 
 		tl.set(nextSlide, {
 			x: direction === 'left' ? slideWidth : -slideWidth,
@@ -120,38 +118,54 @@
 			scale: 1
 		});
 
-		tl.to(currentSlide, {
-			x: direction === 'left' ? -slideWidth : slideWidth,
-			duration: 0.6,
-			ease: 'power2.inOut',
-			opacity: depthEffect ? 0.5 : 1,
-			scale: depthEffect ? depthScale : 1
-		}, 0);
+		tl.to(
+			currentSlide,
+			{
+				x: direction === 'left' ? -slideWidth : slideWidth,
+				duration: 0.6,
+				ease: 'power2.inOut',
+				opacity: depthEffect ? 0.5 : 1,
+				scale: depthEffect ? depthScale : 1
+			},
+			0
+		);
 
-		tl.to(nextSlide, {
-			x: 0,
-			duration: 0.6,
-			ease: 'power2.inOut',
-			opacity: 1,
-			scale: 1
-		}, 0);
+		tl.to(
+			nextSlide,
+			{
+				x: 0,
+				duration: 0.6,
+				ease: 'power2.inOut',
+				opacity: 1,
+				scale: 1
+			},
+			0
+		);
 
 		if (depthEffect) {
-			tl.to(currentSlide, {
-				filter: 'blur(2px)',
-				duration: 0.6,
-				ease: 'power2.inOut'
-			}, 0);
+			tl.to(
+				currentSlide,
+				{
+					filter: 'blur(2px)',
+					duration: 0.6,
+					ease: 'power2.inOut'
+				},
+				0
+			);
 
 			tl.set(nextSlide, {
 				filter: 'blur(2px)'
 			});
 
-			tl.to(nextSlide, {
-				filter: 'blur(0px)',
-				duration: 0.6,
-				ease: 'power2.inOut'
-			}, 0);
+			tl.to(
+				nextSlide,
+				{
+					filter: 'blur(0px)',
+					duration: 0.6,
+					ease: 'power2.inOut'
+				},
+				0
+			);
 		}
 	}
 
@@ -169,30 +183,31 @@
 		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
 		const gap = 20;
 		const totalWidth = slideWidth + gap;
+		const divisor = Math.max(1, visibleCount - 1);
 
 		slideElements.forEach((slide, i) => {
 			if (!slide) return;
-			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
-			const distanceFromCurrent = getCardDistance(effectiveI, currentIndex);
-			
+			const effectiveI = loop ? ((i % totalSlides) + totalSlides) % totalSlides : i;
+			const distanceFromCurrent = getCardDistance(effectiveI, effectiveIndex);
+
 			let xPosition = 0;
 			let scale = 1;
 			let opacity = 1;
 			let zIndex = 0;
 
 			if (distanceFromCurrent >= 0 && distanceFromCurrent < visibleCount) {
-				const progress = distanceFromCurrent / (visibleCount - 1);
-				xPosition = (distanceFromCurrent * totalWidth);
-				scale = depthEffect ? 1 - (progress * (1 - depthScale)) : 1;
-				opacity = depthEffect ? 1 - (progress * 0.3) : 1;
+				const progress = distanceFromCurrent / divisor;
+				xPosition = distanceFromCurrent * totalWidth;
+				scale = depthEffect ? 1 - progress * (1 - depthScale) : 1;
+				opacity = depthEffect ? 1 - progress * 0.3 : 1;
 				zIndex = visibleCount - distanceFromCurrent;
 			} else if (loop) {
-				const wrappedDistance = getWrappedDistance(effectiveI, currentIndex, totalSlides);
+				const wrappedDistance = getWrappedDistance(effectiveI, effectiveIndex, totalSlides);
 				if (wrappedDistance < visibleCount) {
-					const progress = wrappedDistance / (visibleCount - 1);
-					xPosition = (wrappedDistance * totalWidth);
-					scale = depthEffect ? 1 - (progress * (1 - depthScale)) : 1;
-					opacity = depthEffect ? 1 - (progress * 0.3) : 1;
+					const progress = wrappedDistance / divisor;
+					xPosition = wrappedDistance * totalWidth;
+					scale = depthEffect ? 1 - progress * (1 - depthScale) : 1;
+					opacity = depthEffect ? 1 - progress * 0.3 : 1;
 					zIndex = visibleCount - wrappedDistance;
 				} else {
 					xPosition = direction === 'left' ? -totalWidth : (visibleCount + 1) * totalWidth;
@@ -205,19 +220,19 @@
 				scale = depthScale;
 			}
 
-			tl.set(slide, {
+			tl?.set(slide, {
 				x: xPosition,
 				scale,
 				opacity,
 				zIndex,
-				filter: depthEffect && distanceFromCurrent > 0 ? `blur(${distanceFromCurrent}px)` : 'blur(0px)'
+				filter:
+					depthEffect && distanceFromCurrent > 0 ? `blur(${distanceFromCurrent}px)` : 'blur(0px)'
 			});
 		});
 
 		slideElements.forEach((slide, i) => {
 			if (!slide) return;
-			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
-			const oldDistance = getCardDistance(effectiveI, currentIndex);
+			const effectiveI = loop ? ((i % totalSlides) + totalSlides) % totalSlides : i;
 			const newDistance = getCardDistance(effectiveI, newIndex);
 
 			let newX = 0;
@@ -226,10 +241,10 @@
 			let newZIndex = 0;
 
 			if (newDistance >= 0 && newDistance < visibleCount) {
-				const progress = newDistance / (visibleCount - 1);
-				newX = (newDistance * totalWidth);
-				newScale = depthEffect ? 1 - (progress * (1 - depthScale)) : 1;
-				newOpacity = depthEffect ? 1 - (progress * 0.3) : 1;
+				const progress = newDistance / divisor;
+				newX = newDistance * totalWidth;
+				newScale = depthEffect ? 1 - progress * (1 - depthScale) : 1;
+				newOpacity = depthEffect ? 1 - progress * 0.3 : 1;
 				newZIndex = visibleCount - newDistance;
 			} else {
 				newX = direction === 'left' ? -totalWidth : visibleCount * totalWidth;
@@ -238,15 +253,20 @@
 				newZIndex = 0;
 			}
 
-			tl.to(slide, {
-				x: newX,
-				scale: newScale,
-				opacity: newOpacity,
-				zIndex: newZIndex,
-				filter: depthEffect && newDistance > 0 ? `blur(${Math.min(newDistance, 3)}px)` : 'blur(0px)',
-				duration: 0.5,
-				ease: 'power2.inOut'
-			}, 0);
+			tl?.to(
+				slide,
+				{
+					x: newX,
+					scale: newScale,
+					opacity: newOpacity,
+					zIndex: newZIndex,
+					filter:
+						depthEffect && newDistance > 0 ? `blur(${Math.min(newDistance, 3)}px)` : 'blur(0px)',
+					duration: 0.5,
+					ease: 'power2.inOut'
+				},
+				0
+			);
 		});
 	}
 
@@ -294,21 +314,24 @@
 
 	function startAutoscroll(): void {
 		if (!autoscroll || cardMode) return;
-		
+
 		if (autoscrollTween) autoscrollTween.kill();
-		
+
 		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
 		const duration = (slideWidth / 50) * (1 / autoscrollSpeed);
-		
-		autoscrollTween = gsap.to(track, {
-			x: `-${slideWidth * totalSlides}`,
-			duration: duration * totalSlides,
-			ease: 'none',
-			repeat: loop ? -1 : 0,
-			onRepeat: () => {
-				gsap.set(track, { x: 0 });
-			}
-		});
+		if (track) {
+			autoscrollTween = gsap.to(track, {
+				x: `-${slideWidth * totalSlides}`,
+				duration: duration * totalSlides,
+				ease: 'none',
+				repeat: loop ? -1 : 0,
+				onRepeat: () => {
+					if (track) {
+						gsap.set(track, { x: 0 });
+					}
+				}
+			});
+		}
 	}
 
 	function stopAutoscroll(): void {
@@ -331,9 +354,11 @@
 	function initializeSlides(): void {
 		if (tl) tl.kill();
 		stopAutoscroll();
-		
-		gsap.set(track, { x: 0 });
-		
+
+		if (track) {
+			gsap.set(track, { x: 0 });
+		}
+
 		if (cardMode) {
 			initializeCardMode();
 		} else {
@@ -352,11 +377,11 @@
 	function initializeStandardMode(): void {
 		slideElements.forEach((slide, i) => {
 			if (!slide) return;
-			const isActive = i === currentIndex;
+			const isActive = i === effectiveIndex;
 			gsap.set(slide, {
-				x: isActive ? 0 : (i > currentIndex ? slide.offsetWidth : -slide.offsetWidth),
+				x: isActive ? 0 : i > effectiveIndex ? slide.offsetWidth : -slide.offsetWidth,
 				scale: depthEffect && !isActive ? depthScale : 1,
-				opacity: isActive ? 1 : (depthEffect ? 0.7 : 0),
+				opacity: isActive ? 1 : depthEffect ? 0.7 : 0,
 				zIndex: isActive ? 2 : 1,
 				filter: depthEffect && !isActive ? 'blur(2px)' : 'blur(0px)'
 			});
@@ -368,22 +393,23 @@
 		const slideWidth = slideElements[0]?.offsetWidth ?? 300;
 		const gap = 20;
 		const totalWidth = slideWidth + gap;
+		const divisor = Math.max(1, visibleCount - 1);
 
 		slideElements.forEach((slide, i) => {
 			if (!slide) return;
-			const effectiveI = ((i % totalSlides) + totalSlides) % totalSlides;
-			const distance = getCardDistance(effectiveI, currentIndex);
-			
+			const effectiveI = loop ? ((i % totalSlides) + totalSlides) % totalSlides : i;
+			const distance = getCardDistance(effectiveI, effectiveIndex);
+
 			let xPosition = 0;
 			let scale = 1;
 			let opacity = 1;
 			let zIndex = 0;
 
 			if (distance >= 0 && distance < visibleCount) {
-				const progress = distance / (visibleCount - 1);
-				xPosition = (distance * totalWidth);
-				scale = depthEffect ? 1 - (progress * (1 - depthScale)) : 1;
-				opacity = depthEffect ? 1 - (progress * 0.3) : 1;
+				const progress = distance / divisor;
+				xPosition = distance * totalWidth;
+				scale = depthEffect ? 1 - progress * (1 - depthScale) : 1;
+				opacity = depthEffect ? 1 - progress * 0.3 : 1;
 				zIndex = visibleCount - distance;
 			} else {
 				xPosition = visibleCount * totalWidth;
@@ -401,8 +427,13 @@
 		});
 	}
 
-	function bindSlide(element: HTMLElement | undefined, index: number): void {
+	function registerSlide(element: HTMLElement, index: number) {
 		slideElements[index] = element;
+		return {
+			destroy() {
+				slideElements[index] = undefined;
+			}
+		};
 	}
 
 	onMount(() => {
@@ -412,28 +443,34 @@
 	});
 
 	$effect(() => {
-		slides;
+		void slides;
 		tick().then(() => {
 			initializeSlides();
 		});
 	});
 
 	$effect(() => {
-		autoplay;
 		if (autoplay) {
 			startAutoplay();
 		} else {
 			stopAutoplay();
 		}
+
+		return () => {
+			stopAutoplay();
+		};
 	});
 
 	$effect(() => {
-		autoscroll;
 		if (autoscroll && !cardMode) {
 			startAutoscroll();
 		} else {
 			stopAutoscroll();
 		}
+
+		return () => {
+			stopAutoscroll();
+		};
 	});
 
 	onDestroy(() => {
@@ -443,7 +480,7 @@
 	});
 </script>
 
-<div 
+<div
 	bind:this={container}
 	class="carousel-container {className}"
 	class:card-mode={cardMode}
@@ -452,14 +489,10 @@
 	onmouseleave={handleMouseLeave}
 >
 	<div class="carousel-track-wrapper">
-		<div 
-			bind:this={track}
-			class="carousel-track"
-			class:card-mode={cardMode}
-		>
+		<div bind:this={track} class="carousel-track" class:card-mode={cardMode}>
 			{#each slides as slide, index (slide.id ?? index)}
 				<div
-					bind:this={(el) => bindSlide(el, index)}
+					use:registerSlide={index}
 					class="carousel-slide"
 					class:active={index === effectiveIndex}
 					class:card-mode={cardMode}
@@ -471,34 +504,58 @@
 	</div>
 
 	{#if showNavigation && totalSlides > 1}
-		<button 
+		<button
 			class="nav-button nav-prev"
 			onclick={prev}
 			disabled={isTransitioning || (!loop && effectiveIndex === 0)}
 			aria-label="Previous slide"
 		>
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M15 18L9 12L15 6"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
 			</svg>
 		</button>
 	{/if}
 
 	{#if showNavigation && totalSlides > 1}
-		<button 
+		<button
 			class="nav-button nav-next"
 			onclick={next}
 			disabled={isTransitioning || (!loop && effectiveIndex === totalSlides - 1)}
 			aria-label="Next slide"
 		>
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M9 18L15 12L9 6"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
 			</svg>
 		</button>
 	{/if}
 
 	{#if showPagination && totalSlides > 1}
 		<div class="pagination">
-			{#each slides as _, index}
+			{#each slides as _, index (_.id ?? index)}
 				<button
 					class="pagination-dot"
 					class:active={index === effectiveIndex}
@@ -511,7 +568,7 @@
 	{/if}
 
 	{#if (autoplay || autoscroll) && totalSlides > 1}
-		<button 
+		<button
 			class="pause-button"
 			onclick={() => {
 				isPaused = !isPaused;
@@ -526,13 +583,25 @@
 			aria-label={isPaused ? 'Resume' : 'Pause'}
 		>
 			{#if isPaused}
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 20 20"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path d="M6 4L16 10L6 16V4Z" fill="currentColor" />
 				</svg>
 			{:else}
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="5" y="4" width="3" height="12" fill="currentColor"/>
-					<rect x="12" y="4" width="3" height="12" fill="currentColor"/>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 20 20"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<rect x="5" y="4" width="3" height="12" fill="currentColor" />
+					<rect x="12" y="4" width="3" height="12" fill="currentColor" />
 				</svg>
 			{/if}
 		</button>

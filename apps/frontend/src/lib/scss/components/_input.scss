@@ -217,6 +217,9 @@
 			color: var(--indicator-color);
 			text-transform: uppercase;
 			font-family: $code-font-stack;
+			font-feature-settings:
+				'ss01' 1,
+				'ss02' 1;
 			user-select: none;
 			pointer-events: none;
 		}

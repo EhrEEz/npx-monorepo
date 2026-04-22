@@ -153,6 +153,9 @@
 			color: var(--clr-neutral-100);
 			opacity: 0.03;
 			font-family: 'Space Mono', monospace;
+			font-feature-settings:
+				'ss01' 1,
+				'ss02' 1;
 		}
 	}
 </style>
