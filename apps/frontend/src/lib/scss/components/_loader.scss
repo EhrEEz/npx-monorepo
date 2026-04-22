@@ -1,5 +1,5 @@
-@use "../abstracts/variables" as *;
-@use "../base/helpers/type-helper" as *;
+@use '../abstracts/variables' as *;
+@use '../base/helpers/type-helper' as *;
 .loading {
 	&__screen {
 		position: fixed;
@@ -14,12 +14,15 @@
 	}
 	&__value {
 		font-family: $code-font-stack;
+		font-feature-settings:
+			'ss01' 1,
+			'ss02' 1;
 		@extend .heading-5;
 		position: relative;
 		z-index: 1;
 
 		&:before {
-			content: "";
+			content: '';
 			position: absolute;
 			inset-inline-start: 50%;
 			inset-block-start: 50%;

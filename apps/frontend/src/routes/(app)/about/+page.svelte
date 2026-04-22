@@ -488,6 +488,7 @@
 	});
 </script>
 
+<h1 class="sr-only">About Us</h1>
 <SEO pageSettings={page_seo} />
 <section
 	class="about__header pt-md-12 full-width content-grid pb-md- pb-lg-3 mt-8 mt-md-0"

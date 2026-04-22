@@ -369,12 +369,12 @@
 		</div>
 	</div>
 	<nav class="fl-row jc-between al-center">
-		<h1 class="relative">
+		<div class="relative">
 			<Link href="/#home-section" class="nav__logo" scrollTo="#home-section">
 				<Logo fill="currentColor" />
 				<span class="sr-only">Nepaxis</span>
 			</Link>
-		</h1>
+		</div>
 		<button
 			class="menu__btn btn--outline btn--white btn--narrow btn--primary"
 			aria-label="Open Menu"
@@ -382,13 +382,14 @@
 		>
 			<span class="btn__wrapper">
 				<span class="btn__text" bind:this={navText}>{buttonText}</span>
-				<span class="btn__icon">
+				<span class="btn__icon" role="presentation">
 					<svg
 						width="14"
 						height="7"
 						viewBox="0 0 14 7"
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
+						role="presentation"
 					>
 						<path d="M0 0H7V1.16667H0V0Z" fill="currentColor" />
 						<path d="M7 0.583333H14V1.45833H7V0.583333Z" fill="currentColor" />

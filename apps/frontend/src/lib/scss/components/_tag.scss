@@ -16,6 +16,9 @@
 	font-weight: 400;
 	text-transform: uppercase;
 	font-family: $code-font-stack;
+	font-feature-settings:
+		'ss01' 1,
+		'ss02' 1;
 	letter-spacing: 0.0175rem;
 	inline-size: fit-content;
 	line-height: 0.9em;

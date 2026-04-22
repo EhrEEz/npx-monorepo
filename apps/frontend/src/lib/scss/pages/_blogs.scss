@@ -101,6 +101,9 @@
 		padding: 1rem;
 		border-radius: 1rem;
 		font-family: 'Space Mono', monospace;
+		font-feature-settings:
+			'ss01' 1,
+			'ss02' 1;
 		margin-block-end: 1.5rem;
 		&-inline {
 			padding: 0.25em 0.5em;
@@ -200,6 +203,9 @@
 			&::marker {
 				color: var(--clr-accent-300);
 				font-family: 'Space Mono', monospace;
+				font-feature-settings:
+					'ss01' 1,
+					'ss02' 1;
 			}
 			margin-block: 0.35em;
 			color: var(--clr-neutral-300);

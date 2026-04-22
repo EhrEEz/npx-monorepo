@@ -366,7 +366,7 @@
 		bind:this={contact_section}
 	>
 		<div class="content__wrapper relative z-1">
-			<h2 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h2>
+			<h1 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h1>
 			<form id="contactForm" class="contact__form mb-lg-9 mb-6 mb-lg-8" onsubmit={submitForm}>
 				<div class="grid-lg-row gap-lg-3 gap-xl-0">
 					<div class="fl-col row-gap-3 col-gap-2 col-lg-10 col-xl-8 col-2xl-6 mb-3 mb-lg-0">
