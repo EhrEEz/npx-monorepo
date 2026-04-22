@@ -1,8 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from 'payload'
 
-export const Services: CollectionConfig = {
-  slug: 'service',
+export const ServiceApplication: CollectionConfig = {
+  slug: 'service-application',
   admin: {
     useAsTitle: 'name',
     group: 'Service',
@@ -20,18 +19,13 @@ export const Services: CollectionConfig = {
       maxLength: 200,
       required: true,
     },
-    slugField({
-      name: 'slug',
-      useAsSlug: 'name',
-      required: true,
-    }),
     {
-      name: 'label',
-      label: 'Label',
-      type: 'text',
-      maxLength: 200,
-      required: true,
+      name: 'service',
+      label: 'Service',
+      type: 'relationship',
+      relationTo: 'service',
     },
+
     {
       name: 'description',
       label: 'Description',
@@ -54,14 +48,31 @@ export const Services: CollectionConfig = {
       hasMany: true,
     },
     {
-      name: 'relatedInners',
-      type: 'join',
-      collection: 'service-application', // The slug of the collection to join
-      on: 'service', // The field name in service-inner that points here
-      orderable: true,
+      name: 'offerings',
+      label: 'Offerings',
+      type: 'array',
       admin: {
-        defaultColumns: ['id', 'name'],
+        isSortable: true,
       },
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'examples',
+          label: 'Examples',
+          type: 'array',
+          fields: [
+            {
+              name: 'name',
+              type: 'text',
+              required: true,
+            },
+          ],
+        },
+      ],
     },
   ],
 }

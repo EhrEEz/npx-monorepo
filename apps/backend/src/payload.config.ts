@@ -13,8 +13,9 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Categories } from './collections/BlogCategory'
 import { Articles } from './collections/BlogArticle'
-import { Services } from './collections/Services'
 import { SEOPages } from './collections/Pages'
+import { Services } from './collections/Services'
+import { ServiceApplication } from './collections/ServiceApplication'
 import { SiteSettings } from './global/SiteSetttings'
 import { TermsOfService } from './global/TermsOfService'
 import { PrivacyPolicy } from './global/PrivacyPolicy'
@@ -41,7 +42,7 @@ export default buildConfig({
   },
 
   ...(process.env.ENV_MODE === 'prod' && { cors: [process.env.PUBLIC_CLIENT_URL ?? ''] }),
-  collections: [Users, Media, Categories, Articles, SEOPages, Services],
+  collections: [Users, Media, Categories, Articles, SEOPages, Services, ServiceApplication],
   globals: [SiteSettings, PrivacyPolicy, TermsOfService],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

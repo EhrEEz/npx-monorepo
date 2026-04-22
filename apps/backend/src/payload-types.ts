@@ -73,20 +73,26 @@ export interface Config {
     categories: Category;
     articles: Article;
     'seo-pages': SeoPage;
-    services: Service;
+    service: Service;
+    'service-application': ServiceApplication;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    service: {
+      relatedInners: 'service-application';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'seo-pages': SeoPagesSelect<false> | SeoPagesSelect<true>;
-    services: ServicesSelect<false> | ServicesSelect<true>;
+    service: ServiceSelect<false> | ServiceSelect<true>;
+    'service-application': ServiceApplicationSelect<false> | ServiceApplicationSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -320,7 +326,7 @@ export interface SeoPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
+ * via the `definition` "service".
  */
 export interface Service {
   id: number;
@@ -334,10 +340,35 @@ export interface Service {
   description: string;
   cover: number | Media;
   images: (number | Media)[];
-  service_item?:
+  relatedInners?: {
+    docs?: (number | ServiceApplication)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-application".
+ */
+export interface ServiceApplication {
+  id: number;
+  '_service-application_relatedInners_order'?: string | null;
+  name: string;
+  service?: (number | null) | Service;
+  description: string;
+  cover: number | Media;
+  images: (number | Media)[];
+  offerings?:
     | {
         name: string;
-        image?: (number | null) | Media;
+        examples?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -389,8 +420,12 @@ export interface PayloadLockedDocument {
         value: number | SeoPage;
       } | null)
     | ({
-        relationTo: 'services';
+        relationTo: 'service';
         value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'service-application';
+        value: number | ServiceApplication;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -599,9 +634,9 @@ export interface SeoPagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services_select".
+ * via the `definition` "service_select".
  */
-export interface ServicesSelect<T extends boolean = true> {
+export interface ServiceSelect<T extends boolean = true> {
   name?: T;
   generateSlug?: T;
   slug?: T;
@@ -609,11 +644,31 @@ export interface ServicesSelect<T extends boolean = true> {
   description?: T;
   cover?: T;
   images?: T;
-  service_item?:
+  relatedInners?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-application_select".
+ */
+export interface ServiceApplicationSelect<T extends boolean = true> {
+  '_service-application_relatedInners_order'?: T;
+  name?: T;
+  service?: T;
+  description?: T;
+  cover?: T;
+  images?: T;
+  offerings?:
     | T
     | {
         name?: T;
-        image?: T;
+        examples?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
         id?: T;
       };
   updatedAt?: T;
