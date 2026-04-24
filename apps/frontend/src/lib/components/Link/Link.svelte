@@ -7,7 +7,7 @@
 	import { goto, pushState } from '$app/navigation';
 
 	const {
-		class: className,
+		class: className = '',
 		href,
 		onClick = undefined,
 		scrollTo = undefined,

@@ -7,14 +7,19 @@
 
 	const {
 		image,
+		loading = 'lazy',
 		alternate_alt,
 		...restProps
-	}: { image: Media; alternate_alt: string } & HTMLAttributes<HTMLImageElement> = $props();
+	}: {
+		image: Media;
+		loading: 'lazy' | 'eager';
+		alternate_alt: string;
+	} & HTMLAttributes<HTMLImageElement> = $props();
 </script>
 
 {#if image.sizes}
 	<img
-		loading="lazy"
+		{loading}
 		src={image.sizes.small?.url
 			? media_url + image.sizes.small?.url
 			: image.url

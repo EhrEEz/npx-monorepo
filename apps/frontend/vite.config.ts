@@ -1,14 +1,9 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { imagetools } from 'vite-imagetools';
+import { enhancedImages } from '@sveltejs/enhanced-img';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [
-		imagetools({
-			include: ['**/src/lib/assets/**/*']
-		}),
-		sveltekit()
-	],
+	plugins: [enhancedImages(), sveltekit()],
 	ssr: {
 		noExternal: [/gsap/],
 		external: ['payload', 'sharp']

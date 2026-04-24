@@ -12,8 +12,8 @@
 		curvature = 'medium'
 	}: {
 		children: Snippet;
-		variant?: 'outline' | 'fill';
-		color?: 'white' | 'black' | 'dark' | 'grey' | 'dark-grey' | 'light' | 'accent';
+		variant?: 'outline' | 'fill' | 'mix';
+		color?: 'white' | 'black' | 'dark' | 'grey' | 'dark-grey' | 'light' | 'accent' | 'mix-accent';
 		size?: 'small' | 'medium' | 'large';
 		curvature?: 'large' | 'medium' | 'full';
 	} & HTMLAttributes<HTMLElement> = $props();

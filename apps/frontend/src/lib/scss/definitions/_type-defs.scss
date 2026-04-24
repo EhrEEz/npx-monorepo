@@ -24,6 +24,13 @@ $types: (
 			0px: 1rem
 		)
 	),
+	medium-12: (
+		weight: 500,
+		breakpoints: (
+			0px: 1rem,
+			992px: 0.8rem
+		)
+	),
 	regular-25: (
 		weight: 400,
 		breakpoints: (

@@ -7,7 +7,7 @@
 	const services = $derived<Service[] | null>(data.services);
 </script>
 
-<section data-section="dark" class="page__title-section mt-xl-9 mt-9 mb-4">
+<section data-section="dark" class="page__title-section pt-xl-9 pt-9 mb-4">
 	<div class="grid-xl-row al-lg-end">
 		<div class="col-lg-5 col-xl-4">
 			<h1 class="heading-1 mb-2" id="pageTitle">Our Services</h1>

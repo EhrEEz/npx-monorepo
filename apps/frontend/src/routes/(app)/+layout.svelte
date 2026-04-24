@@ -114,7 +114,6 @@
 
 				const hash = window.location.hash;
 
-				console.log(hash);
 				if (smooth && hash) {
 					smooth.scrollTo(hash, true);
 				}

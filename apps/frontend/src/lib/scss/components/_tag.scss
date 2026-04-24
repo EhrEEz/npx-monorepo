@@ -120,9 +120,24 @@
 		--tag-color: var(--clr-dark-700);
 		--tag-background: var(--clr-accent-300);
 	}
+	&--mix-accent {
+		--tag-background: var(--clr-neutral-500);
+		--tag-color: var(--clr-accent-300);
+	}
+
 	&--outline {
 		--_border: 1px solid var(--tag-background);
 		--_color: var(--tag-background);
+		--_background: transparent;
+	}
+	&--narrow {
+		--_padX: 0.5rem;
+		--_padY: 0.45em;
+	}
+
+	&--mix {
+		--_border: 1px solid var(--tag-background);
+		--_color: var(--tag-color);
 		--_background: transparent;
 	}
 	&--small {
