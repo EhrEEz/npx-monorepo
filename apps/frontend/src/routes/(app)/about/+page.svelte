@@ -15,476 +15,493 @@
 	gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
 	$effect(() => {
-		initFloatingImages();
+		let cleanup: (() => void) | null = null;
 
-		const headerTimeline = gsap.timeline({
-			scrollTrigger: {
-				trigger: '.about__header',
-				start: 'top bottom',
-				toggleActions: 'play none none none'
-			}
-		});
-		headerTimeline
-			.addLabel('start')
-			.from(
-				'.about__logo',
-				{
-					opacity: 0,
-					duration: 0.5,
-					delay: 0.2,
-					ease: 'power2.in'
-				},
-				'start+=0.2'
-			)
-			.to(
-				'.about__intro-sub-heading',
-				{
-					duration: 0.8,
-					opacity: 1,
-					scrambleText: {
-						text: '{original}',
-						chars: 'upperAndLowerCase',
-						revealDelay: 0.5,
-						speed: 0.4
+		function init() {
+			cleanup?.();
+			initFloatingImages();
+
+			const ctx = gsap.context(() => {
+				const headerTimeline = gsap.timeline({
+					scrollTrigger: {
+						trigger: '.about__header',
+						start: 'top bottom',
+						toggleActions: 'play none none none'
 					}
-				},
-				'start+=0.3'
-			)
-			.from(
-				'.about__introduction-title,.diamonds__wrapper',
-				{
-					opacity: 0,
-					translateY: -30,
-					stagger: 0.2,
-					ease: 'power2.out'
-				},
-				'start+=0.4'
-			);
-
-		SplitText.create('.about__intro-paragraph', {
-			type: 'lines',
-			autoSplit: true,
-			mask: 'lines',
-			onSplit: (self) => {
-				headerTimeline.from(
-					self.lines,
-					{
-						duration: 1,
-						opacity: 0,
-						yPercent: 60,
-						stagger: 0.1,
-						ease: 'power2.out'
-					},
-					'start+=0.4'
-				);
-			}
-		});
-
-		const introductionTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__introduction',
-					start: 'top 30%',
-					toggleActions: 'play none reverse reset'
-				}
-			})
-			.addLabel('start');
-
-		SplitText.create('.about__introduction-title', {
-			type: 'lines',
-			autoSplit: true,
-			mask: 'lines',
-			onSplit: (self) => {
-				introductionTimeline.to(
-					self.lines,
-					{
-						scrambleText: {
-							text: '{original}',
-							chars: 'upperCase',
-							revealDelay: 0.5,
-							speed: 0.4
+				});
+				headerTimeline
+					.addLabel('start')
+					.from(
+						'.about__logo',
+						{
+							opacity: 0,
+							duration: 0.5,
+							delay: 0.2,
+							ease: 'power2.in'
 						},
-						stagger: {
-							from: 'center',
-							each: 0.1,
-							ease: 'none'
-						}
-					},
-					'start+=0.6'
-				);
-			}
-		});
+						'start+=0.2'
+					)
+					.to(
+						'.about__intro-sub-heading',
+						{
+							duration: 0.8,
+							opacity: 1,
+							scrambleText: {
+								text: '{original}',
+								chars: 'upperAndLowerCase',
+								revealDelay: 0.5,
+								speed: 0.4
+							}
+						},
+						'start+=0.3'
+					)
+					.from(
+						'.about__introduction-title,.diamonds__wrapper',
+						{
+							opacity: 0,
+							translateY: -30,
+							stagger: 0.2,
+							ease: 'power2.out'
+						},
+						'start+=0.4'
+					);
 
-		const whyTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__why',
-					start: 'top 80%',
-					toggleActions: 'play pause resume none'
-				}
-			})
-			.addLabel('start');
-		whyTimeline.from(
-			'.about__why-sub-heading',
-			{
-				opacity: 0,
-				scrambleText: {
-					speed: 0.5,
-					revealDelay: 0.35,
-					text: '{original}',
-					chars: 'upperCase'
-				},
-				ease: 'power1.out',
-				duration: 0.5
-			},
-			'start'
-		);
-		SplitText.create('.about__why-heading', {
-			type: 'lines,words',
-			autoSplit: true,
-			mask: 'lines',
-			onSplit: (self) => {
+				SplitText.create('.about__intro-paragraph', {
+					type: 'lines',
+					autoSplit: true,
+					mask: 'lines',
+					onSplit: (self) => {
+						headerTimeline.from(
+							self.lines,
+							{
+								duration: 1,
+								opacity: 0,
+								yPercent: 60,
+								stagger: 0.1,
+								ease: 'power2.out'
+							},
+							'start+=0.4'
+						);
+					}
+				});
+
+				const introductionTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__introduction',
+							start: 'top 30%',
+							toggleActions: 'play none reverse reset'
+						}
+					})
+					.addLabel('start');
+
+				SplitText.create('.about__introduction-title', {
+					type: 'lines',
+					autoSplit: true,
+					mask: 'lines',
+					onSplit: (self) => {
+						introductionTimeline.to(
+							self.lines,
+							{
+								scrambleText: {
+									text: '{original}',
+									chars: 'upperCase',
+									revealDelay: 0.5,
+									speed: 0.4
+								},
+								stagger: {
+									from: 'center',
+									each: 0.1,
+									ease: 'none'
+								}
+							},
+							'start+=0.6'
+						);
+					}
+				});
+
+				const whyTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__why',
+							start: 'top 80%',
+							toggleActions: 'play pause resume none'
+						}
+					})
+					.addLabel('start');
 				whyTimeline.from(
-					self.words,
+					'.about__why-sub-heading',
 					{
 						opacity: 0,
 						scrambleText: {
-							speed: 2,
-							revealDelay: 0.2,
+							speed: 0.5,
+							revealDelay: 0.35,
 							text: '{original}',
 							chars: 'upperCase'
 						},
-						stagger: {
-							from: 'start',
-							amount: 0.8
-						},
 						ease: 'power1.out',
-						duration: 0.8
+						duration: 0.5
 					},
-					'start+=0.2'
+					'start'
 				);
-			}
-		});
-		SplitText.create('.about__why-paragraph', {
-			type: 'lines',
-			autoSplit: true,
-			mask: 'lines',
-			onSplit: (self) => {
-				whyTimeline.from(
-					self.lines,
-					{
-						duration: 1,
-						opacity: 0,
-						yPercent: 60,
-						stagger: 0.1,
-						ease: 'power2.out'
-					},
-					'start+=0.8'
-				);
-			}
-		});
-		const nepalTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__nepal',
-					start: 'top 40%',
-					toggleActions: 'play none none none'
-				}
-			})
-			.addLabel('nepal_start');
-
-		nepalTimeline
-			.from(
-				'.about__nepal-sub-heading',
-				{
-					opacity: 0,
-					scrambleText: {
-						speed: 0.7,
-						revealDelay: 0.35,
-						text: '{original}',
-						chars: 'upperCase'
-					},
-					ease: 'power1.out',
-					duration: 0.4
-				},
-				'nepal_start'
-			)
-			.from(
-				'.about__nepal-title',
-				{
-					opacity: 0,
-					ease: 'ease',
-					duration: 1
-				},
-				'nepal_start+=0.2'
-			)
-			.from(
-				'.about__nepal-paragraph',
-				{
-					opacity: 0,
-					ease: 'ease',
-					duration: 1
-				},
-				'nepal_start+=0.4'
-			)
-			.from(
-				'#rightAngleBracket',
-				{
-					opacity: 0,
-					yPercent: -10,
-					duration: 0.4,
-					ease: 'ease.out'
-				},
-				'nepal_start+=0.6'
-			)
-			.from(
-				'#slash',
-				{
-					opacity: 0,
-					transformOrigin: 'center center',
-					rotateZ: -10,
-					duration: 0.8,
-					ease: 'ease.out'
-				},
-				'nepal_start+=0.8'
-			)
-			.from(
-				'#leftAngleBracket',
-				{
-					opacity: 0,
-					yPercent: -10,
-					duration: 0.4,
-					ease: 'ease.out'
-				},
-				'nepal_start+=1'
-			)
-			.from(
-				'#flag',
-				{
-					duration: 0.8,
-					opacity: 0,
-					ease: 'ease.in'
-				},
-				'nepal_start+=0.4'
-			);
-		const cubeSectionTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__nepal-section2',
-					start: 'top 80%',
-					toggleActions: 'play none none none'
-				},
-				onComplete: startLoop
-			})
-			.addLabel('start');
-
-		SplitText.create('.about__nepal-section2-title', {
-			type: 'lines,words,chars',
-			autoSplit: true,
-			mask: 'lines',
-			onSplit: (self) => {
-				cubeSectionTimeline.from(
-					self.chars,
-					{
-						opacity: 0,
-						yPercent: 100,
-						ease: 'power3.out',
-						stagger: {
-							amount: 0.5,
-							from: 'end'
-						}
-					},
-					'start+=0.6'
-				);
-			}
-		});
-		cubeSectionTimeline.from(
-			'.cube-svg',
-			{
-				opacity: 0,
-				xPercent: -50,
-				duration: 0.6,
-				stagger: {
-					amount: 0.2,
-					from: 'start'
-				},
-				ease: 'circ.out'
-			},
-			'start+=0.3'
-		);
-		function startLoop() {
-			gsap.to('.cube-svg', {
-				opacity: 0.2,
-				yPercent: -10,
-				duration: 0.6,
-				yoyo: true,
-				repeat: -1,
-				yoyoEase: 'sine.out',
-				repeatDelay: 0.2,
-				ease: 'sine.out',
-				stagger: {
-					amount: 0.4,
-					from: 'start'
-				}
-			});
-		}
-
-		const whatTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__build',
-					start: 'top 80%',
-					toggleActions: 'play none none none'
-				}
-			})
-			.addLabel('start');
-		whatTimeline
-			.fromTo(
-				'.about__build-sub-title',
-				{
-					opacity: 0
-				},
-				{
-					duration: 0.8,
-					opacity: 1,
-					scrambleText: {
-						text: '{original}',
-						chars: 'upperAndLowerCase',
-						revealDelay: 0.5,
-						speed: 0.4
-					}
-				},
-				'start'
-			)
-			.from(
-				'.about__build-title',
-				{
-					opacity: 0,
-					yPercent: -10,
-					duration: 0.6,
-					ease: 'power2.out'
-				},
-				'start'
-			);
-		gsap.from('.card__what', {
-			scrollTrigger: {
-				trigger: '.card__what', // Use 'el' to trigger based on this specific item
-				start: 'top 80%', // When the top of the element hits 80% of viewport
-				toggleActions: 'play none none none'
-			},
-			opacity: 0,
-			xPercent: 10,
-			stagger: {
-				each: 0.1,
-				from: 'random'
-			},
-			duration: 0.4,
-			ease: 'sine.out'
-		});
-		SplitText.create('.approach__text', {
-			type: 'lines',
-			autoSplit: true,
-			linesClass: 'line',
-			onSplit: (splitText) => {
-				const lines = splitText.lines;
-				return gsap.to(lines, {
-					stagger: 1,
-					duration: 1.5,
-					ease: 'none',
-					backgroundSize: '100%',
-					scrollTrigger: {
-						trigger: lines,
-						start: 'center 80%',
-						end: 'center 20%',
-						scrub: true
+				SplitText.create('.about__why-heading', {
+					type: 'lines,words',
+					autoSplit: true,
+					mask: 'lines',
+					onSplit: (self) => {
+						whyTimeline.from(
+							self.words,
+							{
+								opacity: 0,
+								scrambleText: {
+									speed: 2,
+									revealDelay: 0.2,
+									text: '{original}',
+									chars: 'upperCase'
+								},
+								stagger: {
+									from: 'start',
+									amount: 0.8
+								},
+								ease: 'power1.out',
+								duration: 0.8
+							},
+							'start+=0.2'
+						);
 					}
 				});
-			}
-		});
+				SplitText.create('.about__why-paragraph', {
+					type: 'lines',
+					autoSplit: true,
+					mask: 'lines',
+					onSplit: (self) => {
+						whyTimeline.from(
+							self.lines,
+							{
+								duration: 1,
+								opacity: 0,
+								yPercent: 60,
+								stagger: 0.1,
+								ease: 'power2.out'
+							},
+							'start+=0.8'
+						);
+					}
+				});
+				const nepalTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__nepal',
+							start: 'top 40%',
+							toggleActions: 'play none none none'
+						}
+					})
+					.addLabel('nepal_start');
 
-		const operatingTimeline = gsap
-			.timeline({
-				scrollTrigger: {
-					trigger: '.about__operating',
-					start: 'top 80%',
-					toggleActions: 'play none none none'
-				}
-			})
-			.addLabel('start');
-		operatingTimeline.fromTo(
-			'.about__operating-sub-title',
-			{
-				opacity: 0
-			},
-			{
-				duration: 0.8,
-				opacity: 1,
-				scrambleText: {
-					text: '{original}',
-					chars: 'upperAndLowerCase',
-					revealDelay: 0.5,
-					speed: 0.4
-				}
-			},
-			'start'
-		);
-		gsap.from('.model__item', {
-			scrollTrigger: {
-				start: 'top 70%',
-				trigger: '.model__item',
-				toggleActions: 'play none none none'
-			},
-			opacity: 0,
-			x: -40,
-			duration: 0.6,
-			ease: 'ease.out',
-			stagger: 0.2
-		});
-		gsap.utils.toArray('.about__drive-paragraph').forEach((em: unknown) => {
-			gsap.from(em as GSAPTweenTarget, {
-				opacity: 0,
-				duration: 1,
-				ease: 'ease',
-				scrollTrigger: {
-					trigger: em as HTMLElement,
-					start: 'top 70%',
-					toggleActions: 'play none none none'
-				}
-			});
-		});
-		SplitText.create('.about__drive-blockquote', {
-			type: 'chars,words,lines',
-			mask: 'lines',
-			autoSplit: true,
-			onSplit: (self) => {
-				gsap.fromTo(
-					self.chars,
+				nepalTimeline
+					.from(
+						'.about__nepal-sub-heading',
+						{
+							opacity: 0,
+							scrambleText: {
+								speed: 0.7,
+								revealDelay: 0.35,
+								text: '{original}',
+								chars: 'upperCase'
+							},
+							ease: 'power1.out',
+							duration: 0.4
+						},
+						'nepal_start'
+					)
+					.from(
+						'.about__nepal-title',
+						{
+							opacity: 0,
+							ease: 'ease',
+							duration: 1
+						},
+						'nepal_start+=0.2'
+					)
+					.from(
+						'.about__nepal-paragraph',
+						{
+							opacity: 0,
+							ease: 'ease',
+							duration: 1
+						},
+						'nepal_start+=0.4'
+					)
+					.from(
+						'#rightAngleBracket',
+						{
+							opacity: 0,
+							yPercent: -10,
+							duration: 0.4,
+							ease: 'ease.out'
+						},
+						'nepal_start+=0.6'
+					)
+					.from(
+						'#slash',
+						{
+							opacity: 0,
+							transformOrigin: 'center center',
+							rotateZ: -10,
+							duration: 0.8,
+							ease: 'ease.out'
+						},
+						'nepal_start+=0.8'
+					)
+					.from(
+						'#leftAngleBracket',
+						{
+							opacity: 0,
+							yPercent: -10,
+							duration: 0.4,
+							ease: 'ease.out'
+						},
+						'nepal_start+=1'
+					)
+					.from(
+						'#flag',
+						{
+							duration: 0.8,
+							opacity: 0,
+							ease: 'ease.in'
+						},
+						'nepal_start+=0.4'
+					);
+				const cubeSectionTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__nepal-section2',
+							start: 'top 80%',
+							toggleActions: 'play none none none'
+						},
+						onComplete: startLoop
+					})
+					.addLabel('start');
+
+				SplitText.create('.about__nepal-section2-title', {
+					type: 'lines,words,chars',
+					autoSplit: true,
+					mask: 'lines',
+					onSplit: (self) => {
+						cubeSectionTimeline.from(
+							self.chars,
+							{
+								opacity: 0,
+								yPercent: 100,
+								ease: 'power3.out',
+								stagger: {
+									amount: 0.5,
+									from: 'end'
+								}
+							},
+							'start+=0.6'
+						);
+					}
+				});
+				cubeSectionTimeline.from(
+					'.cube-svg',
 					{
-						yPercent: 200
+						opacity: 0,
+						xPercent: -50,
+						duration: 0.6,
+						stagger: {
+							amount: 0.2,
+							from: 'start'
+						},
+						ease: 'circ.out'
+					},
+					'start+=0.3'
+				);
+				function startLoop() {
+					gsap.to('.cube-svg', {
+						opacity: 0.2,
+						yPercent: -10,
+						duration: 0.6,
+						yoyo: true,
+						repeat: -1,
+						yoyoEase: 'sine.out',
+						repeatDelay: 0.2,
+						ease: 'sine.out',
+						stagger: {
+							amount: 0.4,
+							from: 'start'
+						}
+					});
+				}
+
+				const whatTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__build',
+							start: 'top 80%',
+							toggleActions: 'play none none none'
+						}
+					})
+					.addLabel('start');
+				whatTimeline
+					.fromTo(
+						'.about__build-sub-title',
+						{
+							opacity: 0
+						},
+						{
+							duration: 0.8,
+							opacity: 1,
+							scrambleText: {
+								text: '{original}',
+								chars: 'upperAndLowerCase',
+								revealDelay: 0.5,
+								speed: 0.4
+							}
+						},
+						'start'
+					)
+					.from(
+						'.about__build-title',
+						{
+							opacity: 0,
+							yPercent: -10,
+							duration: 0.6,
+							ease: 'power2.out'
+						},
+						'start'
+					);
+				gsap.from('.card__what', {
+					scrollTrigger: {
+						trigger: '.card__what', // Use 'el' to trigger based on this specific item
+						start: 'top 80%', // When the top of the element hits 80% of viewport
+						toggleActions: 'play none none none'
+					},
+					opacity: 0,
+					xPercent: 10,
+					stagger: {
+						each: 0.1,
+						from: 'random'
+					},
+					duration: 0.4,
+					ease: 'sine.out'
+				});
+				SplitText.create('.approach__text', {
+					type: 'lines',
+					autoSplit: true,
+					linesClass: 'line',
+					onSplit: (splitText) => {
+						const lines = splitText.lines;
+						return gsap.to(lines, {
+							stagger: 1,
+							duration: 1.5,
+							ease: 'none',
+							backgroundSize: '100%',
+							scrollTrigger: {
+								trigger: lines,
+								start: 'center 80%',
+								end: 'center 20%',
+								scrub: true
+							}
+						});
+					}
+				});
+
+				const operatingTimeline = gsap
+					.timeline({
+						scrollTrigger: {
+							trigger: '.about__operating',
+							start: 'top 80%',
+							toggleActions: 'play none none none'
+						}
+					})
+					.addLabel('start');
+				operatingTimeline.fromTo(
+					'.about__operating-sub-title',
+					{
+						opacity: 0
 					},
 					{
-						yPercent: 0,
-						// opacity: 1,
+						duration: 0.8,
+						opacity: 1,
 						scrambleText: {
 							text: '{original}',
 							chars: 'upperAndLowerCase',
 							revealDelay: 0.5,
-							speed: 0.3
-						},
-						scrollTrigger: {
-							trigger: '.about__drive-blockquote',
-							start: 'top 80%',
-							toggleActions: 'play pause none none'
-						},
-						ease: 'sine.out',
-						stagger: {
-							each: 0.02,
-							from: 'random'
+							speed: 0.4
 						}
-					}
+					},
+					'start'
 				);
-			}
-		});
+				gsap.from('.model__item', {
+					scrollTrigger: {
+						start: 'top 70%',
+						trigger: '.model__item',
+						toggleActions: 'play none none none'
+					},
+					opacity: 0,
+					x: -40,
+					duration: 0.6,
+					ease: 'ease.out',
+					stagger: 0.2
+				});
+				gsap.utils.toArray('.about__drive-paragraph').forEach((em: unknown) => {
+					gsap.from(em as GSAPTweenTarget, {
+						opacity: 0,
+						duration: 1,
+						ease: 'ease',
+						scrollTrigger: {
+							trigger: em as HTMLElement,
+							start: 'top 70%',
+							toggleActions: 'play none none none'
+						}
+					});
+				});
+				SplitText.create('.about__drive-blockquote', {
+					type: 'chars,words,lines',
+					mask: 'lines',
+					autoSplit: true,
+					onSplit: (self) => {
+						gsap.fromTo(
+							self.chars,
+							{
+								yPercent: 200
+							},
+							{
+								yPercent: 0,
+								// opacity: 1,
+								scrambleText: {
+									text: '{original}',
+									chars: 'upperAndLowerCase',
+									revealDelay: 0.5,
+									speed: 0.3
+								},
+								scrollTrigger: {
+									trigger: '.about__drive-blockquote',
+									start: 'top 80%',
+									toggleActions: 'play none none none'
+								},
+								ease: 'sine.out',
+								stagger: {
+									each: 0.02,
+									from: 'random'
+								}
+							}
+						);
+					}
+				});
+			});
+
+			cleanup = () => ctx.revert();
+		}
+
+		init();
+		window.addEventListener('page-ready', init);
+
+		return () => {
+			window.removeEventListener('page-ready', init);
+			cleanup?.();
+		};
 	});
 </script>
 

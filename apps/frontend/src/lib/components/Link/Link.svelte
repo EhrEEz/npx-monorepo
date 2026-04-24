@@ -29,14 +29,14 @@
 		}
 		if (scrollTo && smoothInstance) {
 			const targetUrl = new URL(href, window.location.origin);
-
 			if (targetUrl.pathname === pathName) {
 				const hash = targetUrl.hash;
 				if (hash) {
-					smoothInstance.scrollTo(hash, true);
 					pushState(`${hash}`, {});
+					smoothInstance.scrollTo(hash, true);
 				} else {
 					pushState(`${pathName}`, {});
+					smoothInstance.scrollTo(0, true);
 				}
 			} else {
 				goto(href);

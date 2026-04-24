@@ -12,6 +12,7 @@
 	import SEO from '$lib/components/SEO/SEO.svelte';
 	import type { SeoPage } from '$backend/src/payload-types.js';
 	import { resolve } from '$app/paths';
+	import { gsap } from 'gsap';
 
 	import desktopBanner from '$lib/assets/images/banner-1.png?width=1200&format=webp&quality=80';
 	import mobileBanner from '$lib/assets/images/banner-1-m.png?width=720&format=webp&quality=80';
@@ -100,14 +101,35 @@
 	const page_seo = $derived(data.page_seo);
 
 	$effect(() => {
-		initFloatingImages();
-		document.fonts.ready.then(() => {
-			initDraggable();
-			initHeroTimeline();
-			initApproachSectionAnimations();
-			initAboutTimeline();
-			initCapabilitiesTimeline();
-		});
+		let cleanups: Array<() => void> = [];
+
+		function init() {
+			cleanups.forEach((fn) => fn());
+			cleanups = [];
+
+			const ctx = gsap.context(() => {
+				initFloatingImages();
+				initDraggable();
+			});
+
+			document.fonts.ready.then(() => {
+				cleanups.push(
+					initHeroTimeline(),
+					initAboutTimeline(),
+					initCapabilitiesTimeline(),
+					initApproachSectionAnimations(),
+					() => ctx.revert()
+				);
+			});
+		}
+
+		init();
+		window.addEventListener('page-ready', init);
+
+		return () => {
+			window.removeEventListener('page-ready', init);
+			cleanups.forEach((fn) => fn());
+		};
 	});
 </script>
 

@@ -39,7 +39,12 @@
 
 	beforeNavigate(() => {
 		showLoader = true;
+
 		if (smooth) smooth.paused(true);
+
+		ScrollTrigger.getAll().forEach((t) => t.kill());
+
+		gsap.globalTimeline.pause();
 	});
 	function waitForImages(): Promise<void> {
 		return new Promise((resolve) => {
@@ -86,25 +91,32 @@
 
 	afterNavigate(async () => {
 		await tick();
-		initAnimations();
-
-		if (smooth) smooth.paused(true);
 
 		await waitForImages();
 
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
+				// Reset scroll position first
+				if (smooth) {
+					smooth.scrollTo(0, false);
+					smooth.paused(false);
+				}
+
+				// Hard refresh so GSAP has correct measurements
 				ScrollTrigger.refresh();
+
+				// Now re-init all animations from scratch
+				gsap.globalTimeline.resume();
+				initAnimations();
+
+				// Signal header to re-init its triggers
 				window.dispatchEvent(new CustomEvent('page-ready'));
 
 				const hash = window.location.hash;
-				if (smooth) {
-					if (hash) {
-						smooth.scrollTo(hash, true);
-					} else {
-						smooth.scrollTo(0, false);
-					}
-					smooth.paused(false);
+
+				console.log(hash);
+				if (smooth && hash) {
+					smooth.scrollTo(hash, true);
 				}
 
 				showLoader = false;

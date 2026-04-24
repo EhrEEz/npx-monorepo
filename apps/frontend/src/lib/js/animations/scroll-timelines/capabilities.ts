@@ -1,10 +1,10 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-
 gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger);
-export function initCapabilitiesTimeline() {
-	document.fonts.ready.then(() => {
+
+export function initCapabilitiesTimeline(): () => void {
+	const ctx = gsap.context(() => {
 		const capabilitiesTimeline = gsap
 			.timeline({
 				scrollTrigger: {
@@ -14,52 +14,34 @@ export function initCapabilitiesTimeline() {
 				}
 			})
 			.addLabel('start');
-		capabilitiesTimeline.fromTo(
-			'.services__title',
-			{
-				opacity: 0
-			},
-			{
-				duration: 1,
-				opacity: 1,
-				scrambleText: {
-					text: '{original}',
-					chars: 'upperCase',
-					revealDelay: 0.35,
-					speed: 0.7
-				}
-			},
-			'start'
-		);
-		capabilitiesTimeline.fromTo(
-			'.services__paragraph',
-			{
-				opacity: 0
-			},
-			{
-				duration: 0.8,
-				opacity: 1,
-				yPercent: -15,
-				ease: 'power1.out'
-			},
-			'start'
-		);
-		capabilitiesTimeline.fromTo(
-			'.services__button',
-			{
-				opacity: 0
-			},
-			{
-				duration: 0.8,
-				opacity: 1,
-				yPercent: -20,
-				ease: 'power1.out'
-			},
-			'start+=0.2'
-		);
+
+		capabilitiesTimeline
+			.fromTo(
+				'.services__title',
+				{ opacity: 0 },
+				{
+					duration: 1,
+					opacity: 1,
+					scrambleText: { text: '{original}', chars: 'upperCase', revealDelay: 0.35, speed: 0.7 }
+				},
+				'start'
+			)
+			.fromTo(
+				'.services__paragraph',
+				{ opacity: 0 },
+				{ duration: 0.8, opacity: 1, yPercent: -15, ease: 'power1.out' },
+				'start'
+			)
+			.fromTo(
+				'.services__button',
+				{ opacity: 0 },
+				{ duration: 0.8, opacity: 1, yPercent: -20, ease: 'power1.out' },
+				'start+=0.2'
+			);
+
 		const mm = gsap.matchMedia();
 
-		mm.add('(max-width:767px', () => {
+		mm.add('(max-width:767px)', () => {
 			const tableItems = gsap.utils.toArray('.capabilities__table--sm tr') as HTMLElement[];
 			tableItems.forEach((item) => {
 				item.dataset.scrambled = 'false';
@@ -70,12 +52,10 @@ export function initCapabilitiesTimeline() {
 					ease: 'power1.out',
 					scrollTrigger: {
 						trigger: item,
-						start: 'top 30%',
+						start: 'top 80%',
 						toggleActions: 'play none none none',
 						onEnter: () => {
-							if (item.dataset.scrambled === 'true') {
-								return;
-							}
+							if (item.dataset.scrambled === 'true') return;
 							const itemText = item.querySelector('.floating__image-text');
 							if (itemText) {
 								gsap.to(itemText, {
@@ -92,12 +72,12 @@ export function initCapabilitiesTimeline() {
 								});
 							}
 						}
-					},
-					onComplete: () => {}
+					}
 				});
 			});
 		});
-		mm.add('(min-width:768px', () => {
+
+		mm.add('(min-width:768px)', () => {
 			const tableItems = gsap.utils.toArray(
 				'.capabilities__table--md tr,.capabilities__table--md th'
 			) as HTMLElement[];
@@ -113,9 +93,7 @@ export function initCapabilitiesTimeline() {
 						start: 'top 80%',
 						toggleActions: 'play none none none',
 						onEnter: () => {
-							if (item.dataset.scrambled === 'true') {
-								return;
-							}
+							if (item.dataset.scrambled === 'true') return;
 							const itemText = item.querySelector('.floating__image-text');
 							if (itemText) {
 								gsap.to(itemText, {
@@ -132,11 +110,11 @@ export function initCapabilitiesTimeline() {
 								});
 							}
 						}
-					},
-					onComplete: () => {}
+					}
 				});
 			});
 		});
 	});
-	// capabilitiesTimeline.scrollTrigger?.disable(true);
+
+	return () => ctx.revert();
 }

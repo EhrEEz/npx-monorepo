@@ -6,13 +6,18 @@
 	import type { SiteSetting } from '$backend/src/payload-types';
 	import { resolve } from '$app/paths';
 
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { SplitText } from 'gsap/SplitText';
+	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
 		.settings as SiteSetting;
 	const siteInfo = $derived(siteSettings.basic_settings);
 	const contacts = $derived(siteInfo.contact);
 	const socials = $derived(siteSettings.social_media);
 
-	const currentPage = $derived<string | null>(page.route.id);
+	const currentPage = $derived<string | null>(page.url.pathname);
 	const CURRENT_YEAR = new Date().getFullYear();
 </script>
 

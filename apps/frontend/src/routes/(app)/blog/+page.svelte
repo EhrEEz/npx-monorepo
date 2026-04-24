@@ -101,7 +101,7 @@
 </script>
 
 <SEO pageSettings={page_seo} />
-<section class="blog__header-section mt-8 mb-3 mt-md-6 mt-lg-9">
+<section class="blog__header-section pt-8 mb-3 pt-md-6 pt-lg-9">
 	<h1 class="heading-1">
 		<span class="sr-only">Nepaxis: </span>Article Collection
 	</h1>
