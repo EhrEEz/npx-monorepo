@@ -4,7 +4,7 @@
 	import { ScrollSmoother } from 'gsap/ScrollSmoother';
 	import { getContext } from 'svelte';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 
 	const {
 		class: className,
@@ -34,16 +34,17 @@
 				const hash = targetUrl.hash;
 				if (hash) {
 					smoothInstance.scrollTo(hash, true);
-					history.pushState(null, '', hash);
+					pushState(`${hash}`, {});
 				} else {
-					history.pushState(null, '', pathName);
-					smoothInstance.scrollTo(0, true);
+					pushState(`${pathName}`, {});
 				}
 			} else {
 				goto(href);
+				ScrollTrigger.refresh();
 			}
 		} else {
 			goto(href);
+			ScrollTrigger.refresh();
 		}
 	}
 </script>

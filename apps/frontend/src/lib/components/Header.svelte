@@ -4,7 +4,6 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { ScrollSmoother } from 'gsap/ScrollSmoother';
 	import { gsap } from 'gsap';
-	import { afterNavigate } from '$app/navigation';
 	import Link from './Link/Link.svelte';
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
@@ -25,6 +24,10 @@
 	let navText = $state<HTMLElement>();
 	let navCard = $state<HTMLElement>();
 	let resizeTimeout: ReturnType<typeof setTimeout>;
+	let scrollTriggers: ScrollTrigger[] = [];
+
+	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
 	function toggleNavBar(e: Event) {
 		e.stopPropagation();
 		navToggled = !navToggled;
@@ -41,64 +44,46 @@
 			navToggled = false;
 		}
 	}
-	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+	function updateNavTheme(sectionTheme: string) {
+		const next: NavTheme =
+			sectionTheme === 'light'
+				? 'dark'
+				: sectionTheme === 'dark'
+					? 'light'
+					: sectionTheme === 'invert'
+						? 'invert'
+						: navTheme;
+
+		if (next !== navTheme) navTheme = next;
+	}
 
 	function initNavThemeChange() {
-		// Kill all existing ScrollTriggers for this function
-		ScrollTrigger.getAll().forEach((trigger) => {
-			if (trigger.vars.id?.startsWith('nav-theme-')) {
-				trigger.kill();
-			}
+		if (!mainNav) return;
+
+		scrollTriggers.forEach((t) => t.kill());
+		scrollTriggers = [];
+
+		document.querySelectorAll<HTMLElement>('section, [data-section]').forEach((section) => {
+			const trigger = ScrollTrigger.create({
+				trigger: section,
+				start: 'top 2%',
+				end: 'bottom 2%',
+				onEnter: () => {
+					const theme = section.getAttribute('data-section');
+					if (theme) updateNavTheme(theme);
+				},
+				onToggle: (self) => {
+					if (self.isActive) {
+						const theme = section.getAttribute('data-section') ?? 'dark';
+						updateNavTheme(theme);
+					}
+				}
+			});
+			scrollTriggers.push(trigger);
 		});
 
-		let sectionTheme: string = 'dark';
-
-		if (mainNav) {
-			const sections: NodeListOf<HTMLElement> =
-				document.querySelectorAll<HTMLElement>('section, [data-section]');
-
-			sections.forEach((section: HTMLElement, index: number) => {
-				ScrollTrigger.create({
-					id: `nav-theme-${index}`, // Add ID for tracking
-					trigger: section,
-					start: 'top 2%',
-					end: 'bottom 2%',
-					onEnter: () => {
-						const theme = section.getAttribute('data-section');
-						if (theme) {
-							sectionTheme = theme;
-						}
-					},
-					onToggle: (self: ScrollTrigger) => {
-						if (self.isActive) {
-							const theme = section.getAttribute('data-section');
-							if (theme) {
-								sectionTheme = theme;
-							} else {
-								sectionTheme = 'dark';
-							}
-							switch (sectionTheme) {
-								case 'light':
-									navTheme = 'dark';
-									break;
-								case 'dark':
-									navTheme = 'light';
-									break;
-								case 'invert':
-									navTheme = 'invert';
-									break;
-								default:
-									break;
-							}
-						}
-					}
-				});
-			});
-
-			if (sections.length === 0) {
-				navTheme = 'light';
-			}
-		}
+		if (scrollTriggers.length === 0) navTheme = 'light';
 	}
 
 	function handleResize() {
@@ -108,42 +93,22 @@
 		}, 250);
 	}
 
-	// Use afterNavigate to handle SvelteKit navigation
-	afterNavigate(() => {
-		if (browser) {
-			// Wait for DOM to settle and images to load
-			requestAnimationFrame(() => {
-				setTimeout(() => {
-					initNavThemeChange();
-					ScrollTrigger.refresh();
-				}, 100);
-			});
-		}
-	});
-
 	$effect(() => {
-		if (browser) {
-			// Initial setup with delay for content loading
-			setTimeout(() => {
-				initNavThemeChange();
-				ScrollTrigger.refresh();
-			}, 100);
+		if (!browser) return;
 
-			window.addEventListener('resize', handleResize);
-		}
+		window.addEventListener('page-ready', initNavThemeChange);
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('page-ready', initNavThemeChange);
+			window.removeEventListener('resize', handleResize);
+		};
 	});
-
 	onDestroy(() => {
 		if (browser) {
-			window.removeEventListener('resize', handleResize);
 			clearTimeout(resizeTimeout);
-
-			// Kill all nav-theme ScrollTriggers
-			ScrollTrigger.getAll().forEach((trigger) => {
-				if (trigger.vars.id?.startsWith('nav-theme-')) {
-					trigger.kill();
-				}
-			});
+			scrollTriggers.forEach((t) => t.kill());
+			scrollTriggers = [];
 		}
 	});
 </script>
@@ -204,7 +169,6 @@
 						<div class="nav__list-label">Blog</div>
 					</Link>
 				</li>
-
 				<li class="nav__list-item">
 					<Link
 						href={resolve('/contact')}
@@ -289,7 +253,6 @@
 								<div class="sr-only">{siteInfo.name} whatsapp Profile</div>
 							</a>
 						{/if}
-
 						{#if socials?.x}
 							<a
 								href={socials.x}
@@ -300,7 +263,6 @@
 								<div class="sr-only">{siteInfo.name} X Profile</div>
 							</a>
 						{/if}
-
 						{#if socials?.youtube}
 							<a
 								href={socials.youtube}
@@ -348,7 +310,6 @@
 									</div>
 								</div>
 							{/if}
-
 							{#if contacts.support_email}
 								<div class="info--help">
 									<p class="medium-15 neutral-100 mb-1 mb-md-2 uppercase">Help & Support</p>

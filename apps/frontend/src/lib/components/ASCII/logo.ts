@@ -2,19 +2,16 @@ import { gsap } from 'gsap';
 // import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initASCIIAnimations } from './ascii_animations';
 
-
-export function initAsciiTimeline(art: HTMLElement, card: HTMLElement) {
-
-	initASCIIAnimations(art);
+export function initAsciiTimeline(asciiSection: HTMLElement, art: HTMLElement, card: HTMLElement) {
+	initASCIIAnimations(art, asciiSection);
 
 	const asciiTimeline = gsap
 		.timeline({
-			trigger: '.ascii__section',
+			trigger: asciiSection,
 			start: 'top 80%',
 			toggleActions: 'play none none none'
 		})
 		.addLabel('start');
-
 
 	asciiTimeline.to(card, {
 		scale: 1.15,
@@ -28,12 +25,12 @@ export function initAsciiTimeline(art: HTMLElement, card: HTMLElement) {
 			trigger: card,
 			start: 'top 0%',
 			end: 'bottom 5%',
-			endTrigger: '.ascii__section',
+			endTrigger: asciiSection,
 			scrub: true,
-			pin: ".ascii__section",
+			pin: '.ascii__section',
 			pinSpacing: false,
 			onEnter: () => {
-				initASCIIAnimations(art);
+				initASCIIAnimations(art, asciiSection);
 				art.style.pointerEvents = 'auto';
 			},
 			onLeave: () => {
@@ -41,15 +38,15 @@ export function initAsciiTimeline(art: HTMLElement, card: HTMLElement) {
 				art.style.pointerEvents = 'none';
 			},
 			onEnterBack: () => {
-				initASCIIAnimations(art);
+				initASCIIAnimations(art, asciiSection);
 				art.style.pointerEvents = 'auto';
 			},
 			onLeaveBack: () => {
 				// destroyASCIIAnimation();
 				art.style.pointerEvents = 'none';
-			},
+			}
 		}
-	})
+	});
 
 	// asciiTimeline.scrollTrigger?.disable(true);
 }

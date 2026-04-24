@@ -330,6 +330,7 @@ export interface SeoPage {
  */
 export interface Service {
   id: number;
+  _order?: string | null;
   name: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -637,6 +638,7 @@ export interface SeoPagesSelect<T extends boolean = true> {
  * via the `definition` "service_select".
  */
 export interface ServiceSelect<T extends boolean = true> {
+  _order?: T;
   name?: T;
   generateSlug?: T;
   slug?: T;

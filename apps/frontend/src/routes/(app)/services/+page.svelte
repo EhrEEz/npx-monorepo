@@ -1,108 +1,10 @@
-<script lang="ts" module>
-	import { resolve } from '$app/paths';
-	import type { Media } from '$backend/src/payload-types';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import Image from '$lib/components/Image/Image.svelte';
-
-	export type ServiceItem = {
-		id: number | string;
-		name: string;
-		label?: string;
-	};
-	export type ServiceType = {
-		id: number | string;
-		name: string;
-		label?: string;
-		description: string;
-		slug: string;
-		inner_list: ServiceItem[];
-		images?: Media[] | string[];
-		cover: Media | string;
-	};
-</script>
-
 <script lang="ts">
-	const allServices: ServiceType[] = [
-		{
-			id: 1,
-			name: 'Design',
-			label: 'Design',
-			slug: 'design',
-			description:
-				'We create cohesive brand systems and intuitive digital experiences that elevate how your business is perceived across every touchpoint.',
-			inner_list: [
-				{ id: 1, name: 'Branding & Visual Identity' },
-				{ id: 2, name: 'UI/UX Design' },
-				{ id: 3, name: 'Digital & Print Media' }
-			],
-			images: [
-				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`,
-				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`,
-				`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-			],
-			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-		},
-		{
-			id: 2,
-			name: 'Development',
-			label: 'Development',
-			slug: 'development',
-			description:
-				'Our engineering team builds high-performance digital products using modern frameworks, scalable architecture, and efficient development practices.',
-			inner_list: [
-				{ id: 1, name: 'Web Development' },
-				{ id: 2, name: 'Mobile App Development' },
-				{ id: 3, name: 'Software Development' },
-				{ id: 4, name: 'Tech Stack Expertise' }
-			],
-			images: [],
-			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-		},
-		{
-			id: 3,
-			name: 'cloud and data',
-			label: 'Cloud & Data Services',
-			slug: 'cloud-and-data',
-			description:
-				'We design and manage secure, resilient, and globally optimized cloud environments that ensure high availability and operational excellence.',
-			inner_list: [
-				{ id: 1, name: 'Branding & Visual Identity' },
-				{ id: 2, name: 'UI/UX Design' },
-				{ id: 3, name: 'Digital & Print Media' }
-			],
-			images: [],
-			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-		},
-		{
-			id: 4,
-			name: 'marketing',
-			label: 'Marketing',
-			slug: 'marketing',
-			description:
-				'We execute data-driven marketing strategies that improve visibility, accelerate acquisition, and enhance long-term customer engagement.',
-			inner_list: [
-				{ id: 1, name: 'Growth Hacking' },
-				{ id: 2, name: 'Search & Performance Marketing' },
-				{ id: 3, name: 'Social Media Marketing' },
-				{ id: 4, name: 'Content & Brand Marketing' },
-				{ id: 5, name: 'Analytics & Reporting' }
-			],
-			images: [],
-			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-		},
-		{
-			id: 5,
-			name: 'expert',
-			label: 'Expert Services',
-			slug: 'expert-services',
-			description:
-				'Our strategic and operational support ensures that every digital initiative is planned, executed, and maintained with precision and clarity.',
-			inner_list: [{ id: 1, name: 'Consulting & Support' }],
-			images: [],
-			cover: `https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/420/280`
-		}
-	];
-	const services = $derived(allServices);
+	import { resolve } from '$app/paths';
+	import type { Media, Service, ServiceApplication } from '$backend/src/payload-types';
+	import Image from '$lib/components/Image/Image.svelte';
+	const { data } = $props();
+
+	const services = $derived<Service[] | null>(data.services);
 </script>
 
 <section data-section="dark" class="page__title-section mt-xl-9 mt-9 mb-4">
@@ -141,90 +43,71 @@
 		</div>
 	</div>
 </section>
-<section class="services__list-section my-4 my-xl-5 pb-lg-8" data-section="dark">
-	<ol class="services__list">
-		{#each services as service, index (service.id)}
-			<li class="services__item strip-style">
-				<div class="grid-md-row {index === 0 ? 'mb-md-6 mb-lg-7' : 'my-md-6 my-lg-7'}">
-					<div class="services__cover w-full">
-						{#if typeof service.cover === 'string'}
-							<img src={service.cover} alt={service.name} />
-						{:else}
-							<Image image={service.cover} />
-						{/if}
-					</div>
-				</div>
-				<div class="grid-lg-row ai-end">
-					<div class="col-start-lg-1 col-end-lg-5 h-full">
-						<h2 class="heading-2">{service.label ? service.label : service.name}</h2>
-						<p class="neutral-400 mt-2">
-							We create cohesive brand systems and intuitive digital experiences that elevate how
-							your business is perceived across every touchpoint.
-						</p>
-						<div class="fl-row fl-wrap al-center mt-2">
-							<a
-								href={resolve(`/services/${service.slug}`)}
-								class="btn--primary btn--outline services__button btn--thin"
-								target="_blank"
-							>
-								<span class="btn__wrapper">
-									<span class="btn__text"
-										><span class="neutral-200">Learn about our {service.name} services</span></span
-									>
-								</span>
-							</a>
+{#if services && services.length > 0}
+	<section class="services__list-section my-4 my-xl-5 pb-lg-8" data-section="dark">
+		<ol class="services__list">
+			{#each services as service, index (service.id)}
+				<li class="services__item strip-style">
+					<div class="grid-md-row {index === 0 ? 'mb-md-6 mb-lg-7' : 'my-md-6 my-lg-7'}">
+						<div class="services__cover w-full">
+							<Image image={service.cover as Media} />
 						</div>
 					</div>
-					<div class="col-start-lg-6 col-end-lg-10 h-full">
-						<div class="h-full">
-							<ol class="services__inner-list mb-3">
-								{#each service.inner_list as inner_item (inner_item.id)}
-									<li class="services__inner-item">
-										<div class="fl-row jc-between al-center">
-											<p class="font-mono regular-15 uppercase neutral-300">
-												{inner_item.label ? inner_item.label : inner_item.name}
-											</p>
-											<div class="font-mono bold-15 neutreal-100" aria-hidden="true">
-												{String(inner_item.id).padStart(2, '0')}
-											</div>
-										</div>
-									</li>
-								{/each}
-							</ol>
-							{#if service.images}
-								<Carousel
-									slides={[
-										...service.images.map((emt, i) => {
-											return {
-												id: i,
-												content: emt
-											};
-										})
-									]}
+					<div class="grid-lg-row ai-end">
+						<div class="col-start-lg-1 col-end-lg-5 h-full">
+							<h2 class="heading-2">{service.label ? service.label : service.name}</h2>
+							<p class="neutral-400 mt-2">
+								{service.description}
+							</p>
+							<div class="fl-row fl-wrap al-center mt-2">
+								<a
+									href={resolve(`/services/${service.slug}`)}
+									class="btn--primary btn--outline services__button btn--thin"
+									target="_blank"
 								>
-									{#snippet children({ slide, isActive })}
-										<div class="slide" class:active={isActive}>
-											{#if typeof slide.content === 'string'}
-												<img src={slide.content} alt="{service.name} example" />
-											{:else}
-												<Image image={slide.content as Media} />
-											{/if}
-										</div>
-									{/snippet}
-								</Carousel>
-							{/if}
+									<span class="btn__wrapper">
+										<span class="btn__text"
+											><span class="neutral-200">Learn about our {service.name} services</span
+											></span
+										>
+									</span>
+								</a>
+							</div>
+						</div>
+						<div class="col-start-lg-6 col-end-lg-10 h-full">
+							<div class="h-full">
+								{#if service.relatedInners?.docs && service.relatedInners.docs.length > 0}
+									{@const applications = service.relatedInners?.docs as ServiceApplication[]}
+
+									<ol class="services__inner-list mb-3">
+										{#each applications as application (applications.indexOf(application))}
+											<li class="services__inner-item">
+												<div class="fl-row jc-between al-center">
+													<p class="font-mono regular-15 uppercase neutral-300">
+														{application.name}
+													</p>
+													<div class="font-mono bold-15 neutreal-100" aria-hidden="true">
+														{String(applications.indexOf(application) + 1).padStart(2, '0')}
+													</div>
+												</div>
+											</li>
+										{/each}
+									</ol>
+								{/if}
+								{#if service.images}{/if}
+							</div>
+						</div>
+						<div class="col-start-lg-10 col-end-lg-13" aria-hidden="true">
+							<div class="services__counter heading-2 font-mono text-right" aria-hidden="true">
+								{String(services.indexOf(service) + 1).padStart(2, '0')}
+							</div>
 						</div>
 					</div>
-					<div class="col-start-lg-10 col-end-lg-13" aria-hidden="true">
-						<div class="services__counter heading-2 font-mono text-right" aria-hidden="true">
-							{String(service.id).padStart(2, '0')}
-						</div>
-					</div>
-				</div>
-			</li>
-		{/each}
-	</ol>
-</section>
+				</li>
+			{/each}
+		</ol>
+	</section>
+{/if}
 
 <style lang="scss">
 	.services {
@@ -252,7 +135,7 @@
 			}
 		}
 		&__cover {
-			img {
+			:global(img) {
 				inline-size: 100%;
 				border-radius: 1rem;
 			}

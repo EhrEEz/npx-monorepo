@@ -29,7 +29,9 @@ export default defineConfig(
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-
+		rules: {
+			'svelte/missing-key-for-each': 'off'
+		},
 		languageOptions: {
 			parserOptions: {
 				projectService: true,

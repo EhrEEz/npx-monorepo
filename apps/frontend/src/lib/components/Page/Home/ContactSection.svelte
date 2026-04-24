@@ -2,84 +2,108 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import { SplitText } from 'gsap/SplitText';
-	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 	import Modal from '$lib/components/Modal/Modal.svelte';
 
-	type Validation = string | true;
-	type ValidationFunction = (a: string) => Validation;
+	import {
+		FormControl,
+		validateFullName,
+		validateCompanyName,
+		validateEmail,
+		validatePhoneNumber,
+		validateMessage
+	} from './contact.svelte';
+	import {
+		initScrambleTitle,
+		initFormGroupAnimations,
+		initContactPinAnimation
+	} from './contact.animations';
+
 	const ACCESS_KEY = `5e3a9806-0470-49b0-ab74-d7109400cdc6`;
 
-	gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger, SplitText);
+	// ── Form state ────────────────────────────────────────────
+	let fullName = new FormControl({ validate: validateFullName });
+	let companyName = new FormControl({ validate: validateCompanyName });
+	let email = new FormControl({ validate: validateEmail });
+	let phoneNumber = new FormControl({ validate: validatePhoneNumber });
+	let message = new FormControl({ validate: validateMessage });
 
-	let contactPinTrigger: ScrollTrigger | null = null;
-	let contact_section = $state<HTMLElement | null>();
-	function initTypePin() {
-		if (!browser) return;
+	// Button is disabled until required fields are touched AND error-free
+	let validity = $derived(
+		fullName.changed &&
+			!fullName.error &&
+			email.changed &&
+			!email.error &&
+			!companyName.error &&
+			!phoneNumber.error &&
+			!message.error
+	);
 
-		document.fonts.ready.then(() => {
-			const contact_title = document.querySelector('.contact__title');
+	const formData = $derived({
+		fullName: fullName.value,
+		companyName: companyName.value,
+		email: email.value,
+		phoneNumber: phoneNumber.value,
+		message: message.value,
+		access_key: ACCESS_KEY
+	});
 
-			if (contact_title) {
-				SplitText.create('.contact__title', {
-					type: 'words,lines',
-					autoSplit: true,
-					onSplit: (self) => {
-						gsap.set(self.words, { opacity: 0 });
-						gsap.to(self.words, {
-							duration: 1,
-							opacity: 1,
-							ease: 'none',
-							scrambleText: {
-								speed: 0.7,
-								revealDelay: 0.35,
-								text: '{original}',
-								chars: 'upperCase'
-							},
-							scrollTrigger: {
-								trigger: '.contact__title',
-								start: 'top 70%',
-								end: 'bottom 0%',
-								toggleActions: 'play none none none'
-							}
-						});
-					}
-				});
-			}
+	// ── Modal state ───────────────────────────────────────────
+	let showModal = $state(false);
+	let showErrorInModal = $state(false);
+	const modal = { headerText: '', contentText: '' };
 
-			const fg = gsap.utils.toArray(
-				'.contact__section .form__group, .big__button-wrapper'
-			) as HTMLElement[];
+	async function submitForm(event: SubmitEvent) {
+		event.preventDefault();
+		if (!validity) return;
 
-			fg.forEach((emt, index) => {
-				gsap.from(emt, {
-					opacity: 0,
-					yPercent: 50,
-					duration: 1,
-					ease: 'power1.out',
-					delay: index * 0.1,
-					scrollTrigger: {
-						trigger: emt,
-						start: 'top 90%',
-						end: 'bottom 0%',
-						toggleActions: 'play none none none'
-					}
-				});
+		try {
+			const res = await fetch('https://api.web3forms.com/submit', {
+				method: 'POST',
+				body: JSON.stringify(formData),
+				headers: { Accept: 'application/json', 'Content-Type': 'application/json' }
 			});
-		});
+			const json = await res.json();
+
+			if (json.success) {
+				modal.headerText = 'Your message has been submitted.';
+				modal.contentText = "We've received your message and will get back to you very soon.";
+				[fullName, companyName, email, phoneNumber, message].forEach((f) => f.reset());
+			} else {
+				modal.headerText = `Error ${json.status}: ${json.message}`;
+				modal.contentText = json.detail;
+				showErrorInModal = true;
+			}
+		} catch {
+			modal.headerText = 'Network Error';
+			modal.contentText = 'Unable to submit form. Please try again.';
+		}
+
+		showModal = true;
 	}
 
-	// Snapshot existing triggers before init so we only kill the ones we create
+	// ── Animation state ───────────────────────────────────────
+	let contact_section = $state<HTMLElement | null>(null);
+	let contactPinTrigger: ScrollTrigger | null = null;
 	let triggersBefore: ScrollTrigger[] = [];
+
+	function setupPinAnimation() {
+		contactPinTrigger?.kill();
+		contactPinTrigger = null;
+		if (contact_section) {
+			contactPinTrigger = initContactPinAnimation(contact_section);
+		}
+	}
 
 	onMount(() => {
 		triggersBefore = ScrollTrigger.getAll();
-		initTypePin();
+		initScrambleTitle();
+		initFormGroupAnimations();
+
+		const t = setTimeout(setupPinAnimation, 200);
 
 		return () => {
-			// Kill only triggers that didn't exist before this component mounted
+			clearTimeout(t);
 			ScrollTrigger.getAll()
 				.filter((st) => !triggersBefore.includes(st))
 				.forEach((st) => st.kill());
@@ -87,273 +111,13 @@
 		};
 	});
 
-	// --------------- Form logic (unchanged) ---------------
-
-	function validateFullName(value: string): Validation {
-		if (!value.trim() || value.trim().length <= 0) {
-			return 'Full Name is required';
-		}
-		return true;
-	}
-	function validateCompanyName(value: string): Validation {
-		if (value.trim() && value.trim().length < 2) {
-			return 'Company Name must be at least 2 characters';
-		}
-		return true;
-	}
-	function validateEmail(value: string): Validation {
-		if (!value.trim() || value.trim().length <= 0) {
-			return 'Email is required';
-		} else {
-			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			if (!emailRegex.test(value.trim())) {
-				return 'Enter a valid email';
-			}
-		}
-		return true;
-	}
-	function validatePhoneNumber(value: string): Validation {
-		const phoneRegex = /^[0-9+\-\s()]{7,}$/;
-		const trimmed = value.trim();
-
-		if (trimmed.length > 0 && !phoneRegex.test(trimmed)) {
-			return 'Enter a valid phone number.';
-		}
-
-		return true;
-	}
-
-	function validateMessage(value: string): Validation {
-		const trimmed = value.trim();
-
-		if (trimmed.length > 0 && trimmed.length < 5) {
-			return 'Message must be at least 5 characters.';
-		}
-
-		if (trimmed.length > 500) {
-			return 'Message must be at most 500 characters.';
-		}
-
-		return true;
-	}
-
-	class FormControl {
-		value: string = $state('');
-		error: boolean = $state(false);
-		errorMessage: string = $state('');
-		changed: boolean = $state(false);
-		validationFunction: ValidationFunction = (): Validation => {
-			return true;
-		};
-
-		constructor(config?: { value?: string; validate?: ValidationFunction } | undefined | null) {
-			if (config && config.value) {
-				this.value = config.value;
-			}
-			if (config && config.validate) {
-				this.validationFunction = config.validate;
-			}
-			return this;
-		}
-
-		setValidation(fn: ValidationFunction) {
-			this.validationFunction = fn;
-		}
-
-		validate() {
-			const err = this.validationFunction.call(this, this.value);
-			if (typeof err === 'string') {
-				this.error = true;
-				this.errorMessage = err;
-			} else {
-				this.error = false;
-				this.errorMessage = '';
-			}
-			if (!this.changed) {
-				this.changed = true;
-			}
-		}
-	}
-
-	let fullName = new FormControl({ validate: validateFullName });
-	let companyName = new FormControl({ validate: validateCompanyName });
-	let email = new FormControl({ validate: validateEmail });
-	let phoneNumber = new FormControl({ validate: validatePhoneNumber });
-	let message = new FormControl({ validate: validateMessage });
-
-	const modal = {
-		headerText: '',
-		contentText: ''
-	};
-
-	const formData = $derived({
-		phoneNumber: phoneNumber.value,
-		fullName: fullName.value,
-		companyName: companyName.value,
-		email: email.value,
-		message: message.value,
-		access_key: ACCESS_KEY
-	});
-	let showModal = $state(false);
-	let showErrorInModal = $state(false);
-	let validity = $derived(
-		!fullName.error && !companyName.error && !email.error && !phoneNumber.error && !message.error
-	);
-	async function submitForm(event: SubmitEvent) {
-		event.preventDefault();
-		if (validity) {
-			try {
-				const res = await fetch('https://api.web3forms.com/submit', {
-					method: 'post',
-					body: JSON.stringify(formData),
-					headers: {
-						Accept: 'application/json',
-						'Content-type': 'application/json'
-					}
-				});
-				const json = await res.json();
-				if (json.success) {
-					modal.headerText = 'Your message has been submitted.';
-					modal.contentText = "We've received your message and will get back to you very soon.";
-					showModal = true;
-					fullName.value = '';
-					companyName.value = '';
-					email.value = '';
-					phoneNumber.value = '';
-					message.value = '';
-				} else {
-					modal.headerText = `Error ${json.status}: ${json.message}`;
-					modal.contentText = `${json.detail}`;
-					showModal = true;
-					showErrorInModal = true;
-				}
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} catch (e: any) {
-				console.error('Error:', e);
-				modal.headerText = 'Network Error';
-				modal.contentText = 'Unable to submit form. Please try again.';
-				showModal = true;
-			}
-		}
-	}
-
-	function initContactPinAnimation() {
-		// Kill existing trigger
-		if (contactPinTrigger) {
-			contactPinTrigger.kill();
-			contactPinTrigger = null;
-		}
-		let footer: HTMLElement | null = document.querySelector('.footer__section');
-
-		if (!footer || !browser) {
-			return;
-		}
-		if (!contact_section) {
-			// Element doesn't exist, silently return
-			return;
-		}
-
-		const contact_title = document.querySelector('.contact__title');
-
-		if (contact_title) {
-			document.fonts.ready.then(() => {
-				SplitText.create('.contact__title', {
-					type: 'words,lines',
-					autoSplit: true,
-					onSplit: (self) => {
-						gsap.set(self.words, { opacity: 0 });
-						gsap.to(self.words, {
-							duration: 1,
-							opacity: 1,
-							ease: 'none',
-							scrambleText: {
-								speed: 0.7,
-								revealDelay: 0.35,
-								text: '{original}',
-								chars: 'upperCase'
-							},
-							scrollTrigger: {
-								trigger: '.contact__title',
-								start: 'top 70%',
-								end: 'bottom 0%',
-								toggleActions: 'play none none none'
-							}
-						});
-					}
-				});
-			});
-		}
-
-		const footerHeight = footer.offsetHeight;
-		const slideOutDuration = contact_section.offsetHeight * 1.25;
-		const totalDuration = footerHeight + slideOutDuration;
-
-		const tl = gsap.timeline({
-			scrollTrigger: {
-				trigger: contact_section,
-				start: 'bottom bottom',
-				end: `+=${totalDuration}`,
-				scrub: true,
-				pin: contact_section,
-				pinSpacing: false,
-				id: 'contact-pin-slide',
-				onRefresh: (self) => {
-					contactPinTrigger = self;
-				}
-			}
-		});
-
-		tl.to(
-			contact_section,
-			{
-				duration: footerHeight,
-				y: 0,
-				ease: 'none'
-			},
-			0
-		);
-
-		tl.to(
-			contact_section,
-			{
-				duration: slideOutDuration,
-				y: -contact_section.offsetHeight,
-				ease: 'none'
-			},
-			footerHeight
-		);
-	}
-	$effect(() => {
-		if (browser) {
-			const timeout = setTimeout(() => {
-				initContactPinAnimation();
-			}, 200);
-
-			return () => {
-				clearTimeout(timeout);
-				if (contactPinTrigger) {
-					contactPinTrigger.kill();
-					contactPinTrigger = null;
-				}
-			};
-		}
-	});
 	afterNavigate(() => {
-		if (browser) {
-			requestAnimationFrame(() => {
-				setTimeout(() => {
-					initContactPinAnimation();
-				}, 200);
-			});
-		}
+		if (browser) requestAnimationFrame(() => setTimeout(setupPinAnimation, 200));
 	});
+
 	onDestroy(() => {
-		if (browser) {
-			if (contactPinTrigger) {
-				contactPinTrigger.kill();
-				contactPinTrigger = null;
-			}
-		}
+		contactPinTrigger?.kill();
+		contactPinTrigger = null;
 	});
 </script>
 

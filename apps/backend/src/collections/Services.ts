@@ -3,6 +3,7 @@ import { slugField } from 'payload'
 
 export const Services: CollectionConfig = {
   slug: 'service',
+  orderable: true,
   admin: {
     useAsTitle: 'name',
     group: 'Service',

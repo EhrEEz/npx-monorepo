@@ -6,7 +6,7 @@ gsap.registerPlugin(SplitText, ScrollTrigger);
 
 let mouseMoveHandler: (this: Document, ev: MouseEvent) => void;
 
-export function initASCIIAnimations(asciiText: HTMLElement) {
+export function initASCIIAnimations(asciiText: HTMLElement, ascii__section: HTMLElement) {
 	if (asciiText && asciiText.innerHTML === '') {
 		console.error("ASCII text variable 'ascii' is not defined.");
 		return;
@@ -135,7 +135,7 @@ export function initASCIIAnimations(asciiText: HTMLElement) {
 	mm.add('(max-width:991px)', () => {
 		gsap.timeline({
 			scrollTrigger: {
-				trigger: '.ascii__section',
+				trigger: ascii__section,
 				start: 'top bottom',
 				end: 'bottom top',
 				toggleActions: 'play pause resume pause',

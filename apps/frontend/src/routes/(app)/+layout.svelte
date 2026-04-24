@@ -41,43 +41,74 @@
 		showLoader = true;
 		if (smooth) smooth.paused(true);
 	});
-	afterNavigate(async () => {
-		await tick();
+	function waitForImages(): Promise<void> {
+		return new Promise((resolve) => {
+			const images = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
+			const unloaded = images.filter((img) => !img.complete);
 
-		// 2. Re-run your animation initializations
-		initAnimations();
+			if (unloaded.length === 0) {
+				resolve();
+				return;
+			}
 
-		// 3. Ensure ScrollTrigger knows about new page height
-		// We wait two frames to ensure layout paints are finished
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				ScrollTrigger.refresh();
+			let count = 0;
+			const done = () => {
+				count++;
+				if (count >= unloaded.length) resolve();
+			};
 
-				// 4. Handle Hash jump if it exists in the new URL
-				const hash = window.location.hash;
-				if (smooth) {
-					if (hash) {
-						smooth.scrollTo(hash, true);
-					} else {
-						smooth.refresh();
-						smooth.scrollTo(0, true);
-					}
-				}
-
-				// 5. Cleanup
-				if (smooth) smooth.paused(false);
-				showLoader = false;
+			unloaded.forEach((img) => {
+				img.addEventListener('load', done, { once: true });
+				img.addEventListener('error', done, { once: true });
 			});
-		});
-	});
 
-	onMount(() => {
+			// Safety fallback
+			setTimeout(resolve, 5000);
+		});
+	}
+
+	onMount(async () => {
 		smooth = ScrollSmoother.create({
 			smooth: 1,
 			effects: true,
 			smoothTouch: 0,
 			wrapper: '#smooth-wrapper',
 			content: '#smooth-content'
+		});
+
+		await waitForImages();
+
+		requestAnimationFrame(() => {
+			ScrollTrigger.refresh();
+			window.dispatchEvent(new CustomEvent('page-ready'));
+		});
+	});
+
+	afterNavigate(async () => {
+		await tick();
+		initAnimations();
+
+		if (smooth) smooth.paused(true);
+
+		await waitForImages();
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				ScrollTrigger.refresh();
+				window.dispatchEvent(new CustomEvent('page-ready'));
+
+				const hash = window.location.hash;
+				if (smooth) {
+					if (hash) {
+						smooth.scrollTo(hash, true);
+					} else {
+						smooth.scrollTo(0, false);
+					}
+					smooth.paused(false);
+				}
+
+				showLoader = false;
+			});
 		});
 	});
 </script>

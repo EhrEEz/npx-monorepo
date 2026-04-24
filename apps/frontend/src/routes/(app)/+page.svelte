@@ -13,6 +13,84 @@
 	import type { SeoPage } from '$backend/src/payload-types.js';
 	import { resolve } from '$app/paths';
 
+	import desktopBanner from '$lib/assets/images/banner-1.png?width=1200&format=webp&quality=80';
+	import mobileBanner from '$lib/assets/images/banner-1-m.png?width=720&format=webp&quality=80';
+
+	import brandingImg from '$lib/assets/images/service/branding-visual.png?width=600&format=webp&quality=80';
+	import uiuxImg from '$lib/assets/images/service/ui-ux-design.png?width=600&format=webp&quality=80';
+	import digitalImg from '$lib/assets/images/service/digital-print-media.png?width=600&format=webp&quality=80';
+	import webDevImg from '$lib/assets/images/service/web-development.png?width=600&format=webp&quality=80';
+	import mobileDevImg from '$lib/assets/images/service/mobile-development.png?width=600&format=webp&quality=80';
+	import softwareImg from '$lib/assets/images/service/software-development.png?width=600&format=webp&quality=80';
+	import expertImg from '$lib/assets/images/service/expert.png?width=600&format=webp&quality=80';
+	import cloudImg from '$lib/assets/images/service/cloud.png?width=600&format=webp&quality=80';
+	import devopsImg from '$lib/assets/images/service/dev-ops.png?width=600&format=webp&quality=80';
+	import analyticsImg from '$lib/assets/images/service/analytics.png?width=600&format=webp&quality=80';
+	import growthImg from '$lib/assets/images/service/growth-hacking.png?width=600&format=webp&quality=80';
+	import seoImg from '$lib/assets/images/service/seo.png?width=600&format=webp&quality=80';
+	import socialImg from '$lib/assets/images/service/social-media.png?width=600&format=webp&quality=80';
+	import contentImg from '$lib/assets/images/service/content-marketing.png?width=600&format=webp&quality=80';
+	import reportingImg from '$lib/assets/images/service/data-reporting.png?width=600&format=webp&quality=80';
+	import supportImg from '$lib/assets/images/service/support.png?width=600&format=webp&quality=80';
+
+	const capabilities = [
+		{
+			id: 1,
+			category: 'Design',
+			description:
+				'We create cohesive brand systems and intuitive digital experiences that elevate how your business is perceived across every touchpoint.',
+			items: [
+				{ label: 'Branding & Visual Identity', img: brandingImg },
+				{ label: 'UI/UX Design', img: uiuxImg },
+				{ label: 'Digital & Print Media', img: digitalImg }
+			]
+		},
+		{
+			id: 2,
+			category: 'Development',
+			description:
+				'Our engineering team builds high-performance digital products using modern frameworks, scalable architecture, and efficient development practices.',
+			items: [
+				{ label: 'Web Development', img: webDevImg },
+				{ label: 'Mobile App Development', img: mobileDevImg },
+				{ label: 'Software Development', img: softwareImg },
+				{ label: 'Tech Stack Expertise', img: expertImg }
+			]
+		},
+		{
+			id: 3,
+			category: 'Cloud & Data Services',
+			description:
+				'We design and manage secure, resilient, and globally optimized cloud environments that ensure high availability and operational excellence.',
+			items: [
+				{ label: 'Cloud & AWS Services', img: cloudImg },
+				{ label: 'DevOps & Infrastructure', img: devopsImg },
+				{ label: 'Data & Analytics', img: analyticsImg }
+			]
+		},
+		{
+			id: 4,
+			category: 'Marketing & Growth',
+			description:
+				'We execute data-driven marketing strategies that improve visibility, accelerate acquisition, and enhance long-term customer engagement.',
+			items: [
+				{ label: 'Growth Hacking', img: growthImg },
+				{ label: 'Search & Performance Marketing', img: seoImg },
+				{ label: 'Social Media Marketing', img: socialImg },
+				{ label: 'Content & Brand marketing', img: contentImg },
+				{ label: 'Analytics & Reporting', img: reportingImg }
+			]
+		},
+		{
+			id: 5,
+
+			category: 'Expert Services',
+			description:
+				'Our strategic and operational support ensures that every digital initiative is planned, executed, and maintained with precision and clarity.',
+			items: [{ label: 'Consulting & Support', img: supportImg }]
+		}
+	];
+
 	interface Props {
 		data: {
 			page_seo?: SeoPage;
@@ -158,18 +236,11 @@
 	</div>
 </section>
 
-<section
-	class="ascii__section full-width content-grid"
-	data-section="dark"
-	aria-hidden="true"
-	aria-label="Nepaxis ASCII Logo Section"
->
-	<ASCII />
-</section>
+<ASCII />
 <section class="full-width fs-image relative" data-section="dark">
 	<picture>
-		<source srcset="/images/banner-1.png" media="(min-width:720px)" />
-		<img src="/images/banner-1-m.png" class="work__image" alt="Our Work Images" />
+		<source srcset={desktopBanner} media="(min-width: 720px)" />
+		<img src={mobileBanner} class="work__image" alt="Our Work Images" loading="eager" />
 	</picture>
 </section>
 <section
@@ -362,165 +433,31 @@
 			</table>
 			<table class="capabilities__table--md regular-14 mb-md-4">
 				<tbody>
-					<tr>
-						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Design</th>
-					</tr>
-					<tr>
-						<td rowspan="3">
-							<p class="neutral-500 regular-14">
-								We create cohesive brand systems and intuitive digital experiences that elevate how
-								your business is perceived across every touchpoint.
-							</p>
-						</td>
-						<td class="floating__image-wrapper" data-img="/images/service/branding-visual.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Branding & Visual Identity
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/ui-ux-design.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								UI/UX Design
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/digital-print-media.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Digital & Print Media
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Development</th>
-					</tr>
-					<tr>
-						<td rowspan="4">
-							<p class="neutral-500 regular-14">
-								Our engineering team builds high-performance digital products using modern
-								frameworks, scalable architecture, and efficient development practices.
-							</p>
-						</td>
-						<td class="floating__image-wrapper" data-img="/images/service/web-development.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Web Development
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/mobile-development.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Mobile App Development
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/software-development.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Software Development
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/expert.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Tech Stack Expertise
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<th colspan="2" class="text-left uppercase bold-14 neutral-600"
-							>Cloud & Data Services</th
-						>
-					</tr>
-					<tr>
-						<td rowspan="3">
-							<p class="neutral-500 regular-14">
-								We design and manage secure, resilient, and globally optimized cloud environments
-								that ensure high availability and operational excellence.
-							</p>
-						</td>
-						<td class="floating__image-wrapper" data-img="/images/service/cloud.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Cloud & AWS Services
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/dev-ops.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								DevOps & Infrastructure
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/analytics.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Data & Analytics
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Marketing & Growth</th>
-					</tr>
-					<tr>
-						<td rowspan="5">
-							<p class="neutral-500 regular-14">
-								We execute data-driven marketing strategies that improve visibility, accelerate
-								acquisition, and enhance long-term customer engagement.
-							</p>
-						</td>
-						<td class="floating__image-wrapper" data-img="/images/service/growth-hacking.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Growth Hacking
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/seo.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Search & Performance Marketing
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/social-media.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Social Media Marketing
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/content-marketing.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Content & Brand marketing
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="floating__image-wrapper" data-img="/images/service/data-reporting.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Analytics & Reporting
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Expert Services</th>
-					</tr>
-					<tr>
-						<td rowspan="3">
-							<p class="neutral-500 regular-14">
-								Our strategic and operational support ensures that every digital initiative is
-								planned, executed, and maintained with precision and clarity.
-							</p>
-						</td>
-						<td class="floating__image-wrapper" data-img="/images/service/support.png">
-							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
-								Consulting & Support
-							</span>
-						</td>
-					</tr>
+					{#each capabilities as section (section.id)}
+						<tr>
+							<th colspan="2" class="text-left uppercase bold-14 neutral-600">
+								{section.category}
+							</th>
+						</tr>
+
+						{#each section.items as item, i}
+							<tr>
+								{#if i === 0}
+									<td rowspan={section.items.length}>
+										<p class="neutral-500 regular-14">
+											{section.description}
+										</p>
+									</td>
+								{/if}
+
+								<td class="floating__image-wrapper" data-img={item.img}>
+									<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+										{item.label}
+									</span>
+								</td>
+							</tr>
+						{/each}
+					{/each}
 				</tbody>
 			</table>
 		</div>
@@ -533,7 +470,7 @@
 							below.
 						</p>
 					</div>
-					<!-- <a
+					<a
 						href="https://drive.google.com/uc?export=download&id=1x1kVPoeZaI9VFPjU6xvle9SePYs8-nWH"
 						class="btn--black services__button mb-4 mb-lg-5"
 						target="_blank"
@@ -555,7 +492,7 @@
 								</svg>
 							</span>
 						</span>
-					</a> -->
+					</a>
 				</div>
 				<Cube />
 			</div>
