@@ -12,7 +12,7 @@
 		.settings as SiteSetting;
 
 	const globalSEO = $derived(siteSettings.page_seo);
-	const pageURL = $derived(main_url + page.route.id);
+	const pageURL = $derived(main_url + page.url.pathname);
 
 	const homepageURL = $derived(page.url.origin);
 	const analytics = $derived(globalSEO?.analytics);
