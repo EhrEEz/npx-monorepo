@@ -73,7 +73,7 @@
 			</h1>
 
 			<p
-				class="error-message font-mono"
+				class="error-message-text font-mono uppercase"
 				in:fly={{ y: 20, duration: 600, delay: 200, easing: cubicOut }}
 			>
 				{errorDetails.message}
@@ -125,7 +125,7 @@
 		margin: 0;
 	}
 
-	.error-message {
+	.error-message-text {
 		color: var(--clr-neutral-400);
 		line-height: 1.6;
 	}

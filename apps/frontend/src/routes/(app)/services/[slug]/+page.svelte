@@ -2,13 +2,16 @@
 	import { resolve } from '$app/paths';
 	import type { ServiceApplication, Service } from '$backend/src/payload-types.js';
 	import ResponsiveImage from '$lib/components/Image/ResponsiveImage.svelte';
-	import Link from '$lib/components/Link/Link.svelte';
+	import { ScrollSmoother } from 'gsap/ScrollSmoother';
 	import Tag from '$lib/components/Tag/Tag.svelte';
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { getContext } from 'svelte';
 
+	type SmoothType = { smooth: ScrollSmoother | null };
+	const smoothInstance = $derived<ScrollSmoother | null>(getContext<SmoothType>('smooth').smooth);
 	const { data } = $props();
 	const service = $derived<Service>(data.service);
 	const applications = $derived<ServiceApplication[]>(
@@ -18,6 +21,8 @@
 	let applicationSection = $state<HTMLElement>();
 	let applicationNav = $state<HTMLElement>();
 	let ctx: gsap.Context | null = null;
+	let applicationElements = $state<HTMLLIElement[]>([]);
+	let currentApplicationIndex = $state(0);
 
 	function initNavPin() {
 		if (!browser) return;
@@ -36,11 +41,37 @@
 				pinSpacing: false,
 				id: 'application-pin'
 			});
+
+			const mm = gsap.matchMedia();
+			mm.add('(min-width:992px)', () => {
+				applicationElements.forEach((emt) => {
+					ScrollTrigger.create({
+						trigger: emt,
+						start: 'top 20%',
+						end: 'bottom 20%',
+						toggleActions: 'play pause resume reverse',
+						onEnter: () => {
+							const data = emt.getAttribute('data-item-index');
+							currentApplicationIndex = parseInt(data as string);
+						},
+
+						onEnterBack: () => {
+							const data = emt.getAttribute('data-item-index');
+							currentApplicationIndex = parseInt(data as string);
+						}
+					});
+				});
+			});
 		});
 	}
 
 	function onPageReady() {
 		initNavPin();
+	}
+
+	function scrollToApplication(index: number) {
+		currentApplicationIndex = index;
+		smoothInstance?.scrollTo(`#application-${index + 1}`, true, 'top 19%');
 	}
 
 	$inspect(service);
@@ -51,7 +82,6 @@
 
 		// Wait for page-ready so ScrollTrigger has correct measurements
 		window.addEventListener('page-ready', onPageReady);
-
 		return () => {
 			window.removeEventListener('page-ready', onPageReady);
 			ctx?.revert();
@@ -120,21 +150,33 @@
 		>
 			<ul class="strip-style fl-col gap-1 application__navigation">
 				{#each applications as application, index (applications.indexOf(application))}
-					<li class="application__item" class:active={index === 0}>
-						<Link
-							class="font-mono uppercase"
-							scrollTo="#application-{application.id}"
-							href="#application-{application.id}">{application.name}</Link
+					<li class="application__item">
+						<button
+							class="font-mono uppercase application__navigation-link"
+							class:active={index === currentApplicationIndex}
+							onclick={() => scrollToApplication(index)}>{application.name}</button
 						>
 					</li>
 				{/each}
 			</ul>
+			<div class="fl-row mt-4">
+				<a href={resolve('/contact')} class="circle__link strip-style btn--accent">
+					<span class="btn__wrapper"
+						><span class="btn__text bold-32 font-mono uppercase">Let's Talk</span></span
+					>
+				</a>
+			</div>
 		</nav>
 		<ul class="strip-style col-lg-10 application__list" aria-label={`${service.name} Applications`}>
-			{#each applications as application (applications.indexOf(application))}
-				<li class="application__row" id="application-{application.id}">
-					<h2 class="sr-only">{application.name}</h2>
+			{#each applications as application, index (applications.indexOf(application))}
+				<li
+					class="application__row"
+					id="application-{application.id}"
+					data-item-index={index}
+					bind:this={applicationElements[index]}
+				>
 					<div class="application__content pb-2 pb-md-8">
+						<h2 class="about-title mb-1">{application.name}</h2>
 						<p class="neutral-300 mb-3 mb-lg-4">
 							{application.description}
 						</p>
@@ -163,11 +205,13 @@
 							{/each}
 						</ul>
 					</div>
-					<!-- <div class="application__carousel">
+					<div class="application__carousel">
 						{#if application.images}
-							{#each application.images as image (typeof image === 'i')}{/each}
+							{#each application.images as image (typeof image === 'number')}
+								{JSON.stringify(image)}
+							{/each}
 						{/if}
-					</div> -->
+					</div>
 				</li>
 			{/each}
 		</ul>
@@ -175,7 +219,34 @@
 </section>
 
 <style lang="scss">
+	.about-title {
+		font-feature-settings:
+			'ss01' on,
+			'ss02' on;
+		font-family: 'Space Mono';
+		font-style: normal;
+		font-weight: 400;
+		line-height: 122%;
+		text-transform: uppercase;
+		text-wrap: balance;
+
+		&-wrapper {
+			display: grid;
+			align-items: center;
+		}
+	}
 	.application {
+		&__navigation {
+			&-link {
+				color: var(--clr-neutral-400);
+				&.active {
+					&,
+					&:hover {
+						color: var(--clr-neutral-100);
+					}
+				}
+			}
+		}
 		&__item {
 			--_color: var(--clr-neutral-500);
 			color: var(--_color);
@@ -186,13 +257,6 @@
 
 			&:hover {
 				--_color: var(--clr-neutral-300);
-			}
-
-			&.active {
-				&,
-				&:hover {
-					--_color: var(--clr-neutral-100);
-				}
 			}
 		}
 		&__row,

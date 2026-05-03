@@ -26,8 +26,10 @@
 	transition: background-color var(--_transition) ease-out;
 	text-transform: var(--_transform);
 	font-size: var(--_size);
-	display: block;
-	inline-size: fit-content;
+	display: inline-flex;
+	inline-size: max-content;
+	max-inline-size: 100%;
+	overflow: hidden;
 	flex-shrink: 0;
 	&:hover {
 		background-color: var(--_hov-background, --_background);
@@ -88,6 +90,7 @@
 		justify-content: center;
 		gap: var(--_gap);
 		inline-size: 100%;
+		max-inline-size: 100%;
 	}
 	&__text {
 		display: inline-block;
@@ -97,8 +100,11 @@
 		font-weight: 600;
 		font-family: 'Space Grotesk', sans-serif;
 		letter-spacing: 0.04em;
-		white-space: nowrap;
-		// margin-block-start: -0.2em; // compensating for leading differences
+		flex: 1 1 auto;
+		white-space: normal;
+		word-break: break-word;
+		max-inline-size: 100%;
+		inline-size: max-content;
 	}
 	&__icon {
 		display: flex;

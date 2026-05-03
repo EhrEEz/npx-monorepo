@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ params }) => {
 	const data = await payload.find({
 		collection: 'service',
-		depth: 8,
+		depth: 5,
 		where: {
 			slug: {
 				equals: params.slug
