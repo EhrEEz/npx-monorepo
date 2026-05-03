@@ -111,6 +111,7 @@
 		companyName: companyName.value,
 		email: email.value,
 		message: message.value,
+		source: 'Marketing',
 		access_key: ACCESS_KEY
 	});
 	let showModal = $state(false);
@@ -774,5 +775,6 @@
 	}
 	textarea.form__control {
 		border-radius: 1rem;
+		text-transform: unset;
 	}
 </style>
