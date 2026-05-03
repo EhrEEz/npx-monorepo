@@ -33,18 +33,16 @@
 				const hash = targetUrl.hash;
 				if (hash) {
 					pushState(`${hash}`, {});
-					smoothInstance.scrollTo(hash, true);
+					smoothInstance.scrollTo(hash, true, 'top 100px');
 				} else {
 					pushState(`${pathName}`, {});
-					smoothInstance.scrollTo(0, true);
+					smoothInstance.scrollTo(0, true, 'top 100px');
 				}
 			} else {
 				goto(href);
-				ScrollTrigger.refresh();
 			}
 		} else {
 			goto(href);
-			ScrollTrigger.refresh();
 		}
 	}
 </script>

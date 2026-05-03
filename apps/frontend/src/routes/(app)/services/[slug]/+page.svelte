@@ -14,57 +14,54 @@
 	const applications = $derived<ServiceApplication[]>(
 		service.relatedInners?.docs as ServiceApplication[]
 	);
+
 	let applicationSection = $state<HTMLElement>();
 	let applicationNav = $state<HTMLElement>();
-	$inspect(service);
+	let ctx: gsap.Context | null = null;
 
 	function initNavPin() {
 		if (!browser) return;
-
-		// Kill existing trigger
-		if (applicationPinTrigger) {
-			applicationPinTrigger.kill();
-			applicationPinTrigger = null;
-		}
 		if (window.innerWidth < 768) return;
-
 		if (!applicationSection || !applicationNav) return;
 
-		applicationPinTrigger = ScrollTrigger.create({
-			trigger: applicationSection,
-			start: 'top 200', // Adjust based on your header height
-			end: 'bottom bottom',
-			pin: applicationNav,
-			pinSpacing: false,
-			id: 'share-pin'
+		ctx?.revert();
+
+		ctx = gsap.context(() => {
+			ScrollTrigger.create({
+				trigger: applicationSection,
+				scroller: '#smooth-wrapper',
+				start: 'top 200px',
+				end: 'bottom bottom',
+				pin: applicationNav,
+				pinSpacing: false,
+				id: 'application-pin'
+			});
 		});
 	}
 
-	let applicationPinTrigger: ScrollTrigger | null = null;
+	function onPageReady() {
+		initNavPin();
+	}
+
+	$inspect(service);
 	$effect(() => {
-		if (browser) {
-			gsap.registerPlugin(ScrollTrigger);
+		if (!browser) return;
 
-			const timeout = setTimeout(() => {
-				initNavPin();
-				ScrollTrigger.refresh();
-			}, 150);
+		gsap.registerPlugin(ScrollTrigger);
 
-			return () => {
-				clearTimeout(timeout);
-				if (applicationPinTrigger) {
-					applicationPinTrigger.kill();
-					applicationPinTrigger = null;
-				}
-			};
-		}
+		// Wait for page-ready so ScrollTrigger has correct measurements
+		window.addEventListener('page-ready', onPageReady);
+
+		return () => {
+			window.removeEventListener('page-ready', onPageReady);
+			ctx?.revert();
+			ctx = null;
+		};
 	});
 
 	onDestroy(() => {
-		if (applicationPinTrigger) {
-			applicationPinTrigger.kill();
-			applicationPinTrigger = null;
-		}
+		ctx?.revert();
+		ctx = null;
 	});
 </script>
 
@@ -134,7 +131,7 @@
 			</ul>
 		</nav>
 		<ul class="strip-style col-lg-10 application__list" aria-label={`${service.name} Applications`}>
-			{#each applications as application, index (applications.indexOf(application))}
+			{#each applications as application (applications.indexOf(application))}
 				<li class="application__row" id="application-{application.id}">
 					<h2 class="sr-only">{application.name}</h2>
 					<div class="application__content pb-2 pb-md-8">
@@ -166,7 +163,11 @@
 							{/each}
 						</ul>
 					</div>
-					<div class="application__carousel"></div>
+					<!-- <div class="application__carousel">
+						{#if application.images}
+							{#each application.images as image (typeof image === 'i')}{/each}
+						{/if}
+					</div> -->
 				</li>
 			{/each}
 		</ul>

@@ -2,3 +2,4 @@
 User-agent: *
 Disallow:
 Sitemap: https://nepaxis.com/sitemap.xml
+Disallow: /images/approach/*
