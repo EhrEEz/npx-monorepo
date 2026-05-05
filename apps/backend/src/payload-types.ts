@@ -340,7 +340,7 @@ export interface Service {
   label: string;
   description: string;
   cover: number | Media;
-  images: (number | Media)[];
+  images?: (number | Media)[] | null;
   relatedInners?: {
     docs?: (number | ServiceApplication)[];
     hasNextPage?: boolean;

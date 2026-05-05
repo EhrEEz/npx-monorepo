@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import type { Media, Service, ServiceApplication } from '$backend/src/payload-types';
 	import Image from '$lib/components/Image/Image.svelte';
+	import Preview from '$lib/components/ImagePreview/Preview.svelte';
+	import PreviewThumbnail from '$lib/components/ImagePreview/PreviewThumbnail.svelte';
 	const { data } = $props();
 
 	const services = $derived<Service[] | null>(data.services);
@@ -97,7 +99,14 @@
 										{/each}
 									</ol>
 								{/if}
-								{#if service.images}{/if}
+								{#if service.images}
+									{@const images = service.images as Media[]}
+									{#each images as image (image.id)}
+										<PreviewThumbnail {image}>
+											<Image {image} />
+										</PreviewThumbnail>
+									{/each}
+								{/if}
 							</div>
 						</div>
 						<div

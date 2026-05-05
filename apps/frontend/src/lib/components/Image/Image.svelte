@@ -7,15 +7,20 @@
 
 	const {
 		image,
+		loading = 'lazy',
 		alternate_alt,
 		class: className,
 		...restProps
-	}: { image: Media; alternate_alt?: string } & HTMLAttributes<HTMLImageElement> = $props();
+	}: {
+		image: Media;
+		alternate_alt?: string;
+		loading?: 'lazy' | 'eager';
+	} & HTMLAttributes<HTMLImageElement> = $props();
 </script>
 
 {#if image.sizes}
 	<img
-		loading="lazy"
+		{loading}
 		src={image.sizes.small?.url
 			? media_url + image.sizes.small?.url
 			: image.url
@@ -32,7 +37,7 @@
 	/>
 {:else}
 	<img
-		loading="lazy"
+		{loading}
 		src={image?.url ? media_url + image.url : default_image}
 		class={['object-cover', className]}
 		alt="Cover of {image.alt ?? image.alt ?? alternate_alt}"

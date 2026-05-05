@@ -51,7 +51,7 @@ export const Services: CollectionConfig = {
       label: 'Images',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+      required: false,
       hasMany: true,
     },
     {
@@ -60,6 +60,7 @@ export const Services: CollectionConfig = {
       collection: 'service-application', // The slug of the collection to join
       on: 'service', // The field name in service-inner that points here
       orderable: true,
+      maxDepth: 2,
       admin: {
         defaultColumns: ['id', 'name'],
       },
