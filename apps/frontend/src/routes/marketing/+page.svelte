@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import Tag from '$lib/components/Tag/Tag.svelte';
@@ -9,6 +10,12 @@
 	import Link from '$lib/components/Link/Link.svelte';
 	const ACCESS_KEY = `5e3a9806-0470-49b0-ab74-d7109400cdc6`;
 	const cleanupSlots = useSlot('fixed', whatsappButton);
+	import type { SiteSetting } from '$backend/src/payload-types';
+
+	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
+		.settings as SiteSetting;
+	const siteInfo = $derived(siteSettings.basic_settings);
+	const socials = $derived(siteSettings.social_media);
 
 	type Validation = string | true;
 	type ValidationFunction = (a: string) => Validation;
@@ -731,6 +738,109 @@
 					</button>
 				</div>
 			</div>
+			<div
+				class="regular-12 font-mono uppercase tracking-wide text-center neutral-400 py-3 py-lg-4"
+			>
+				OR
+			</div>
+			<div class="social__link-wrapper fl-row gap-2 gap-lg-4 mb-4 jc-center">
+				{#if socials?.facebook}
+					<a
+						href={socials.facebook}
+						class="social--light social--facebook"
+						target="_blank"
+						title={`${siteInfo.name} facebook Profile`}
+					>
+						<div class="sr-only">{siteInfo.name} facebook Profile</div>
+					</a>
+				{/if}
+				{#if socials?.instagram}
+					<a
+						href={socials.instagram}
+						class="social--light social--instagram"
+						target="_blank"
+						title={`${siteInfo.name} instagram profile`}
+					>
+						<div class="sr-only">{siteInfo.name} instagram profile</div>
+					</a>
+				{/if}
+				{#if socials?.linkedin}
+					<a
+						href={socials.linkedin}
+						class="social--light social--linkedin"
+						target="_blank"
+						title={`${siteInfo.name} linkedin Profile`}
+					>
+						<div class="sr-only">{siteInfo.name} linkedin Profile</div>
+					</a>
+				{/if}
+				{#if socials?.pinterest}
+					<a
+						href={socials.pinterest}
+						class="social--light social--pinterest"
+						target="_blank"
+						title={`${siteInfo.name} pinterest profile`}
+					>
+						<div class="sr-only">{siteInfo.name} pinterest profile</div>
+					</a>
+				{/if}
+				{#if socials?.threads}
+					<a
+						href={socials.threads}
+						class="social--light social--threads"
+						target="_blank"
+						title={`${siteInfo.name} threads profile`}
+					>
+						<div class="sr-only">{siteInfo.name} threads profile</div>
+					</a>
+				{/if}
+				{#if socials?.tiktok}
+					<a
+						href={socials.tiktok}
+						class="social--light social--tiktok"
+						target="_blank"
+						title={`${siteInfo.name} tiktok profile`}
+					>
+						<div class="sr-only">{siteInfo.name} tiktok profile</div>
+					</a>
+				{/if}
+				{#if socials?.whatsapp}
+					<a
+						href={socials.whatsapp}
+						class="social--light social--whatsapp"
+						target="_blank"
+						title={`${siteInfo.name} whatsapp Profile`}
+					>
+						<div class="sr-only">{siteInfo.name} whatsapp Profile</div>
+					</a>
+				{/if}
+
+				{#if socials?.x}
+					<a
+						href={socials.x}
+						class="social--light social--x"
+						target="_blank"
+						title={`${siteInfo.name} X Profile`}
+					>
+						<div class="sr-only">{siteInfo.name} X Profile</div>
+					</a>
+				{/if}
+
+				{#if socials?.youtube}
+					<a
+						href={socials.youtube}
+						class="social--light social--youtube"
+						target="_blank"
+						title={`${siteInfo.name} youtube profile`}
+					>
+						<div class="sr-only">{siteInfo.name} youtube profile</div>
+					</a>
+				{/if}
+
+				<!-- <a href="#" class="social--light social--youtube" target="_blank">
+									<div class="sr-only">Youtube</div>
+								</a> -->
+			</div>
 		</form>
 	</div>
 </section>
@@ -833,7 +943,7 @@
 		inset-block-start: calc(var(--padding) * 2);
 	}
 	.banner__img {
-		img {
+		:global(img) {
 			border-radius: 1.25rem;
 		}
 	}

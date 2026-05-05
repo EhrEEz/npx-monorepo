@@ -105,6 +105,11 @@
 		word-break: break-word;
 		max-inline-size: 100%;
 		inline-size: max-content;
+		&[data-shuffling] {
+			inline-size: var(--shuffle-width);
+			overflow: hidden;
+			white-space: nowrap;
+		}
 	}
 	&__icon {
 		display: flex;

@@ -43,35 +43,31 @@ export function shuffleText(
 export function handleSingleShuffle(shuffledEl: HTMLElement) {
 	const parentButton: HTMLButtonElement | null = shuffledEl.closest(`[class*="btn-"]`) || null;
 	if (!parentButton) return;
-
-	if (parentButton.classList.contains('menu__btn')) {
-		return;
-	}
+	if (parentButton.classList.contains('menu__btn')) return;
 
 	const textOrig = shuffledEl.textContent || '';
 
-	// **1. Layout Shift Prevention (One-time setup)**
-	const originalWidth = Math.ceil(shuffledEl.getBoundingClientRect().width + 1);
-	shuffledEl.style.inlineSize = `${originalWidth}px`;
-	shuffledEl.style.overflow = 'hidden';
-
-	// **2. Mouseover Listener (Start Animation)**
 	parentButton.addEventListener('mouseenter', () => {
-		if (intervalMap.has(shuffledEl)) {
-			clearInterval(intervalMap.get(shuffledEl));
-		}
+		if (intervalMap.has(shuffledEl)) clearInterval(intervalMap.get(shuffledEl));
+
+		// Remove attr first so inline-size: max-content applies, then measure
+		shuffledEl.removeAttribute('data-shuffling');
+		const currentWidth = shuffledEl.getBoundingClientRect().width;
+		shuffledEl.style.setProperty('--shuffle-width', `${currentWidth}px`);
+		shuffledEl.setAttribute('data-shuffling', '');
+
 		const newInter = shuffleText(shuffledEl, config);
 		intervalMap.set(shuffledEl, newInter);
 	});
 
-	// **3. Mouseleave Listener (Stop Animation)**
 	parentButton.addEventListener('mouseleave', () => {
 		const inter = intervalMap.get(shuffledEl);
-
 		if (inter !== undefined) {
 			clearInterval(inter);
 			intervalMap.delete(shuffledEl);
 		}
+		shuffledEl.removeAttribute('data-shuffling');
+		shuffledEl.style.removeProperty('--shuffle-width');
 		shuffledEl.textContent = textOrig;
 	});
 }
