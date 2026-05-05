@@ -6,11 +6,6 @@
 	import type { SiteSetting } from '$backend/src/payload-types';
 	import { resolve } from '$app/paths';
 
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import { SplitText } from 'gsap/SplitText';
-	import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-
 	const siteSettings = getContext<{ settings: SiteSetting }>('site-settings')
 		.settings as SiteSetting;
 	const siteInfo = $derived(siteSettings.basic_settings);

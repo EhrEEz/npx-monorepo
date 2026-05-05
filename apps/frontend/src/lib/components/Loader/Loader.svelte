@@ -56,7 +56,7 @@
 	.loader-wrapper {
 		position: fixed;
 		inset: 0;
-		z-index: 10000;
+		z-index: 9999;
 		background: var(--clr-neutral-700, #000);
 		display: grid;
 		place-items: center;

@@ -1,15 +1,24 @@
 import type { Media } from '$backend/src/payload-types';
-export const preview = $state<{ open: boolean; image: Media | null; alt?: string }>({
-	open: false,
-	image: null,
-	alt: ''
-});
 
-export function openPreview(image: Media, alt: string) {
-	preview.image = image;
-	preview.alt = alt;
+class Preview {
+	#open = $state<boolean>(false);
+	image = $state<Media | null>(null);
+	alt = $state<string>('');
+
+	openPreview(image: Media, alt: string) {
+		this.image = image;
+		this.alt = alt;
+		console.log('triggered openPreview');
+		this.#open = true;
+	}
+	closePreview() {
+		this.#open = false;
+		console.log('triggered closePreview');
+	}
+
+	get open() {
+		return this.#open;
+	}
 }
 
-export function closePreview() {
-	preview.open = false;
-}
+export const preview = new Preview();

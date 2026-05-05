@@ -51,12 +51,10 @@ export function handleSingleShuffle(shuffledEl: HTMLElement) {
 	const textOrig = shuffledEl.textContent || '';
 
 	// **1. Layout Shift Prevention (One-time setup)**
-	const originalWidth = shuffledEl.getBoundingClientRect().width;
-	shuffledEl.style.minInlineSize = `${originalWidth}px`;
-	const parentWidth = parentButton.offsetWidth;
-	if (originalWidth > parentWidth * 0.9) {
-		shuffledEl.style.minInlineSize = '0';
-	}
+	const originalWidth = Math.ceil(shuffledEl.getBoundingClientRect().width + 1);
+	shuffledEl.style.inlineSize = `${originalWidth}px`;
+	shuffledEl.style.overflow = 'hidden';
+
 	// **2. Mouseover Listener (Start Animation)**
 	parentButton.addEventListener('mouseenter', () => {
 		if (intervalMap.has(shuffledEl)) {

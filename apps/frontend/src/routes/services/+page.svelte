@@ -2,7 +2,6 @@
 	import { resolve } from '$app/paths';
 	import type { Media, Service, ServiceApplication } from '$backend/src/payload-types';
 	import Image from '$lib/components/Image/Image.svelte';
-	import Preview from '$lib/components/ImagePreview/Preview.svelte';
 	import PreviewThumbnail from '$lib/components/ImagePreview/PreviewThumbnail.svelte';
 	const { data } = $props();
 
@@ -52,7 +51,7 @@
 				<li class="services__item strip-style">
 					<div class="grid-md-row {index === 0 ? 'mb-3 mb-md-6 mb-lg-7' : 'my-md-6 my-lg-7'}">
 						<div class="services__cover w-full">
-							<Image image={service.cover as Media} />
+							<Image image={service.cover as Media} class="object-cover" />
 						</div>
 					</div>
 					<div class="grid-row ai-lg-end row-gap-2 gap-md-2">

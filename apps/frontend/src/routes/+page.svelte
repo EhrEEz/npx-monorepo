@@ -288,7 +288,7 @@
 								<p class="neutral-500 regular-14">{section.description}</p>
 							</td>
 						</tr>
-						{#each section.items as item}
+						{#each section.items as item (section.items.indexOf(item))}
 							<tr>
 								<td class="single-column-service">
 									<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
@@ -308,7 +308,7 @@
 								{section.category}
 							</th>
 						</tr>
-						{#each section.items as item, i}
+						{#each section.items as item, i (section.items.indexOf(item))}
 							<tr>
 								{#if i === 0}
 									<td rowspan={section.items.length}>
@@ -465,7 +465,7 @@
 		src="/static/images/bottom-image.png"
 		class="h-full object-cover w-100"
 		alt="Our Work Images"
-		loading="lazy"
+		loading="eager"
 	/>
 </section>
 

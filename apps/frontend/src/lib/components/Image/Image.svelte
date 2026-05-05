@@ -31,7 +31,7 @@
 				{image?.sizes?.card?.url ? `${media_url + image.sizes.card.url} 500w,` : ''}
 				{image?.sizes?.tablet?.url ? `${media_url + image.sizes.tablet.url} 750w,` : ''}
 				{image?.sizes?.desktop?.url ? `${media_url + image.sizes.desktop.url} 1000w,` : ''}"
-		class={['object-cover', className]}
+		class={['', className]}
 		alt="Cover of {image.alt ?? image.alt ?? alternate_alt}"
 		{...restProps}
 	/>
@@ -39,7 +39,7 @@
 	<img
 		{loading}
 		src={image?.url ? media_url + image.url : default_image}
-		class={['object-cover', className]}
+		class={['', className]}
 		alt="Cover of {image.alt ?? image.alt ?? alternate_alt}"
 		{...restProps}
 	/>

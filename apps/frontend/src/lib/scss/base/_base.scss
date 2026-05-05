@@ -28,7 +28,7 @@ html {
 body {
 	background-color: var(--set-body-background-color);
 	color: var(--set-default-color);
-	min-height: 100dvh;
+	min-block-size: 100dvh;
 }
 
 %heading-font {
@@ -117,8 +117,8 @@ p {
 }
 
 img {
-	max-width: 100%;
-
+	max-inline-size: 100%;
+	block-size: auto;
 	&:before {
 		padding: 1em;
 		display: inline-block;
@@ -126,9 +126,9 @@ img {
 }
 
 .df-image-wrapper {
-	width: 100%;
+	inline-size: 100%;
 	img {
-		width: 100%;
+		inline-size: 100%;
 	}
 }
 
